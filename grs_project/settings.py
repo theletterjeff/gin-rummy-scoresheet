@@ -49,7 +49,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'gin_rummy_scoresheet.urls'
+ROOT_URLCONF = 'grs_project.urls'
 
 TEMPLATES = [
     {
@@ -67,7 +67,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'gin_rummy_scoresheet.wsgi.application'
+WSGI_APPLICATION = 'grs_project.wsgi.application'
 
 
 # Database
