@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    # Django apps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -39,9 +40,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # Custom apps
-    'accounts',
+    'accounts.apps.AccountsConfig',
+    'base.apps.BaseConfig',
+
+    # Third-party dependencies
     'rest_framework',
-    'base',
 ]
 
 MIDDLEWARE = [
