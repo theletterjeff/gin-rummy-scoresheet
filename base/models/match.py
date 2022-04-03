@@ -16,6 +16,7 @@ class Match(models.Model):
         default=500,
         validators=[validate_gt_zero],
     )
+    complete=models.BooleanField(default=False)
 
 class MatchPlayer(models.Model):
     """
@@ -38,15 +39,13 @@ class Outcome(MatchPlayer):
     """
     Wins and losses by Player for each Match.
     """
-    # Choices for `player_outcome`
     WIN = 1
     LOSS = 0
     OUTCOME_CHOICES = (
         (WIN, 'Win'),
         (LOSS, 'Loss'),
     )
-    # Fields
-    complete = models.BooleanField(default=False)
+
     player_outcome = models.IntegerField(
         choices=OUTCOME_CHOICES,
         null=True,
