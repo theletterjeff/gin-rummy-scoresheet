@@ -9,6 +9,7 @@ class Match(models.Model):
     It concludes when one player's score reaches 500.
     """
     players = models.ManyToManyField(Player, related_name='matches')
+
     datetime_started = models.DateTimeField(auto_now_add=True)
     datetime_ended = models.DateTimeField(null=True, blank=True)
 
