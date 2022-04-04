@@ -27,18 +27,4 @@ class Game(models.Model):
     gin = models.BooleanField(default=False)
     undercut = models.BooleanField(default=False)
 
-    datetime_played = models.DateTimeField(auto_now_add=True)
-
-    def save(self, *args, **kwargs):
-        """
-        Add points from game to match total for the winning player.
-        """
-        super(Game, self).save(*args, **kwargs)
-        match_obj = self.match
-
-        if self.winner == match_obj.player1:
-            match_obj.player1_score = match_obj.player1_score + self.points
-        elif self.winner == match_obj.player2:
-            match_obj.player2_score = match_obj.player2_score + self.points
-        
-        match_obj.save()
+    datetime_played = models.DateTimeField(auto_now_add=True)   
