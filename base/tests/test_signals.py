@@ -115,15 +115,6 @@ class TestSignals(TestCase):
             player=player2,
         )
     
-    def test_default_match_has_target_score_500_and_outcome_false(self):
-        """
-        Match instances that are created without any additional parameters
-        have .target_score=500 and .complete=False..
-        """
-        match = Match()
-        self.assertEqual(match.target_score, 500)
-        self.assertFalse(match.complete)
-    
     def test_finish_match(self):
         """
         When one player's Score.player_score exceed Match.target_score,
