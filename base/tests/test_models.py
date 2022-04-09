@@ -13,6 +13,8 @@ class TestMatchModel(TestCase):
     """
     Tests for the Match model.
     """
+    fixtures = ['accounts', 'base']
+
     def test_default_match_has_target_score_500_and_outcome_false(self):
         """
         Match instances that are created without any additional parameters
@@ -32,3 +34,34 @@ class TestMatchModel(TestCase):
         
         match = Match.objects.create()
         assert match.datetime_started == mock_datetime()
+
+    def test_str(self):
+        """
+        String representation of a Match is '<date started string> (<pk>)',
+        e.g., '01/01/22 (3)'.
+        """
+        # Load match from fixture
+        match = Match.objects.get(pk=1)
+
+        target_str = '04/02/22 (1)'
+
+        self.assertEqual(match.__str__(), target_str)
+
+class TestScoreModel(TestCase):
+    """
+    Tests for the Score model.
+    """
+    fixtures = ['accounts', 'base']
+    
+    def test_str(self):
+        """
+        String representation of a Match is 
+        '<username> <date started string (<pk>) ({self.pk})',
+        e.g., 'player1 04/02/22 (1)'
+        """
+        # Load score from fixture
+        score = Score.objects.get(pk=1)
+
+        target_str = 'player1 04/02/22 (1)'
+
+        self.assertEqual(score.__str__(), target_str)
