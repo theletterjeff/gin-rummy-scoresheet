@@ -124,3 +124,66 @@ class TestSignals(TestCase):
 
         self.assertEqual(winner_outcome.player_outcome, 1)
         self.assertEqual(loser_outcome.player_outcome, 0)
+
+    def test_delete_game_remove_score_points(self):
+        """
+        When Game is deleted, remove its points from the associated
+        Score objects.
+        """
+        player1 = Player.objects.get(username='player1')
+        player2 = Player.objects.get(username='player2')
+
+        match = Match.objects.get(pk=2)
+
+        game = Game.objects.create(
+            match=match,
+            winner=player1,
+            loser=player2,
+            points=50,
+        )
+
+        self.assertEqual(
+            Score.objects.get(player=player1, match=match).player_score,
+            50
+        )
+
+        game.delete()
+
+        self.assertEqual(
+            Score.objects.get(player=player1, match=match).player_score,
+            0
+        )
+    
+    def test_delete_game_deletes_outcomes(self):
+        """
+        When Game is deleted, if deleted points put the associated Match below
+        its target_score, delete the associated Outcome objects.
+        """
+        # Load data from fixtures
+        match = Match.objects.get(pk=4)
+        player1 = Player.objects.get(pk=1)
+        player2 = Player.objects.get(pk=2)
+
+        # Verify that the Outcome instances exist
+        try:
+            Outcome.objects.get(match=match, player=player1, player_outcome=1)
+            Outcome.objects.get(match=match, player=player2, player_outcome=0)
+        except:
+            assert False
+
+        Game.objects.get(pk=2).delete()
+
+        with self.assertRaises(Outcome.DoesNotExist):
+            Outcome.objects.get(
+                match=match, player=player1, player_outcome=1)
+            Outcome.objects.get(
+                match=match, player=player2, player_outcome=0)
+
+    def test_delete_game_sets_completed_to_false(self):
+        """
+        When Game is deleted, if deleted points put the associated Match below
+        its target_score, Match.complete changes to False.
+        """
+        Game.objects.get(pk=2).delete()
+
+        self.assertFalse(Match.objects.get(pk=4).complete)
