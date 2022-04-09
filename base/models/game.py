@@ -27,4 +27,13 @@ class Game(models.Model):
     gin = models.BooleanField(default=False)
     undercut = models.BooleanField(default=False)
 
-    datetime_played = models.DateTimeField(auto_now_add=True)   
+    datetime_played = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        datetime_played_str = self.datetime_played.strftime('%D %H:%M')
+        match_datetime_started_str = self.match.datetime_started.strftime('%D')
+        
+        return (
+            f'{datetime_played_str} (Match {match_datetime_started_str}) '
+            f'({self.pk})'
+        )

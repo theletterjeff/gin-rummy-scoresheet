@@ -19,6 +19,10 @@ class Match(models.Model):
     )
     complete=models.BooleanField(default=False)
 
+    def __str__(self):
+        date_started_str = self.datetime_started.strftime('%D')
+        return f'{date_started_str} ({self.pk})'
+
 class MatchPlayer(models.Model):
     """
     An abstract base class for individual Players and each of their Matches.
@@ -36,6 +40,10 @@ class Score(MatchPlayer):
     """
     player_score = models.IntegerField(default=0)
 
+    def __str__(self):
+        date_started_str = self.match.datetime_started.strftime('%D')
+        return f'{self.player.username} {date_started_str} ({self.pk})'
+
 class Outcome(MatchPlayer):
     """
     Wins and losses by Player for each Match.
@@ -52,6 +60,7 @@ class Outcome(MatchPlayer):
         null=True,
         blank=True,
     )
-    
 
-
+    def __str__(self):
+        date_started_str = self.match.datetime_started.strftime('%D')
+        return f'{self.player.username} {date_started_str} ({self.pk})'
