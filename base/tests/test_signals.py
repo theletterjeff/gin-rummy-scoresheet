@@ -32,26 +32,11 @@ class TestSignals(TestCase):
         When a Game is entered, the .player_score attribute of Score
         records are updated.
         """
+        # Load data from fixtures
         player1 = Player.objects.get(username='player1')
         player2 = Player.objects.get(username='player2')
 
-        # Load the Match fixture that doesn't have Players in it yet
-        match = Match.objects.get(pk=1)
-
-        # Add players
-        match.players.add(player1)
-        match.players.add(player2)
-        match.save()
-
-        # Assert that the starting scores for both players are 0
-        self.assertEqual(
-            Score.objects.get(match=match, player=player1).player_score,
-            0
-        )
-        self.assertEqual(
-            Score.objects.get(match=match, player=player2).player_score,
-            0
-        )
+        match = Match.objects.get(pk=2)
 
         # Create a Game that player1 got 50 points from
         Game.objects.create(
