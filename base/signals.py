@@ -1,7 +1,7 @@
 """
 Signals to update Game and Match records.
 """
-from django.db.models.signals import post_save, pre_save
+from django.db.models.signals import pre_delete, post_save, pre_save
 from django.dispatch import receiver
 
 from .models import Game, Match, Outcome, Score
@@ -35,7 +35,16 @@ def finish_match(sender, instance, **kwargs):
     If it does, set the winner and loser on the Outcome records and set
     Match.complete to True.
     """
-    if instance.player_score >= instance.match.target_score:
+    # Set conditions for when we activate this signal
+    target_score_gte = (instance.player_score >= instance.match.target_score)
+    
+    try:
+        outcome = Outcome.objects.get(
+            match=instance.match, player=instance.player)
+    except Outcome.DoesNotExist:
+        outcome = None
+
+    if target_score_gte and not outcome:
         
         # Get winner and loser
         winner = instance.player
@@ -62,3 +71,23 @@ def finish_match(sender, instance, **kwargs):
             player=loser,
             player_outcome=0
         )
+
+@receiver(pre_delete, sender=Game)
+def delete_game(sender, instance, **kwargs):
+    """
+    When Game is deleted, remove its points from the associated Score objects.
+    If deleted points put the associated Match below its target_score,
+    change Match.complete to False and delete the associated Outcome objects.
+    """
+    # Remove points from Score
+    winner_score = Score.objects.get(
+        match=instance.match, player=instance.winner)
+    
+    winner_score.player_score -= instance.points
+    winner_score.save()
+    
+    if instance.match.complete:
+        instance.match.complete = False
+        instance.match.save()
+        
+        Outcome.objects.filter(match=instance.match).delete()
