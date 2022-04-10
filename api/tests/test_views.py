@@ -35,6 +35,16 @@ class TestViews(TestCase):
             'players': [],
         }
         self.assertEqual(response.data, target_data)
+    
+    def test_get_invalid_match(self):
+        """
+        Calling getMatch with an invalid pk returns ???
+        """
+        client = APIClient()
+        url = reverse('get_match', kwargs={'pk': '9999'})
+        
+        with self.assertRaises(Match.DoesNotExist):
+            client.get(url)
 
     def test_get_game(self):
         """
@@ -60,3 +70,13 @@ class TestViews(TestCase):
             'loser': 1,
         }
         self.assertEqual(response.data, target_data)
+
+    def test_get_invalid_game(self):
+        """
+        Calling getMatch with an invalid pk returns ???
+        """
+        client = APIClient()
+        url = reverse('get_game', kwargs={'pk': '9999'})
+        
+        with self.assertRaises(Game.DoesNotExist):
+            client.get(url)
