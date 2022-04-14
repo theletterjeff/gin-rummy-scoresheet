@@ -7,7 +7,7 @@ from .serializers import (GameSerializer, MatchSerializer,
                           OutcomeSerializer, ScoreSerializer)
 
 @api_view(['GET'])
-def getAllMatches(request):
+def getAllMatches(request, format=None):
     """
     Return all Match instances.
     """
@@ -17,7 +17,7 @@ def getAllMatches(request):
     return Response(serializer.data)
 
 @api_view(['GET'])
-def getAllGames(request):
+def getAllGames(request, format=None):
     """
     Return all Game instances.
     """
@@ -27,7 +27,7 @@ def getAllGames(request):
     return Response(serializer.data)
 
 @api_view(['GET'])
-def getMatch(request, pk):
+def getMatch(request, pk, format=None):
     """
     Return a specific Match object.
     """
@@ -41,21 +41,21 @@ def getMatch(request, pk):
     return Response(serializer.data)
 
 @api_view(['GET'])
-def getGame(request, pk):
+def getGame(request, pk, format=None):
     """
     Return a speciic Game object.
     """
     try:
         game = Game.objects.get(pk=pk)
     except Game.DoesNotExist:
-        Response(status=status.HTTP_404_NOT_FOUND)
+        return Response(status=status.HTTP_404_NOT_FOUND)
 
     serializer = GameSerializer(game, many=False)
 
     return Response(serializer.data)
 
 @api_view(['POST'])
-def createMatch(request):
+def createMatch(request, format=None):
     """
     Create a new Match. This view does not add Players to the Match.
     """
@@ -68,7 +68,7 @@ def createMatch(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
-def createGame(request):
+def createGame(request, format=None):
     """
     Create a new Game.
     """

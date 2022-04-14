@@ -39,9 +39,9 @@ class TestViews(TestCase):
         """
         client = APIClient()
         url = reverse('get_match', kwargs={'pk': '9999'})
-        
-        with self.assertRaises(Match.DoesNotExist):
-            client.get(url)
+        response = client.get(url)
+
+        self.assertEqual(response.status_code, 404)
 
     def test_get_game(self):
         """
@@ -74,9 +74,9 @@ class TestViews(TestCase):
         """
         client = APIClient()
         url = reverse('get_game', kwargs={'pk': '9999'})
-        
-        with self.assertRaises(Game.DoesNotExist):
-            client.get(url)
+        response = client.get(url)
+
+        self.assertEqual(response.status_code, 404)
     
     def test_create_match(self):
         """
@@ -93,3 +93,20 @@ class TestViews(TestCase):
             Match.objects.get(target_score=12345)
         except Match.DoesNotExist:
             assert False
+
+    def test_suffix_patterns(self):
+        """
+        Making a request to the all_matches endpoint with a URL
+        ending in .json returns a JSON object. Doing the same
+        with a URL ending in HTML returns an HTML object.
+        """
+        client = APIClient()
+        url_json = reverse('all_matches') + '.json'
+        url_browsable_api = reverse('all_matches') + '.api'
+        
+        response_json = client.get(url_json)
+        response_browsable_api = client.get(url_browsable_api)
+
+        self.assertEqual(response_json.accepted_media_type, 'application/json')
+        self.assertEqual(response_browsable_api.accepted_media_type,
+            'text/html')
