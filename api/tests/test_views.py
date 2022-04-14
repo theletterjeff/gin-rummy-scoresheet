@@ -1,6 +1,3 @@
-from datetime import datetime, timedelta, timezone
-from unittest import mock
-
 from django.test import TestCase
 from django.urls import reverse
 
@@ -80,3 +77,19 @@ class TestViews(TestCase):
         
         with self.assertRaises(Game.DoesNotExist):
             client.get(url)
+    
+    def test_create_match(self):
+        """
+        Sending valid JSON data to the `/create-match/` endpoint
+        creates a new Match.
+        """
+        client = APIClient()
+        url = reverse('create_match')
+        data = {'target_score': 12345}
+
+        client.post(url, data=data)
+
+        try:
+            Match.objects.get(target_score=12345)
+        except Match.DoesNotExist:
+            assert False
