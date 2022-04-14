@@ -16,6 +16,16 @@ def getAllMatches(request):
     return Response(serializer.data)
 
 @api_view(['GET'])
+def getAllGames(request):
+    """
+    Return all Game instances.
+    """
+    games = Game.objects.all()
+    serializer = GameSerializer(games, many=True)
+
+    return Response(serializer.data)
+
+@api_view(['GET'])
 def getMatch(request, pk):
     """
     Return a specific Match object.
@@ -33,4 +43,28 @@ def getGame(request, pk):
     game = Game.objects.get(pk=pk)
     serializer = GameSerializer(game, many=False)
 
+    return Response(serializer.data)
+
+@api_view(['POST'])
+def createMatch(request):
+    """
+    Create a new Match. This view does not add Players to the Match.
+    """
+    serializer = MatchSerializer(data=request.data)
+
+    if serializer.is_valid():
+        serializer.save()
+
+    return Response(serializer.data)
+
+@api_view(['POST'])
+def createGame(request):
+    """
+    Create a new Game.
+    """
+    serializer = GameSerializer(data=request.data)
+
+    if serializer.is_valid():
+        serializer.save()
+    
     return Response(serializer.data)
