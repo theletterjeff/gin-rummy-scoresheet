@@ -10,17 +10,10 @@ from rest_framework.generics import (GenericAPIView,
 from rest_framework.mixins import (CreateModelMixin,
                                    ListModelMixin)
 
+from api.serializers import (GameSerializer, MatchSerializer,
+                             OutcomeSerializer, ScoreSerializer)
 from base.models import Game, Match, Outcome, Score
-from .serializers import (GameSerializer, MatchSerializer,
-                          OutcomeSerializer, ScoreSerializer)
-
-class MatchMixin:
-    queryset = Match.objects.all()
-    serializer_class = MatchSerializer
-
-class GameMixin:
-    queryset = Game.objects.all()
-    serializer_class = GameSerializer
+from api.views.mixins import MatchMixin, GameMixin
 
 class AllMatches(MatchMixin, ListAPIView):
     """
