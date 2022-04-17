@@ -14,44 +14,46 @@ from base.models import Game, Match, Outcome, Score
 from .serializers import (GameSerializer, MatchSerializer,
                           OutcomeSerializer, ScoreSerializer)
 
-class AllMatches(ListAPIView):
+class MatchMixin:
+    queryset = Match.objects.all()
+    serializer_class = MatchSerializer
+
+class GameMixin:
+    queryset = Game.objects.all()
+    serializer_class = GameSerializer
+
+class AllMatches(MatchMixin, ListAPIView):
     """
     Return all Match instances.
     """
-    queryset = Match.objects.all()
-    serializer_class = MatchSerializer
+    pass
 
-class AllGames(ListAPIView):
+class AllGames(GameMixin, ListAPIView):
     """
     Return all Game instances.
     """
-    queryset = Game.objects.all()
-    serializer_class = GameSerializer
+    pass
 
-class MatchDetail(RetrieveUpdateDestroyAPIView):
+class MatchDetail(MatchMixin, RetrieveUpdateDestroyAPIView):
     """
     Return, update, or delete a specific Match object.
     """
-    queryset = Match.objects.all()
-    serializer_class = MatchSerializer
+    pass
 
-class GameDetail(RetrieveUpdateDestroyAPIView):
+class GameDetail(GameMixin, RetrieveUpdateDestroyAPIView):
     """
     Return a speciic Game object.
     """
-    queryset = Game.objects.all()
-    serializer_class = GameSerializer
+    pass
 
-class CreateMatch(CreateAPIView):
+class CreateMatch(MatchMixin, CreateAPIView):
     """
     Create a new Match. This view does not add Players to the Match.
     """
-    queryset = Match.objects.all()
-    serializer_class = MatchSerializer
+    pass
 
-class CreateGame(CreateAPIView):
+class CreateGame(GameMixin, CreateAPIView):
     """
     Create a new Game.
     """
-    queryset = Game.objects.all()
-    serializer_class = GameSerializer
+    pass
