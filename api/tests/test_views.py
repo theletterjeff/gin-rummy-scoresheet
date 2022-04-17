@@ -15,7 +15,7 @@ class TestViews(TestCase):
         Calling getMatch with a valid pk returns the Match with that pk.
         """
         client = APIClient()
-        url = reverse('get_match', kwargs={'pk': '1'})
+        url = reverse('match_detail', kwargs={'pk': '1'})
         
         response = client.get(url)
 
@@ -38,7 +38,7 @@ class TestViews(TestCase):
         Calling getMatch with an invalid pk returns ???
         """
         client = APIClient()
-        url = reverse('get_match', kwargs={'pk': '9999'})
+        url = reverse('match_detail', kwargs={'pk': '9999'})
         response = client.get(url)
 
         self.assertEqual(response.status_code, 404)
@@ -110,3 +110,33 @@ class TestViews(TestCase):
         self.assertEqual(response_json.accepted_media_type, 'application/json')
         self.assertEqual(response_browsable_api.accepted_media_type,
             'text/html')
+    
+    def test_update_match(self):
+        """
+        Sending a PATCH request to the match_detail URL endpoint for match 1
+        with data update {'target_score': 1000} updates match 1's target_score
+        to 1000.
+        """
+        client = APIClient()
+        url = reverse('match_detail', kwargs={'pk': '1'})
+        update_data = {'target_score': 1000}
+        
+        response = client.patch(url, data=update_data)
+        
+        # Test response data against target data
+        self.assertEqual(response.data['target_score'], 1000)
+    
+    def test_delete_match(self):
+        """
+        Sending a DELETE request to the match_detail URL endpoint for match 1
+        deletes match 1.
+        """
+        client = APIClient()
+        url = reverse('match_detail', kwargs={'pk': '1'})
+        
+        response = client.delete(url)
+        
+        self.assertEqual(response.status_code, 204)
+
+        # Making a GET call to the resource returns a 404 error
+        self.assertEqual(client.get(url).status_code, 404)

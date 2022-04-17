@@ -26,19 +26,30 @@ def getAllGames(request, format=None):
 
     return Response(serializer.data)
 
-@api_view(['GET'])
-def getMatch(request, pk, format=None):
+@api_view(['GET', 'PATCH', 'DELETE'])
+def matchDetail(request, pk, format=None):
     """
-    Return a specific Match object.
+    Return, update, or delete a specific Match object.
     """
     try:
         match = Match.objects.get(pk=pk)
     except Match.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
-    serializer = MatchSerializer(match, many=False)
-
-    return Response(serializer.data)
+    if request.method == 'GET':
+        serializer = MatchSerializer(match)
+        return Response(serializer.data)
+    
+    elif request.method == 'PATCH':
+        serializer = MatchSerializer(match, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    elif request.method == 'DELETE':
+        match.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 @api_view(['GET'])
 def getGame(request, pk, format=None):
