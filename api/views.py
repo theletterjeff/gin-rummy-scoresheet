@@ -4,6 +4,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 
 from rest_framework.generics import (GenericAPIView,
+                                     CreateAPIView,
+                                     ListAPIView,
                                      RetrieveUpdateDestroyAPIView)
 from rest_framework.mixins import (CreateModelMixin,
                                    ListModelMixin)
@@ -12,25 +14,19 @@ from base.models import Game, Match, Outcome, Score
 from .serializers import (GameSerializer, MatchSerializer,
                           OutcomeSerializer, ScoreSerializer)
 
-class AllMatches(GenericAPIView, ListModelMixin):
+class AllMatches(ListAPIView):
     """
     Return all Match instances.
     """
     queryset = Match.objects.all()
     serializer_class = MatchSerializer
 
-    def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
-
-class AllGames(GenericAPIView, ListModelMixin):
+class AllGames(ListAPIView):
     """
     Return all Game instances.
     """
     queryset = Game.objects.all()
     serializer_class = GameSerializer
-
-    def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
 
 class MatchDetail(RetrieveUpdateDestroyAPIView):
     """
@@ -46,22 +42,16 @@ class GameDetail(RetrieveUpdateDestroyAPIView):
     queryset = Game.objects.all()
     serializer_class = GameSerializer
 
-class CreateMatch(GenericAPIView, CreateModelMixin):
+class CreateMatch(CreateAPIView):
     """
     Create a new Match. This view does not add Players to the Match.
     """
     queryset = Match.objects.all()
     serializer_class = MatchSerializer
 
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
-
-class CreateGame(GenericAPIView, CreateModelMixin):
+class CreateGame(CreateAPIView):
     """
     Create a new Game.
     """
     queryset = Game.objects.all()
     serializer_class = GameSerializer
-
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
