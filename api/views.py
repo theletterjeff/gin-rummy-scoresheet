@@ -41,7 +41,7 @@ def matchDetail(request, pk, format=None):
         return Response(serializer.data)
     
     elif request.method == 'PATCH':
-        serializer = MatchSerializer(match, data=request.data)
+        serializer = MatchSerializer(match, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -51,8 +51,8 @@ def matchDetail(request, pk, format=None):
         match.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-@api_view(['GET'])
-def getGame(request, pk, format=None):
+@api_view(['GET', 'PATCH', 'DELETE'])
+def gameDetail(request, pk, format=None):
     """
     Return a speciic Game object.
     """
@@ -60,10 +60,21 @@ def getGame(request, pk, format=None):
         game = Game.objects.get(pk=pk)
     except Game.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
-
-    serializer = GameSerializer(game, many=False)
-
-    return Response(serializer.data)
+    
+    if request.method == 'GET':
+        serializer = GameSerializer(game)
+        return Response(serializer.data)
+    
+    elif request.method == 'PATCH':
+        serializer = GameSerializer(game, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    elif request.method == 'DELETE':
+        game.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 @api_view(['POST'])
 def createMatch(request, format=None):

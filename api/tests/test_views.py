@@ -48,7 +48,7 @@ class TestViews(TestCase):
         Calling getGame with a valid pk returns the Game with that pk.
         """
         client = APIClient()
-        url = reverse('get_game', kwargs={'pk': '1'})
+        url = reverse('game_detail', kwargs={'pk': '1'})
         
         response = client.get(url)
 
@@ -73,7 +73,7 @@ class TestViews(TestCase):
         Calling getMatch with an invalid pk returns ???
         """
         client = APIClient()
-        url = reverse('get_game', kwargs={'pk': '9999'})
+        url = reverse('game_detail', kwargs={'pk': '9999'})
         response = client.get(url)
 
         self.assertEqual(response.status_code, 404)
@@ -133,6 +133,37 @@ class TestViews(TestCase):
         """
         client = APIClient()
         url = reverse('match_detail', kwargs={'pk': '1'})
+        
+        response = client.delete(url)
+        
+        self.assertEqual(response.status_code, 204)
+
+        # Making a GET call to the resource returns a 404 error
+        self.assertEqual(client.get(url).status_code, 404)
+
+    def test_update_game(self):
+        """
+        Sending a PATCH request to the game_detail URL endpoint for game 1
+        with data update {'points': 1000} updates game 1's points to 1000.
+        """
+        client = APIClient()
+        url = reverse('game_detail', kwargs={'pk': '1'})
+        update_data = {'points': 1000}
+        
+        response = client.patch(url, data=update_data)
+        
+        # Test response data against target data
+        self.assertEqual(response.data['points'], 1000)
+    
+    def test_delete_game(self):
+        """
+        Sending a DELETE request to the game_detail URL endpoint for match 1
+        deletes game 1. (Note: this test does not evaluate deletion's impact
+        on the associated signals Outcome and Score; it simply evaluates
+        whether the delete call deletes the record.)
+        """
+        client = APIClient()
+        url = reverse('game_detail', kwargs={'pk': '1'})
         
         response = client.delete(url)
         
