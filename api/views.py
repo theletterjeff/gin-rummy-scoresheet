@@ -1,6 +1,5 @@
 from django.http import Http404
 from rest_framework import status
-from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -26,78 +25,84 @@ class AllGames(APIView):
         serializer = GameSerializer(games, many=True)
         return Response(serializer.data)
 
-@api_view(['GET', 'PATCH', 'DELETE'])
-def matchDetail(request, pk, format=None):
+class MatchDetail(APIView):
     """
     Return, update, or delete a specific Match object.
     """
-    try:
-        match = Match.objects.get(pk=pk)
-    except Match.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+    def get_object(self, pk):
+        try:
+            return Match.objects.get(pk=pk)
+        except Match.DoesNotExist:
+            raise Http404
 
-    if request.method == 'GET':
+    def get(self, request, pk, format=None):
+        match = self.get_object(pk)
         serializer = MatchSerializer(match)
         return Response(serializer.data)
     
-    elif request.method == 'PATCH':
+    def patch(self, request, pk, format=None):
+        match = self.get_object(pk)
         serializer = MatchSerializer(match, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-    elif request.method == 'DELETE':
+    def delete(self, request, pk, format=None):
+        match = self.get_object(pk)
         match.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-@api_view(['GET', 'PATCH', 'DELETE'])
-def gameDetail(request, pk, format=None):
+class GameDetail(APIView):
     """
     Return a speciic Game object.
     """
-    try:
-        game = Game.objects.get(pk=pk)
-    except Game.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+    def get_object(self, pk):
+        try:
+            return Game.objects.get(pk=pk)
+        except Game.DoesNotExist:
+            raise Http404
     
-    if request.method == 'GET':
+    def get(self, request, pk, format=None):
+        game = self.get_object(pk)
         serializer = GameSerializer(game)
         return Response(serializer.data)
     
-    elif request.method == 'PATCH':
+    def patch(self, request, pk, format=None):
+        game = self.get_object(pk)
         serializer = GameSerializer(game, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-    elif request.method == 'DELETE':
+    def delete(self, request, pk, format=None):
+        game = self.get_object(pk)
         game.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-@api_view(['POST'])
-def createMatch(request, format=None):
+class CreateMatch(APIView):
     """
     Create a new Match. This view does not add Players to the Match.
     """
-    serializer = MatchSerializer(data=request.data)
+    def post(self, request, format=None):
+        serializer = MatchSerializer(data=request.data)
 
-    if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['POST'])
-def createGame(request, format=None):
+class CreateGame(APIView):
     """
     Create a new Game.
     """
-    serializer = GameSerializer(data=request.data)
+    def post(self, request, format=None):
+        serializer = GameSerializer(data=request.data)
 
-    if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
