@@ -17,7 +17,7 @@ class GameSerializer(serializers.ModelSerializer):
 
 class MatchSerializer(serializers.ModelSerializer):
 
-    players = PlayerSerializer(many=True, read_only=True)
+    players = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
     class Meta:
         model = Match
