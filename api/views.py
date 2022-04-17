@@ -1,29 +1,38 @@
 from django.http import Http404
 from rest_framework import status
-from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.response import Response
+
+from rest_framework.generics import GenericAPIView
+from rest_framework.mixins import (CreateModelMixin,
+                                   DestroyModelMixin,
+                                   ListModelMixin,
+                                   RetrieveModelMixin,
+                                   UpdateModelMixin)
 
 from base.models import Game, Match, Outcome, Score
 from .serializers import (GameSerializer, MatchSerializer,
                           OutcomeSerializer, ScoreSerializer)
 
-class AllMatches(APIView):
+class AllMatches(GenericAPIView, ListModelMixin):
     """
     Return all Match instances.
     """
-    def get(self, request, format=None):
-        matches = Match.objects.all()
-        serializer = MatchSerializer(matches, many=True)
-        return Response(serializer.data)
+    queryset = Match.objects.all()
+    serializer_class = MatchSerializer
 
-class AllGames(APIView):
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+class AllGames(GenericAPIView, ListModelMixin):
     """
     Return all Game instances.
     """
-    def get(self, request, format=None):
-        games = Game.objects.all()
-        serializer = GameSerializer(games, many=True)
-        return Response(serializer.data)
+    queryset = Game.objects.all()
+    serializer_class = GameSerializer
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
 
 class MatchDetail(APIView):
     """
