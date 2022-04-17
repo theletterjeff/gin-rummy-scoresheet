@@ -1,18 +1,6 @@
-from django.http import Http404
-from rest_framework import status
-from rest_framework.views import APIView
-from rest_framework.response import Response
-
-from rest_framework.generics import (GenericAPIView,
-                                     CreateAPIView,
-                                     ListAPIView,
+from rest_framework.generics import (CreateAPIView, ListAPIView,
                                      RetrieveUpdateDestroyAPIView)
-from rest_framework.mixins import (CreateModelMixin,
-                                   ListModelMixin)
 
-from api.serializers import (GameSerializer, MatchSerializer,
-                             OutcomeSerializer, ScoreSerializer)
-from base.models import Game, Match, Outcome, Score
 from api.views.mixins import MatchMixin, GameMixin
 
 class AllMatches(MatchMixin, ListAPIView):
