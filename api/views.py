@@ -1,30 +1,30 @@
+from django.http import Http404
 from rest_framework import status
-from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from base.models import Game, Match, Outcome, Score
 from .serializers import (GameSerializer, MatchSerializer,
                           OutcomeSerializer, ScoreSerializer)
 
-@api_view(['GET'])
-def getAllMatches(request, format=None):
+class AllMatches(APIView):
     """
     Return all Match instances.
     """
-    matches = Match.objects.all()
-    serializer = MatchSerializer(matches, many=True)
-    
-    return Response(serializer.data)
+    def get(self, request, format=None):
+        matches = Match.objects.all()
+        serializer = MatchSerializer(matches, many=True)
+        return Response(serializer.data)
 
-@api_view(['GET'])
-def getAllGames(request, format=None):
+class AllGames(APIView):
     """
     Return all Game instances.
     """
-    games = Game.objects.all()
-    serializer = GameSerializer(games, many=True)
-
-    return Response(serializer.data)
+    def get(self, request, format=None):
+        games = Game.objects.all()
+        serializer = GameSerializer(games, many=True)
+        return Response(serializer.data)
 
 @api_view(['GET', 'PATCH', 'DELETE'])
 def matchDetail(request, pk, format=None):
