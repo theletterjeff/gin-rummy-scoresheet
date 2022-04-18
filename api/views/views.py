@@ -1,17 +1,25 @@
-from rest_framework.generics import (CreateAPIView, ListAPIView,
+from rest_framework.generics import (CreateAPIView, ListAPIView, 
+                                     RetrieveAPIView,
                                      RetrieveUpdateDestroyAPIView)
 
-from api.views.mixins import MatchMixin, GameMixin
+from api.views.mixins import MatchMixin, GameMixin, PlayerMixin
 
 class AllMatches(MatchMixin, ListAPIView):
     """
     Return all Match instances.
     """
-    pass
+    def perform_create(self, serializer):
+        serializer.save(created_by=self.request.user)
 
 class AllGames(GameMixin, ListAPIView):
     """
     Return all Game instances.
+    """
+    pass
+
+class AllPlayers(PlayerMixin, ListAPIView):
+    """
+    Return all Player instances.
     """
     pass
 
@@ -23,7 +31,13 @@ class MatchDetail(MatchMixin, RetrieveUpdateDestroyAPIView):
 
 class GameDetail(GameMixin, RetrieveUpdateDestroyAPIView):
     """
-    Return a speciic Game object.
+    Return a specific Game object.
+    """
+    pass
+
+class PlayerDetail(PlayerMixin, RetrieveAPIView):
+    """
+    Return a specific Player object.
     """
     pass
 

@@ -171,3 +171,39 @@ class TestViews(TestCase):
 
         # Making a GET call to the resource returns a 404 error
         self.assertEqual(client.get(url).status_code, 404)
+
+class TestPlayerViews(TestCase):
+
+    fixtures = ['accounts', 'base']
+
+    def test_all_players_view(self):
+        """
+        Sending a GET request to the `all_players` endpoint returns
+        a list of all players.
+        """
+        client = APIClient()
+        url = reverse('all_players')
+
+        response = client.get(url)
+
+        # Sort response Players & database Players
+        sorted_response_pks = sorted(
+            [player['id'] for player in response.data]
+        )
+        sorted_database_pks = sorted(
+            [player.pk for player in Player.objects.all()]
+        )
+
+        # Compare the two
+        self.assertEqual(sorted_response_pks, sorted_database_pks)
+
+    def test_player_detail_view(self):
+        """
+        Sending a GET request for a specific Player returns that Player.
+        """
+        client = APIClient()
+        url = reverse('player_detail', kwargs={'pk': '1'})
+
+        response = client.get(url)
+
+        self.assertEqual(response.data['id'], 1)
