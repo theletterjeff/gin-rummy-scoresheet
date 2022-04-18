@@ -17,7 +17,14 @@ class Match(models.Model):
         default=500,
         validators=[validate_gt_zero],
     )
-    complete=models.BooleanField(default=False)
+    complete = models.BooleanField(default=False)
+
+    created_by = models.ForeignKey(
+        Player,
+        related_name='created_matches',
+        null=True,
+        on_delete=models.SET_NULL,
+    )
 
     def __str__(self):
         date_started_str = self.datetime_started.strftime('%D')
