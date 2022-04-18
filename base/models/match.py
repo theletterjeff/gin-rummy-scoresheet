@@ -8,7 +8,7 @@ class Match(models.Model):
     A Match consists of multiple Game objects. 
     It concludes when one player's score reaches 500.
     """
-    players = models.ManyToManyField(Player, related_name='matches')
+    players = models.ManyToManyField(Player, related_name='match_set')
 
     datetime_started = models.DateTimeField(auto_now_add=True)
     datetime_ended = models.DateTimeField(null=True, blank=True)
@@ -21,7 +21,7 @@ class Match(models.Model):
 
     created_by = models.ForeignKey(
         Player,
-        related_name='created_matches',
+        related_name='created_match_set',
         null=True,
         on_delete=models.SET_NULL,
     )
