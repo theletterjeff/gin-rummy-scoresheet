@@ -10,14 +10,25 @@ class TestViews(TestCase):
 
     fixtures = ['accounts', 'base']
 
+    @classmethod
+    def setUpClass(cls):
+        """
+        Authenticate player1.
+        """
+        super().setUpClass()
+        
+        player = Player.objects.get(pk=1)
+        
+        cls.apiclient = APIClient()
+        cls.apiclient.force_authenticate(user=player)
+
     def test_get_match(self):
         """
         Calling getMatch with a valid pk returns the Match with that pk.
         """
-        client = APIClient()
         url = reverse('match_detail', kwargs={'pk': '1'})
         
-        response = client.get(url)
+        response = self.apiclient.get(url)
 
         # Check that response is working
         self.assertEqual(response.status_code, 200)
@@ -37,9 +48,8 @@ class TestViews(TestCase):
         """
         Calling getMatch with an invalid pk returns ???
         """
-        client = APIClient()
         url = reverse('match_detail', kwargs={'pk': '9999'})
-        response = client.get(url)
+        response = self.apiclient.get(url)
 
         self.assertEqual(response.status_code, 404)
 
@@ -47,10 +57,9 @@ class TestViews(TestCase):
         """
         Calling getGame with a valid pk returns the Game with that pk.
         """
-        client = APIClient()
         url = reverse('game_detail', kwargs={'pk': '1'})
         
-        response = client.get(url)
+        response = self.apiclient.get(url)
 
         # Check that response is working
         self.assertEqual(response.status_code, 200)
@@ -72,9 +81,8 @@ class TestViews(TestCase):
         """
         Calling getMatch with an invalid pk returns ???
         """
-        client = APIClient()
         url = reverse('game_detail', kwargs={'pk': '9999'})
-        response = client.get(url)
+        response = self.apiclient.get(url)
 
         self.assertEqual(response.status_code, 404)
     
@@ -83,11 +91,10 @@ class TestViews(TestCase):
         Sending valid JSON data to the `/create-match/` endpoint
         creates a new Match.
         """
-        client = APIClient()
         url = reverse('create_match')
         data = {'target_score': 12345}
 
-        client.post(url, data=data)
+        self.apiclient.post(url, data=data)
 
         try:
             Match.objects.get(target_score=12345)
@@ -100,12 +107,11 @@ class TestViews(TestCase):
         ending in .json returns a JSON object. Doing the same
         with a URL ending in HTML returns an HTML object.
         """
-        client = APIClient()
         url_json = reverse('all_matches') + '.json'
         url_browsable_api = reverse('all_matches') + '.api'
         
-        response_json = client.get(url_json)
-        response_browsable_api = client.get(url_browsable_api)
+        response_json = self.apiclient.get(url_json)
+        response_browsable_api = self.apiclient.get(url_browsable_api)
 
         self.assertEqual(response_json.accepted_media_type, 'application/json')
         self.assertEqual(response_browsable_api.accepted_media_type,
@@ -117,11 +123,10 @@ class TestViews(TestCase):
         with data update {'target_score': 1000} updates match 1's target_score
         to 1000.
         """
-        client = APIClient()
         url = reverse('match_detail', kwargs={'pk': '1'})
         update_data = {'target_score': 1000}
         
-        response = client.patch(url, data=update_data)
+        response = self.apiclient.patch(url, data=update_data)
         
         # Test response data against target data
         self.assertEqual(response.data['target_score'], 1000)
@@ -131,26 +136,23 @@ class TestViews(TestCase):
         Sending a DELETE request to the match_detail URL endpoint for match 1
         deletes match 1.
         """
-        client = APIClient()
         url = reverse('match_detail', kwargs={'pk': '1'})
-        
-        response = client.delete(url)
-        
+
+        response = self.apiclient.delete(url)
         self.assertEqual(response.status_code, 204)
 
         # Making a GET call to the resource returns a 404 error
-        self.assertEqual(client.get(url).status_code, 404)
+        self.assertEqual(self.apiclient.get(url).status_code, 404)
 
     def test_update_game(self):
         """
         Sending a PATCH request to the game_detail URL endpoint for game 1
         with data update {'points': 1000} updates game 1's points to 1000.
         """
-        client = APIClient()
         url = reverse('game_detail', kwargs={'pk': '1'})
         update_data = {'points': 1000}
         
-        response = client.patch(url, data=update_data)
+        response = self.apiclient.patch(url, data=update_data)
         
         # Test response data against target data
         self.assertEqual(response.data['points'], 1000)
@@ -162,29 +164,39 @@ class TestViews(TestCase):
         on the associated signals Outcome and Score; it simply evaluates
         whether the delete call deletes the record.)
         """
-        client = APIClient()
         url = reverse('game_detail', kwargs={'pk': '1'})
         
-        response = client.delete(url)
+        response = self.apiclient.delete(url)
         
         self.assertEqual(response.status_code, 204)
 
         # Making a GET call to the resource returns a 404 error
-        self.assertEqual(client.get(url).status_code, 404)
+        self.assertEqual(self.apiclient.get(url).status_code, 404)
 
 class TestPlayerViews(TestCase):
 
     fixtures = ['accounts', 'base']
+
+    @classmethod
+    def setUpClass(cls):
+        """
+        Authenticate player1.
+        """
+        super().setUpClass()
+        
+        player = Player.objects.get(pk=1)
+        
+        cls.apiclient = APIClient()
+        cls.apiclient.force_authenticate(user=player)
 
     def test_all_players_view(self):
         """
         Sending a GET request to the `all_players` endpoint returns
         a list of all players.
         """
-        client = APIClient()
         url = reverse('all_players')
 
-        response = client.get(url)
+        response = self.apiclient.get(url)
 
         # Sort response Players & database Players
         sorted_response_pks = sorted(
@@ -201,9 +213,8 @@ class TestPlayerViews(TestCase):
         """
         Sending a GET request for a specific Player returns that Player.
         """
-        client = APIClient()
         url = reverse('player_detail', kwargs={'pk': '1'})
 
-        response = client.get(url)
+        response = self.apiclient.get(url)
 
         self.assertEqual(response.data['id'], 1)
