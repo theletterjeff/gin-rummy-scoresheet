@@ -1,7 +1,6 @@
 from rest_framework.generics import (CreateAPIView, ListAPIView,
                                      RetrieveAPIView,
                                      RetrieveUpdateDestroyAPIView)
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 from api.views.mixins import (AuthenticationMixin, MatchMixin,
                               GameMixin, PlayerMixin)
