@@ -22,4 +22,7 @@ def update_profile(sender, instance, created, **kwargs):
     Player instance is updated.
     """
     if created is False:
-        instance.playerprofile.save()
+        try:
+            instance.playerprofile.save()
+        except Player.playerprofile.RelatedObjectDoesNotExist:
+            PlayerProfile.objects.create(player=instance)
