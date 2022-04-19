@@ -41,8 +41,13 @@ class TestViews(TestCase):
             'target_score': 500,
             'complete': False,
             'players': [],
+            'created_by': 1,
         }
-        self.assertEqual(response.data, target_data)
+
+        # Test each response value individually
+        # (testing equivalence between two dicts abbreviated datetime value)
+        for key, value in response.data.items():
+            self.assertEqual(value, target_data[key])
     
     def test_get_invalid_match(self):
         """
@@ -74,6 +79,7 @@ class TestViews(TestCase):
             'match': 4,
             'winner': 2,
             'loser': 1,
+            'created_by': 1,
         }
         self.assertEqual(response.data, target_data)
 
