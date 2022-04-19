@@ -1,53 +1,55 @@
-from rest_framework.generics import (CreateAPIView, ListAPIView, 
+from rest_framework.generics import (CreateAPIView, ListAPIView,
                                      RetrieveAPIView,
                                      RetrieveUpdateDestroyAPIView)
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
-from api.views.mixins import MatchMixin, GameMixin, PlayerMixin
+from api.views.mixins import (AuthenticationMixin, MatchMixin,
+                              GameMixin, PlayerMixin)
 
-class AllMatches(MatchMixin, ListAPIView):
+class AllMatches(MatchMixin, AuthenticationMixin, ListAPIView):
     """
     Return all Match instances.
     """
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user)
 
-class AllGames(GameMixin, ListAPIView):
+class AllGames(GameMixin, AuthenticationMixin, ListAPIView):
     """
     Return all Game instances.
     """
     pass
 
-class AllPlayers(PlayerMixin, ListAPIView):
+class AllPlayers(PlayerMixin, AuthenticationMixin, ListAPIView):
     """
     Return all Player instances.
     """
     pass
 
-class MatchDetail(MatchMixin, RetrieveUpdateDestroyAPIView):
+class MatchDetail(MatchMixin, AuthenticationMixin, RetrieveUpdateDestroyAPIView):
     """
     Return, update, or delete a specific Match object.
     """
     pass
 
-class GameDetail(GameMixin, RetrieveUpdateDestroyAPIView):
+class GameDetail(GameMixin, AuthenticationMixin, RetrieveUpdateDestroyAPIView):
     """
     Return a specific Game object.
     """
     pass
 
-class PlayerDetail(PlayerMixin, RetrieveAPIView):
+class PlayerDetail(PlayerMixin, AuthenticationMixin, RetrieveAPIView):
     """
     Return a specific Player object.
     """
     pass
 
-class CreateMatch(MatchMixin, CreateAPIView):
+class CreateMatch(MatchMixin, AuthenticationMixin, CreateAPIView):
     """
     Create a new Match. This view does not add Players to the Match.
     """
     pass
 
-class CreateGame(GameMixin, CreateAPIView):
+class CreateGame(GameMixin, AuthenticationMixin, CreateAPIView):
     """
     Create a new Game.
     """
