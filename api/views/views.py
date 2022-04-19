@@ -1,9 +1,20 @@
+from rest_framework.decorators import api_view
 from rest_framework.generics import (CreateAPIView, ListAPIView,
                                      RetrieveAPIView,
                                      RetrieveUpdateDestroyAPIView)
+from rest_framework.response import Response
+from rest_framework.reverse import reverse
 
 from api.views.mixins import (AuthenticationMixin, MatchMixin,
                               GameMixin, PlayerMixin)
+
+@api_view(['GET'])
+def api_root(request, format=None):
+    return Response({
+        'matches': reverse('all_matches', request=request, format=format),
+        'games': reverse('all_games', request=request, format=format),
+        'players': reverse('all_players', request=request, format=format),
+    })
 
 class AllMatches(MatchMixin, AuthenticationMixin, ListAPIView):
     """

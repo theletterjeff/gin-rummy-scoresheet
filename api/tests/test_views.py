@@ -224,3 +224,48 @@ class TestPlayerViews(TestCase):
         response = self.apiclient.get(url)
 
         self.assertEqual(response.data['id'], 1)
+
+class TestRootView(TestCase):
+
+    fixtures = ['accounts']
+
+    @classmethod
+    def setUpClass(cls):
+        """
+        Authenticate player1.
+        """
+        super().setUpClass()
+        
+        player = Player.objects.get(pk=1)
+        
+        cls.apiclient = APIClient()
+        cls.apiclient.force_authenticate(user=player)
+    
+    def test_api_root_status(self):
+        """
+        Sending a GET request to the `api_root` endpoint returns a status
+        code 200.
+        """
+        url = reverse('api_root')
+        response = self.apiclient.get(url)
+
+        self.assertEqual(response.status_code, 200)
+    
+    def test_api_root_keys(self):
+        """
+        The `api_root` endpoint returns a dictionary in the `data` attribute
+        with keys ['matches', 'games', 'players']
+        """
+        url = reverse('api_root')
+        response = self.apiclient.get(url)
+
+        response_keys = [key for key in response.data.keys()]
+        response_keys = sorted(response_keys)
+
+        target_keys = [
+            'games',
+            'matches',
+            'players',
+        ]
+
+        self.assertEqual(response_keys, target_keys)

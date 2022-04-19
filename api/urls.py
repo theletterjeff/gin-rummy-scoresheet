@@ -4,6 +4,9 @@ from rest_framework.urlpatterns import format_suffix_patterns
 from . import views
 
 urlpatterns = [
+    
+    # Root
+    path('', views.api_root, name='api_root'),
 
     # List
     path('all-matches', views.AllMatches.as_view(), name='all_matches'),
