@@ -11,9 +11,9 @@ from api.views.mixins import (AuthenticationMixin, MatchMixin,
 @api_view(['GET'])
 def api_root(request, format=None):
     return Response({
-        'matches': reverse('all_matches', request=request, format=format),
-        'games': reverse('all_games', request=request, format=format),
-        'players': reverse('all_players', request=request, format=format),
+        'matches': reverse('all-matches', request=request, format=format),
+        'games': reverse('all-games', request=request, format=format),
+        'players': reverse('all-players', request=request, format=format),
     })
 
 class AllMatches(MatchMixin, AuthenticationMixin, ListAPIView):

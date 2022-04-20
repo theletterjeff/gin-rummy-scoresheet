@@ -26,7 +26,7 @@ class TestViews(TestCase):
         """
         Calling getMatch with a valid pk returns the Match with that pk.
         """
-        url = reverse('match_detail', kwargs={'pk': '1'})
+        url = reverse('match-detail', kwargs={'pk': '1'})
         
         response = self.apiclient.get(url)
 
@@ -53,7 +53,7 @@ class TestViews(TestCase):
         """
         Calling getMatch with an invalid pk returns ???
         """
-        url = reverse('match_detail', kwargs={'pk': '9999'})
+        url = reverse('match-detail', kwargs={'pk': '9999'})
         response = self.apiclient.get(url)
 
         self.assertEqual(response.status_code, 404)
@@ -62,7 +62,7 @@ class TestViews(TestCase):
         """
         Calling getGame with a valid pk returns the Game with that pk.
         """
-        url = reverse('game_detail', kwargs={'pk': '1'})
+        url = reverse('game-detail', kwargs={'pk': '1'})
         
         response = self.apiclient.get(url)
 
@@ -87,7 +87,7 @@ class TestViews(TestCase):
         """
         Calling getMatch with an invalid pk returns ???
         """
-        url = reverse('game_detail', kwargs={'pk': '9999'})
+        url = reverse('game-detail', kwargs={'pk': '9999'})
         response = self.apiclient.get(url)
 
         self.assertEqual(response.status_code, 404)
@@ -97,7 +97,7 @@ class TestViews(TestCase):
         Sending valid JSON data to the `/create-match/` endpoint
         creates a new Match.
         """
-        url = reverse('create_match')
+        url = reverse('create-match')
         data = {'target_score': 12345}
 
         self.apiclient.post(url, data=data)
@@ -113,8 +113,8 @@ class TestViews(TestCase):
         ending in .json returns a JSON object. Doing the same
         with a URL ending in HTML returns an HTML object.
         """
-        url_json = reverse('all_matches') + '.json'
-        url_browsable_api = reverse('all_matches') + '.api'
+        url_json = reverse('all-matches') + '.json'
+        url_browsable_api = reverse('all-matches') + '.api'
         
         response_json = self.apiclient.get(url_json)
         response_browsable_api = self.apiclient.get(url_browsable_api)
@@ -129,7 +129,7 @@ class TestViews(TestCase):
         with data update {'target_score': 1000} updates match 1's target_score
         to 1000.
         """
-        url = reverse('match_detail', kwargs={'pk': '1'})
+        url = reverse('match-detail', kwargs={'pk': '1'})
         update_data = {'target_score': 1000}
         
         response = self.apiclient.patch(url, data=update_data)
@@ -142,7 +142,7 @@ class TestViews(TestCase):
         Sending a DELETE request to the match_detail URL endpoint for match 1
         deletes match 1.
         """
-        url = reverse('match_detail', kwargs={'pk': '1'})
+        url = reverse('match-detail', kwargs={'pk': '1'})
 
         response = self.apiclient.delete(url)
         self.assertEqual(response.status_code, 204)
@@ -155,7 +155,7 @@ class TestViews(TestCase):
         Sending a PATCH request to the game_detail URL endpoint for game 1
         with data update {'points': 1000} updates game 1's points to 1000.
         """
-        url = reverse('game_detail', kwargs={'pk': '1'})
+        url = reverse('game-detail', kwargs={'pk': '1'})
         update_data = {'points': 1000}
         
         response = self.apiclient.patch(url, data=update_data)
@@ -170,7 +170,7 @@ class TestViews(TestCase):
         on the associated signals Outcome and Score; it simply evaluates
         whether the delete call deletes the record.)
         """
-        url = reverse('game_detail', kwargs={'pk': '1'})
+        url = reverse('game-detail', kwargs={'pk': '1'})
         
         response = self.apiclient.delete(url)
         
@@ -200,7 +200,7 @@ class TestPlayerViews(TestCase):
         Sending a GET request to the `all_players` endpoint returns
         a list of all players.
         """
-        url = reverse('all_players')
+        url = reverse('all-players')
 
         response = self.apiclient.get(url)
 
@@ -219,7 +219,7 @@ class TestPlayerViews(TestCase):
         """
         Sending a GET request for a specific Player returns that Player.
         """
-        url = reverse('player_detail', kwargs={'pk': '1'})
+        url = reverse('player-detail', kwargs={'pk': '1'})
 
         response = self.apiclient.get(url)
 
@@ -246,7 +246,7 @@ class TestRootView(TestCase):
         Sending a GET request to the `api_root` endpoint returns a status
         code 200.
         """
-        url = reverse('api_root')
+        url = reverse('api-root')
         response = self.apiclient.get(url)
 
         self.assertEqual(response.status_code, 200)
@@ -256,7 +256,7 @@ class TestRootView(TestCase):
         The `api_root` endpoint returns a dictionary in the `data` attribute
         with keys ['matches', 'games', 'players']
         """
-        url = reverse('api_root')
+        url = reverse('api-root')
         response = self.apiclient.get(url)
 
         response_keys = [key for key in response.data.keys()]
