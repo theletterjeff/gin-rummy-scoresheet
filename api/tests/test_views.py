@@ -229,6 +229,22 @@ class TestGameViews(TestCase):
         # Making a GET call to the resource returns a 404 error
         self.assertEqual(self.apiclient.get(url).status_code, 404)
 
+    def test_suffix_patterns(self):
+        """
+        Making a request to the all-games endpoint with a URL
+        ending in .json returns a JSON object. Doing the same
+        with a URL ending in HTML returns an HTML object.
+        """
+        url_json = reverse('all-games') + '.json'
+        url_browsable_api = reverse('all-games') + '.api'
+        
+        response_json = self.apiclient.get(url_json)
+        response_browsable_api = self.apiclient.get(url_browsable_api)
+
+        self.assertEqual(response_json.accepted_media_type, 'application/json')
+        self.assertEqual(response_browsable_api.accepted_media_type,
+            'text/html')
+
 class TestPlayerViews(TestCase):
 
     fixtures = ['accounts', 'base']
