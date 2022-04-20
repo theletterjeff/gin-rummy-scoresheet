@@ -83,7 +83,7 @@ class TestMatchViews(TestCase):
             ]
         }
 
-        response = self.apiclient.post(url, data=data)
+        self.apiclient.post(url, data=data)
 
         try:
             Match.objects.get(target_score=12345)
