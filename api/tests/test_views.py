@@ -1,3 +1,6 @@
+from datetime import datetime
+from unittest import mock
+
 from cgi import test
 from django.test import TestCase
 from django.urls import reverse
@@ -199,6 +202,38 @@ class TestGameViews(TestCase):
         response = self.apiclient.get(url)
 
         self.assertEqual(response.status_code, 404)
+    
+    def test_create_game(self):
+        """
+        Sending a POST request with required fields filled out to the
+        `create-game` endpoint creates a new Game in the database.
+        """
+        MATCH_URL = self.BASE_URL + reverse('match-detail', kwargs={'pk': '2'})
+        WINNER_URL = self.BASE_URL + reverse('player-detail', kwargs={'pk': '1'})
+        LOSER_URL = self.BASE_URL + reverse('player-detail', kwargs={'pk': '2'})
+        POINTS = 50
+
+        MOCKED_DATETIME = datetime(2000, 1, 1)
+
+        data = {
+            'match': MATCH_URL,
+            'winner': WINNER_URL,
+            'loser': LOSER_URL,
+            'points': POINTS,
+        }
+
+        url = reverse('create-game')
+
+        with mock.patch(
+            'django.utils.timezone.now',
+            mock.Mock(return_value=MOCKED_DATETIME)
+        ):
+            self.apiclient.post(url, data=data)
+
+        try:
+            Game.objects.get(datetime_played=MOCKED_DATETIME)
+        except Game.DoesNotExist:
+            assert False, 'Game object not created.'
     
     def test_update_game(self):
         """
