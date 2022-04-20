@@ -8,8 +8,11 @@ class Game(models.Model):
     """
     A series of games make up one match.
     """
-    match = models.ForeignKey(Match, on_delete=models.CASCADE)
-
+    match = models.ForeignKey(
+        Match,
+        on_delete=models.CASCADE,
+        related_name='games'
+    )
     winner = models.ForeignKey(
         Player,
         null=True,
