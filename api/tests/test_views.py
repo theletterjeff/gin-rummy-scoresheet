@@ -1,3 +1,4 @@
+from cgi import test
 from django.test import TestCase
 from django.urls import reverse
 
@@ -6,7 +7,7 @@ from rest_framework.test import APIClient
 from accounts.models import Player
 from base.models import Game, Match, Score
 
-class TestViews(TestCase):
+class TestMatchViews(TestCase):
 
     fixtures = ['accounts', 'base']
 
@@ -68,54 +69,6 @@ class TestViews(TestCase):
 
         self.assertEqual(response.status_code, 404)
 
-    def test_get_game(self):
-        """
-        Calling getGame with a valid pk returns the Game with that pk.
-        """
-        url = reverse('game-detail', kwargs={'pk': '1'})
-        
-        response = self.apiclient.get(url)
-
-        # Check that response is working
-        self.assertEqual(response.status_code, 200)
-
-        # Test response data against target data
-        target_data = {
-            'url': self.BASE_URL + url,
-            'points': 400,
-            'gin': False,
-            'undercut': False,
-            'datetime_played': '2022-04-03T13:00:00Z',
-            'match': (
-                self.BASE_URL + reverse('match-detail', kwargs={'pk': '4'})
-            ),
-            'winner': (
-                self.BASE_URL + reverse('player-detail', kwargs={'pk': '2'})
-            ),
-            'loser': (
-                self.BASE_URL + reverse('player-detail', kwargs={'pk': '1'})
-            ),
-            'created_by': (
-                self.BASE_URL + reverse('player-detail', kwargs={'pk': '1'})
-            ),
-        }
-        
-        for key, value in response.data.items():
-            self.assertEqual(value, target_data[key])
-            del(target_data[key])
-        
-        # After testing all items, there are no remaining target_data items
-        self.assertEqual(len(target_data), 0)
-
-    def test_get_invalid_game(self):
-        """
-        Calling getMatch with an invalid pk returns ???
-        """
-        url = reverse('game-detail', kwargs={'pk': '9999'})
-        response = self.apiclient.get(url)
-
-        self.assertEqual(response.status_code, 404)
-    
     def test_create_match(self):
         """
         Sending valid JSON data to the `/create-match/` endpoint
@@ -180,6 +133,73 @@ class TestViews(TestCase):
         # Making a GET call to the resource returns a 404 error
         self.assertEqual(self.apiclient.get(url).status_code, 404)
 
+class TestGameViews(TestCase):
+
+    fixtures = ['accounts', 'base']
+
+    @classmethod
+    def setUpClass(cls):
+        """
+        Authenticate player1, set base URL constant.
+        """
+        super().setUpClass()
+        
+        player = Player.objects.get(pk=1)
+        
+        cls.apiclient = APIClient()
+        cls.apiclient.force_authenticate(user=player)
+
+        # Set base URL
+        cls.BASE_URL = 'http://testserver'
+
+    def test_get_game(self):
+        """
+        Calling getGame with a valid pk returns the Game with that pk.
+        """
+        url = reverse('game-detail', kwargs={'pk': '1'})
+        
+        response = self.apiclient.get(url)
+
+        # Check that response is working
+        self.assertEqual(response.status_code, 200)
+
+        # Test response data against target data
+        target_data = {
+            'url': self.BASE_URL + url,
+            'points': 400,
+            'gin': False,
+            'undercut': False,
+            'datetime_played': '2022-04-03T13:00:00Z',
+            'match': (
+                self.BASE_URL + reverse('match-detail', kwargs={'pk': '4'})
+            ),
+            'winner': (
+                self.BASE_URL + reverse('player-detail', kwargs={'pk': '2'})
+            ),
+            'loser': (
+                self.BASE_URL + reverse('player-detail', kwargs={'pk': '1'})
+            ),
+            'created_by': (
+                self.BASE_URL + reverse('player-detail', kwargs={'pk': '1'})
+            ),
+        }
+        
+        for key, value in response.data.items():
+            self.assertEqual(value, target_data[key])
+            del(target_data[key])
+        
+        # After testing all items, there are no remaining target_data items
+        self.assertEqual(len(target_data), 0)
+
+    def test_get_invalid_game(self):
+        """
+        Calling getMatch with an invalid pk returns ???
+        """
+        url = reverse('game-detail', kwargs={'pk': '9999'})
+        response = self.apiclient.get(url)
+
+        self.assertEqual(response.status_code, 404)
+    
     def test_update_game(self):
         """
         Sending a PATCH request to the game_detail URL endpoint for game 1
