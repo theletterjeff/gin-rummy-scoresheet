@@ -13,7 +13,7 @@ class TestViews(TestCase):
     @classmethod
     def setUpClass(cls):
         """
-        Authenticate player1.
+        Authenticate player1, set base URL constant.
         """
         super().setUpClass()
         
@@ -21,6 +21,9 @@ class TestViews(TestCase):
         
         cls.apiclient = APIClient()
         cls.apiclient.force_authenticate(user=player)
+
+        # Set base URL
+        cls.BASE_URL = 'http://testserver'
 
     def test_get_match(self):
         """
@@ -35,19 +38,26 @@ class TestViews(TestCase):
         
         # Test response data against target data
         target_data = {
-            'id': 1,
+            'url': self.BASE_URL + url,
             'datetime_started': '2022-04-02T20:08:37.108472Z',
             'datetime_ended': None,
             'target_score': 500,
             'complete': False,
             'players': [],
-            'created_by': 1,
+            'created_by': (
+                self.BASE_URL + reverse('player-detail', kwargs={'pk': '1'})
+            ),
+            'games': [],
         }
 
         # Test each response value individually
         # (testing equivalence between two dicts abbreviated datetime value)
         for key, value in response.data.items():
             self.assertEqual(value, target_data[key])
+            del(target_data[key])
+        
+        # After testing all items, there are no remaining target_data items
+        self.assertEqual(len(target_data), 0)
     
     def test_get_invalid_match(self):
         """
@@ -71,17 +81,31 @@ class TestViews(TestCase):
 
         # Test response data against target data
         target_data = {
-            'id': 1,
+            'url': self.BASE_URL + url,
             'points': 400,
             'gin': False,
             'undercut': False,
             'datetime_played': '2022-04-03T13:00:00Z',
-            'match': 4,
-            'winner': 2,
-            'loser': 1,
-            'created_by': 1,
+            'match': (
+                self.BASE_URL + reverse('match-detail', kwargs={'pk': '4'})
+            ),
+            'winner': (
+                self.BASE_URL + reverse('player-detail', kwargs={'pk': '2'})
+            ),
+            'loser': (
+                self.BASE_URL + reverse('player-detail', kwargs={'pk': '1'})
+            ),
+            'created_by': (
+                self.BASE_URL + reverse('player-detail', kwargs={'pk': '1'})
+            ),
         }
-        self.assertEqual(response.data, target_data)
+        
+        for key, value in response.data.items():
+            self.assertEqual(value, target_data[key])
+            del(target_data[key])
+        
+        # After testing all items, there are no remaining target_data items
+        self.assertEqual(len(target_data), 0)
 
     def test_get_invalid_game(self):
         """
@@ -98,9 +122,15 @@ class TestViews(TestCase):
         creates a new Match.
         """
         url = reverse('create-match')
-        data = {'target_score': 12345}
+        data = {
+            'target_score': 12345,
+            'players': [
+                self.BASE_URL + reverse('player-detail', kwargs={'pk': '1'}),
+                self.BASE_URL + reverse('player-detail', kwargs={'pk': '2'}),
+            ]
+        }
 
-        self.apiclient.post(url, data=data)
+        response = self.apiclient.post(url, data=data)
 
         try:
             Match.objects.get(target_score=12345)
@@ -201,15 +231,14 @@ class TestPlayerViews(TestCase):
         a list of all players.
         """
         url = reverse('all-players')
-
         response = self.apiclient.get(url)
 
         # Sort response Players & database Players
         sorted_response_pks = sorted(
-            [player['id'] for player in response.data]
+            [player['username'] for player in response.data]
         )
         sorted_database_pks = sorted(
-            [player.pk for player in Player.objects.all()]
+            [player.username for player in Player.objects.all()]
         )
 
         # Compare the two
@@ -220,10 +249,9 @@ class TestPlayerViews(TestCase):
         Sending a GET request for a specific Player returns that Player.
         """
         url = reverse('player-detail', kwargs={'pk': '1'})
-
         response = self.apiclient.get(url)
 
-        self.assertEqual(response.data['id'], 1)
+        self.assertEqual(response.data['username'], 'player1')
 
 class TestRootView(TestCase):
 

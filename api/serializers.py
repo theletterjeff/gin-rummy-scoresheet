@@ -4,47 +4,44 @@ from accounts.models import Player
 from base.models import Game, Match, Outcome, Score
 from base.models.match import MatchPlayer
 
-class PlayerSerializer(serializers.ModelSerializer):
+class PlayerSerializer(serializers.HyperlinkedModelSerializer):
     """
     Serializer for the Player model (auth user model).
     """
-    # Reverse relationship
-    created_match_set = serializers.PrimaryKeyRelatedField(
+    match_set = serializers.HyperlinkedRelatedField(
+        view_name='match-detail',
         many=True,
-        queryset=Match.objects.all(),
+        read_only=True,
     )
-    match_set = serializers.PrimaryKeyRelatedField(
-        many=True,
-        queryset=Match.objects.all(),
-    )
-
-    created_by = serializers.ReadOnlyField(source='created_by.username')
-
     class Meta:
         model = Player
         fields = '__all__'
 
-class GameSerializer(serializers.ModelSerializer):
+class GameSerializer(serializers.HyperlinkedModelSerializer):
     
     class Meta:
         model = Game
         fields = '__all__'
 
-class MatchSerializer(serializers.ModelSerializer):
+class MatchSerializer(serializers.HyperlinkedModelSerializer):
 
-    players = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    games = serializers.HyperlinkedRelatedField(
+        view_name='game-detail',
+        many=True,
+        read_only=True,
+    )
 
     class Meta:
         model = Match
         fields = '__all__'
 
-class OutcomeSerializer(serializers.ModelSerializer):
+class OutcomeSerializer(serializers.HyperlinkedModelSerializer):
     
     class Meta:
         model = Outcome
         fields = '__all__'
 
-class ScoreSerializer(serializers.ModelSerializer):
+class ScoreSerializer(serializers.HyperlinkedModelSerializer):
     
     class Meta:
         model = Score
