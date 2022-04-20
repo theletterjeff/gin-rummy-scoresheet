@@ -1,4 +1,5 @@
 from datetime import datetime
+import pytz
 from unittest import mock
 
 from cgi import test
@@ -213,7 +214,7 @@ class TestGameViews(TestCase):
         LOSER_URL = self.BASE_URL + reverse('player-detail', kwargs={'pk': '2'})
         POINTS = 50
 
-        MOCKED_DATETIME = datetime(2000, 1, 1)
+        MOCKED_DATETIME = datetime(2000, 1, 1, tzinfo=pytz.timezone('UTC'))
 
         data = {
             'match': MATCH_URL,
