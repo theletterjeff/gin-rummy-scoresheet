@@ -136,6 +136,21 @@ class TestMatchViews(TestCase):
 
         # Making a GET call to the resource returns a 404 error
         self.assertEqual(self.apiclient.get(url).status_code, 404)
+    
+    def test_pagination(self):
+        """
+        Having more than 10 matches in the database returns datasets with only
+        10 matches per page.
+        """
+        # Create 9 matches (to bring total to 11)
+        for i in range(9):
+            Match.objects.create()
+
+        url = reverse('all-matches')
+        response = self.apiclient.get(url)
+        
+        self.assertEqual(response.data['count'], 13)
+        self.assertEqual(len(response.data['results']), 10)
 
 class TestGameViews(TestCase):
 
@@ -307,7 +322,7 @@ class TestPlayerViews(TestCase):
 
         # Sort response Players & database Players
         sorted_response_pks = sorted(
-            [player['username'] for player in response.data]
+            [player['username'] for player in response.data['results']]
         )
         sorted_database_pks = sorted(
             [player.username for player in Player.objects.all()]
