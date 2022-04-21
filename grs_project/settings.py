@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     # Custom apps
     'accounts.apps.AccountsConfig',
     'base.apps.BaseConfig',
+    'frontend.apps.FrontendConfig',
 
     # Third-party dependencies
     'rest_framework',
