@@ -147,10 +147,12 @@ class TestMatchViews(TestCase):
             Match.objects.create()
 
         url = reverse('all-matches')
-        response = self.apiclient.get(url)
+        response_p1 = self.apiclient.get(url)
+        response_p2 = self.apiclient.get(url, data={'page': 2})
         
-        self.assertEqual(response.data['count'], 13)
-        self.assertEqual(len(response.data['results']), 10)
+        self.assertEqual(response_p1.data['count'], 13)
+        self.assertEqual(len(response_p1.data['results']), 10)
+        self.assertEqual(len(response_p2.data['results']), 3)
 
 class TestGameViews(TestCase):
 
