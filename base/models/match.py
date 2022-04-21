@@ -26,6 +26,9 @@ class Match(models.Model):
         on_delete=models.SET_NULL,
     )
 
+    class Meta:
+        ordering = ['-datetime_started']
+
     def __str__(self):
         date_started_str = self.datetime_started.strftime('%D')
         return f'{date_started_str} ({self.pk})'
@@ -38,8 +41,9 @@ class MatchPlayer(models.Model):
     player = models.ForeignKey(Player, null=True, on_delete=models.SET_NULL)
 
     class Meta:
-        abstract=True
-        unique_together=('match', 'player')
+        abstract = True
+        unique_together = ('match', 'player')
+        ordering = ['match']
 
 class Score(MatchPlayer):
     """

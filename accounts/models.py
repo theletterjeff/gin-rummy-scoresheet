@@ -5,7 +5,8 @@ class Player(AbstractUser):
     """
     The auth_user_model.
     """
-    pass
+    class Meta:
+        ordering = ['pk']
 
     def __str__(self):
         return self.username
@@ -20,6 +21,9 @@ class PlayerProfile(models.Model):
         blank=True,
         null=True,
     )
+
+    class Meta:
+        ordering = ['pk']
 
     def __str__(self):
         return self.username

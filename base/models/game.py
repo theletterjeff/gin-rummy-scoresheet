@@ -39,6 +39,9 @@ class Game(models.Model):
         on_delete=models.SET_NULL,
     )
 
+    class Meta:
+        ordering = ['-datetime_played']
+
     def __str__(self):
         datetime_played_str = self.datetime_played.strftime('%D %H:%M')
         match_datetime_started_str = self.match.datetime_started.strftime('%D')
