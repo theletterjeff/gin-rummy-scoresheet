@@ -75,10 +75,10 @@ class TestMatchViews(TestCase):
 
     def test_create_match(self):
         """
-        Sending valid JSON data to the `/create-match/` endpoint
+        Sending valid JSON data to the `/match-list-create/` endpoint
         creates a new Match.
         """
-        url = reverse('create-match')
+        url = reverse('match-list-create')
         data = {
             'target_score': 12345,
             'players': [
@@ -100,8 +100,8 @@ class TestMatchViews(TestCase):
         ending in .json returns a JSON object. Doing the same
         with a URL ending in HTML returns an HTML object.
         """
-        url_json = reverse('all-matches') + '.json'
-        url_browsable_api = reverse('all-matches') + '.api'
+        url_json = reverse('match-list-create') + '.json'
+        url_browsable_api = reverse('match-list-create') + '.api'
         
         response_json = self.apiclient.get(url_json)
         response_browsable_api = self.apiclient.get(url_browsable_api)
@@ -146,7 +146,7 @@ class TestMatchViews(TestCase):
         for i in range(9):
             Match.objects.create()
 
-        url = reverse('all-matches')
+        url = reverse('match-list-create')
         response_p1 = self.apiclient.get(url)
         response_p2 = self.apiclient.get(url, data={'page': 2})
         
@@ -224,7 +224,7 @@ class TestGameViews(TestCase):
     def test_create_game(self):
         """
         Sending a POST request with required fields filled out to the
-        `create-game` endpoint creates a new Game in the database.
+        `game-list-create` endpoint creates a new Game in the database.
         """
         MATCH_URL = self.BASE_URL + reverse('match-detail', kwargs={'pk': '2'})
         WINNER_URL = self.BASE_URL + reverse('player-detail', kwargs={'pk': '1'})
@@ -240,7 +240,7 @@ class TestGameViews(TestCase):
             'points': POINTS,
         }
 
-        url = reverse('create-game')
+        url = reverse('game-list-create')
 
         with mock.patch(
             'django.utils.timezone.now',
@@ -284,12 +284,12 @@ class TestGameViews(TestCase):
 
     def test_suffix_patterns(self):
         """
-        Making a request to the all-games endpoint with a URL
+        Making a request to the game-list-create endpoint with a URL
         ending in .json returns a JSON object. Doing the same
         with a URL ending in HTML returns an HTML object.
         """
-        url_json = reverse('all-games') + '.json'
-        url_browsable_api = reverse('all-games') + '.api'
+        url_json = reverse('game-list-create') + '.json'
+        url_browsable_api = reverse('game-list-create') + '.api'
         
         response_json = self.apiclient.get(url_json)
         response_browsable_api = self.apiclient.get(url_browsable_api)
@@ -319,7 +319,7 @@ class TestPlayerViews(TestCase):
         Sending a GET request to the `all_players` endpoint returns
         a list of all players.
         """
-        url = reverse('all-players')
+        url = reverse('player-list')
         response = self.apiclient.get(url)
 
         # Sort response Players & database Players

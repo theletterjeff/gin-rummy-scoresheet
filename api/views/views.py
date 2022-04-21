@@ -1,5 +1,5 @@
 from rest_framework.decorators import api_view
-from rest_framework.generics import (CreateAPIView, ListAPIView,
+from rest_framework.generics import (ListAPIView, ListCreateAPIView,
                                      RetrieveAPIView,
                                      RetrieveUpdateDestroyAPIView)
 from rest_framework.response import Response
@@ -11,25 +11,26 @@ from api.views.mixins import (AuthenticationMixin, MatchMixin,
 @api_view(['GET'])
 def api_root(request, format=None):
     return Response({
-        'matches': reverse('all-matches', request=request, format=format),
-        'games': reverse('all-games', request=request, format=format),
-        'players': reverse('all-players', request=request, format=format),
+        'matches': reverse('match-list-create', request=request, format=format),
+        'games': reverse('game-list-create', request=request, format=format),
+        'players': reverse('player-list', request=request, format=format),
     })
 
-class AllMatches(MatchMixin, AuthenticationMixin, ListAPIView):
+class MatchList(MatchMixin, AuthenticationMixin, ListCreateAPIView):
     """
     Return all Match instances.
     """
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user)
 
-class AllGames(GameMixin, AuthenticationMixin, ListAPIView):
+class GameList(GameMixin, AuthenticationMixin, ListCreateAPIView):
     """
     Return all Game instances.
     """
-    pass
+    def perform_create(self, serializer):
+        serializer.save(created_by=self.request.user)
 
-class AllPlayers(PlayerMixin, AuthenticationMixin, ListAPIView):
+class PlayerList(PlayerMixin, AuthenticationMixin, ListAPIView):
     """
     Return all Player instances.
     """
@@ -50,17 +51,5 @@ class GameDetail(GameMixin, AuthenticationMixin, RetrieveUpdateDestroyAPIView):
 class PlayerDetail(PlayerMixin, AuthenticationMixin, RetrieveAPIView):
     """
     Return a specific Player object.
-    """
-    pass
-
-class CreateMatch(MatchMixin, AuthenticationMixin, CreateAPIView):
-    """
-    Create a new Match. This view does not add Players to the Match.
-    """
-    pass
-
-class CreateGame(GameMixin, AuthenticationMixin, CreateAPIView):
-    """
-    Create a new Game.
     """
     pass
