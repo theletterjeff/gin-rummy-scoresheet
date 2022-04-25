@@ -21,8 +21,12 @@
     <script type="text/javascript">
         function listGames() {
             
-            let wrapper = document.getElementById('game-wrapper')
-            const matchUrl 
+            const re = (?<=match\/)\d+''
+            const matchNum = re.exec(document.url);
+            const matchURL = `http://${document.domain}:8000/api/match/${match_num}`;
+            
+            let wrapper = document.getElementById('game-wrapper');
+            
         }
     </script>
 
