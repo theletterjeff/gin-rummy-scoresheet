@@ -1,0 +1,41 @@
+h1, h2, h3, h4, h5, p, span, strike {
+    font-family: 'Lato', sans-serif;
+    color: rgb(67, 67, 79);
+}
+#nav-item {
+    color: white;
+}
+#match-container {
+    max-width: 600px;
+    margin: 0 auto;
+    margin-top: 100px;
+    margin-bottom: 100px;
+    justify-content: space-around;
+    align-items: flex-start;
+    border: white;
+}
+#form-wrapper {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0rem;
+    border-bottom: 1px solid;
+    padding: 40px;
+}
+#submit {
+    background-color: rgb(150, 150, 150);
+    border-radius: 0;
+    border: 0;
+}
+.flex-wrapper {
+    display: flex;
+}
+.game-wrapper {
+    margin: 5px;
+    padding: 5px;
+    padding: 20px;
+    cursor: pointer;
+    border-bottom: 1px solid;
+}
+.game-attr-cell {
+    margin: 10px;;
+}

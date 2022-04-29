@@ -1,63 +1,38 @@
 <!--Match detail page that links to each of the games-->
+
+{% load static %}
+
 <!DOCTYPE html>
 <html>
 
 <head>
     <title>Match</title>
     <meta charset="utf-8">
-    <meta name="viewport" content="width-device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'frontend/style.css' %}">
 	<link href="https://fonts.googleapis.com/css2?family=Lato:wght@100;300&display=swap" rel="stylesheet">
     <link rel="shortcut icon" href="#">
-
-    <style type="text/css">
-        body {
-            background: rgb(17, 113, 97);
-        }
-        h1, h2, h3, h4, h5, p, span, strike {
-            font-family: 'Lato', sans-serif;
-            color: white;
-        }
-        #match-container {
-            max-width: 600px;
-            margin: 0 auto;
-            margin-top: 100px;
-            margin-bottom: 100px;
-            justify-content: space-around;
-            align-items: flex-start;
-            border: white;
-        }
-        #form-wrapper {
-            position: -webkit-sticky;
-            position: sticky;
-            top: 0rem;
-            border-bottom: 1px solid;
-            padding: 40px;
-        }
-        #submit {
-            background-color: rgb(150, 150, 150);
-            border-radius: 0;
-            border: 0;
-        }
-        .flex-wrapper {
-            display: flex;
-        }
-        .game-wrapper {
-            margin: 5px;
-            padding: 5px;
-            padding: 20px;
-            cursor: pointer;
-            border-bottom: 1px solid;
-        }
-        .game-attr-cell {
-            margin: 10px;;
-        }
-    </style>
 </head>
 
 <body>
-    <div class="container">
+    <!--Navbar-->
+    <div class="container-fluid bg-light border-bottom border-5 pt-2 pb-2 fixed-top">
+        <ul class="nav">
+            <li class="nav-item">
+                <a class="nav-link" id="matches-nav-link" href="#">Matches</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="stats-nav-link" href="#">Stats</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="players-nav-link" href="#">Players</a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="container bg-light">
         <div id="match-container">
             <div id="game-wrapper">
             </div>
@@ -65,7 +40,8 @@
     </div>
 
     <script type="text/javascript">
-        listGames()
+        fillMatchesNavLink();
+        listGames();
         
         function listGames() {
             
@@ -125,7 +101,19 @@
             let response = await fetch(playerEndpoint);
             let parsed = await response.json();
             return parsed['username'];
-        }
+        };
+
+        function getMatchesURL() {
+            const pageURL = new URL(window.location.href);
+            const pageOrigin = pageURL.origin;
+            return pageOrigin + "/api/matches";
+        };
+        function fillMatchesNavLink() {
+            const matchesURL = getMatchesURL();
+            matchesNavElem = document.getElementById("matches-nav-link");
+            matchesNavElem.href = matchesNavElem.href.replace(
+                "#", matchesURL);
+        };
     </script>
 
 </body>
