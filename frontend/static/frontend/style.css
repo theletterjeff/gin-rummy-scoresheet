@@ -5,8 +5,14 @@ h1, h2, h3, h4, h5, p, span, strike {
 #nav-item {
     color: white;
 }
+a.nav-link {
+    color: rgb(77, 95, 128)
+}
+a.nav-link:hover {
+    color: rgb(127, 154, 204);
+}
 #match-container {
-    max-width: 600px;
+    max-width: 900px;
     margin: 0 auto;
     margin-top: 100px;
     margin-bottom: 100px;

@@ -18,10 +18,10 @@
 
 <body>
     <!--Navbar-->
-    <div class="container-fluid bg-light border-bottom border-5 pt-2 pb-2 fixed-top">
+    <div class="container-fluid bg-light border-bottom border-5 py-2 fixed-top">
         <div class="row">
             <div class="col-md d-flex">
-                <h3>Gin Rummy Scoresheet</h3>
+                <h4>Gin Rummy Scoresheet</h4>
             </div>
             
             <div class="col-md d-flex">
@@ -34,6 +34,9 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" id="players-nav-link" href="#">Players</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="account-nav-link" href="#">Account</a>
                     </li>
                 </ul>
             </div>
@@ -50,6 +53,7 @@
     <script type="text/javascript">
         fillMatchesNavLink();
         listGames();
+        fillWinners();
         
         function listGames() {
             
@@ -65,35 +69,12 @@
             .then(function(data) {
                 let gameEndpoints = data.games;
 
-                for (let i in gameEndpoints) {
+                for (let gameEndpoint of gameEndpoints) {
 
-                    fetch(gameEndpoints[i])
+                    fetch(gameEndpoint)
                     .then(response => response.json())
                     .then(function(data) {
-                        
-                        let points = `<span class="game-attr-cell">${data.points}</span>`;
-                        let gin = `<span class="game-attr-cell">${data.gin}</span>`;
-                        let undercut = `<span class="game-attr-cell">${data.undercut}</span>`;
-                        
-                        let _date = new Date(data.datetime_played);
-                        let date = `<span class="game-attr-cell">${_date.toDateString()}</span>`
-                        
-                        let item = `
-                            <div id="game-row-${i}" class="game-wrapper flex-wrapper">
-                                <div>
-                                    ${date}
-                                </div>
-                                <div style="flex-10">
-                                    ${points}
-                                </div>
-                                <div style="flex-2">
-                                    ${gin}
-                                </div>
-                                <div style="flex-3">
-                                    ${undercut}
-                                </div>
-                            </div>
-                        `
+                        let item = makeCard(data);
                         wrapper.innerHTML += item;
                     });
                     
@@ -105,10 +86,57 @@
             
         };
 
-        async function getUsername(playerEndpoint) {
-            let response = await fetch(playerEndpoint);
-            let parsed = await response.json();
-            return parsed['username'];
+        function makeCard(gameResponseJson) {
+            
+            let winner = getUsername(gameResponseJson.winner)
+            let winnerEndpoint = gameResponseJson.winner
+            let datePlayed = new Date(gameResponseJson.datetime_played).toDateString()
+            let points = gameResponseJson.points
+            let gin = gameResponseJson.gin
+            let undercut = gameResponseJson.undercut
+
+            let innerHTML = `
+                <div class="card mt-4 mb-4">
+                    <div class="card-body row">
+                        <div class="col">
+                            <h6>Winner</h6>
+                            <h5 class="winner">${winnerEndpoint}<h5>
+                        </div>
+                        <div class="col">
+                            <h6>Played</h6>
+                            <h5>${datePlayed}</h5>
+                        </div>
+                        <div class="col">
+                            <h6>Points</h6>
+                            <h5>+${points}</h5>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            return innerHTML;
+        };
+
+        function fillWinners() {
+            let winnerElems = document.getElementsByClassName("winner");
+
+            for (let winnerElem of winnerElems) {
+                fetch(winnerElem.innerHTML)
+                .then(response => response.json())
+                .then(function(data) {
+                    winnerElem.innerHTML = data.username;
+                });
+            };
+
+        };
+
+        function getUsername(playerEndpoint) {
+            let username = fetch(playerEndpoint)
+            .then(resp => resp.json())
+            .then(function(data) {
+                return data.username;
+            });
+            return username;
         };
 
         function getMatchesURL() {
