@@ -52,31 +52,76 @@
 
     <script type="text/javascript">
         fillMatchesNavLink();
-        listGames();
+        let players = getPlayers(); 
+        listGames(players);
         fillWinners();
         
-        function listGames() {
-            
-            let wrapper = document.getElementById('game-wrapper');
-            
+        // Derive the match's endpoint from the current page's URL
+        function getMatchEndoint() {
             const pageURL = new URL(window.location.href);
             const pageOrigin = pageURL.origin;
             const pagePath = pageURL.pathname;
-            const matchEndpoint = `${pageOrigin}/api${pagePath}`;
+            return `${pageOrigin}/api${pagePath}`;
+        };
+        
+        function getPlayers() {
+            let matchEndpoint = getMatchEndoint();
+            let players = [];
 
             fetch(matchEndpoint)
-            .then(resp => resp.json())
+            .then((resp) => resp.json())
+            .then(function(data) {
+                console.log(data.players);
+                for (playerEndpoint of data.players) {
+                    fetch(playerEndpoint)
+                    .then((resp) => resp.json())
+                    .then(function(playerData) {
+                        players.push(playerData);
+                    });
+                };
+            });
+            return players;
+        };
+
+        /**
+         * Take in an array of Player objects, return an object mapping 
+         * endpoint to username. Used to cross-reference the player endpoints 
+         * we get back from listGames.
+         * @param {Object} players  Player data loaded from API.
+         */
+        function getPlayerUsernames(players) {
+            let endpointUsername = {};
+            for (let player of players) {
+                endpointUsername[player.url] = player.username;
+            };
+            return endpointUsername;
+        }
+
+        /**
+         * Build a list of games and fill div with data from those games.
+         * @param {Object} players   Player data loaded from API.
+         */
+        function listGames(players) {
+            
+            let wrapper = document.getElementById('game-wrapper');
+            let matchEndpoint = getMatchEndoint();
+            let playerUsernames = getPlayerUsernames(players);
+
+            fetch(matchEndpoint)
+            .then((resp) => resp.json())
             .then(function(data) {
                 let gameEndpoints = data.games;
 
-                for (let gameEndpoint of gameEndpoints) {
+                for (let i in gameEndpoints) {
 
-                    fetch(gameEndpoint)
-                    .then(response => response.json())
+                    fetch(gameEndpoints[i])
+                    .then((response) => response.json())
                     .then(function(data) {
-                        let item = makeCard(data);
+                        let item = makeCard(data, idx=i);
                         wrapper.innerHTML += item;
-                    });
+                        return data;
+                    })
+                    .then(() => fillWinners());
                     
                     
                 };
@@ -86,9 +131,8 @@
             
         };
 
-        function makeCard(gameResponseJson) {
+        function makeCard(gameResponseJson, idx) {
             
-            let winner = getUsername(gameResponseJson.winner)
             let winnerEndpoint = gameResponseJson.winner
             let datePlayed = new Date(gameResponseJson.datetime_played).toDateString()
             let points = gameResponseJson.points
@@ -96,7 +140,7 @@
             let undercut = gameResponseJson.undercut
 
             let innerHTML = `
-                <div class="card mt-4 mb-4">
+                <div class="card mt-4 mb-4" id="game-card-${idx}">
                     <div class="card-body row">
                         <div class="col">
                             <h6>Winner</h6>
@@ -122,7 +166,7 @@
 
             for (let winnerElem of winnerElems) {
                 fetch(winnerElem.innerHTML)
-                .then(response => response.json())
+                .then((response) => response.json())
                 .then(function(data) {
                     winnerElem.innerHTML = data.username;
                 });
@@ -132,7 +176,7 @@
 
         function getUsername(playerEndpoint) {
             let username = fetch(playerEndpoint)
-            .then(resp => resp.json())
+            .then((resp) => resp.json())
             .then(function(data) {
                 return data.username;
             });
