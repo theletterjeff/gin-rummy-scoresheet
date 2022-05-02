@@ -1,22 +1,36 @@
 fillMatchesNavLink();
-let players = getPlayers(); 
-listGames(players);
+let players = {} 
+listGames();
 fillWinners();
 
-// Derive the match's endpoint from the current page's URL
-function getMatchEndoint() {
+class Match {
+
+  constructor() {
+    this.players = {};
+    this.matchEndpoint = this._getMatchEndpoint();
+  }
+
+  _getMatchEndpoint() {
     const pageURL = new URL(window.location.href);
     const pageOrigin = pageURL.origin;
     const pagePath = pageURL.pathname;
     return `${pageOrigin}/api${pagePath}`;
+  }
+
+}
+
+// Get promise of JSON response from API call
+function getJSONResponsePromise(endpoint) {
+  let json = fetch(endpoint)
+  .then((response) => response.json());
+  return json;
 };
 
 function getPlayers() {
     let matchEndpoint = getMatchEndoint();
     let players = [];
 
-    fetch(matchEndpoint)
-    .then((resp) => resp.json())
+    getJSONResponsePromise(matchEndpoint)
     .then(function(data) {
         console.log(data.players);
         for (playerEndpoint of data.players) {
@@ -48,21 +62,20 @@ function getPlayerUsernames(players) {
  * Build a list of games and fill div with data from those games.
  * @param {Object} players   Player data loaded from API.
  */
-function listGames(players) {
+function listGames() {
     
     let wrapper = document.getElementById('game-wrapper');
     let matchEndpoint = getMatchEndoint();
-    let playerUsernames = getPlayerUsernames(players);
 
     fetch(matchEndpoint)
     .then((resp) => resp.json())
+    .then((matchJSON) => fillPlayersArray(matchJSON))
     .then(function(data) {
         let gameEndpoints = data.games;
 
         for (let i in gameEndpoints) {
 
-            fetch(gameEndpoints[i])
-            .then((response) => response.json())
+            getJSONResponsePromise(gameEndpoints[i])
             .then(function(data) {
                 let item = makeCard(data, idx=i);
                 wrapper.innerHTML += item;
@@ -106,6 +119,16 @@ function makeCard(gameResponseJson, idx) {
     `;
 
     return innerHTML;
+};
+
+function fillPlayersArray(matchJSON) {
+  for (playerEndpoint of matchJSON.players) {
+    getJSONResponsePromise(playerEndpoint)
+    .then((playerJSON) => players[playerEndpoint] = playerJSON.username)
+    .then(console.log(players));
+  };
+
+  return matchJSON;
 };
 
 function fillWinners() {
