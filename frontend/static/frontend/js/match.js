@@ -7,38 +7,52 @@ class Match {
   }
 
   fillPage() {
-    getJSONResponsePromise(this.MatchEndpoint)
-    .then(function(matchData) {
-      let players = getPlayers(matchData);
-      this.players.push(players);
-      return matchData;
-    })
-    .then(function(matchData) {
-      let gameEndpoints = matchData.games;
-      for (let i in gameEndpoints) {
-        getJSONResponsePromise(gameEndpoints[i])
-        .then(function(gameData) {
-          this.gameWrapper += makeCard(gameData, this.players, i)
-        });
-      };
-    });
+    getJSONResponsePromise(this.matchEndpoint)
+    .then(matchData => this.fillPlayers(matchData))
+    .then(matchData => this.fillGames(matchData))
   }
+    
+  fillPlayers(matchData) {
+    let players = getPlayers(matchData);
+    this.players = players;
+    return matchData;
+  }
+
+  fillGames(matchData) {
+    let gameEndpoints = matchData.games;
+    for (let i in gameEndpoints) {
+      getJSONResponsePromise(gameEndpoints[i])
+      .then(function(gameData) {
+        this.gameWrapper += makeCard(gameData, this.players, i)
+      });
+    };
+  }
+
 }
+
 
 
 function getJSONResponsePromise(endpoint) {
   let json = fetch(endpoint)
-             .then((response) => response.json);
+             .then((response) => response.json());
   return json;
+}
+
+function getMatchEndpoint() {
+  const pageURL = new URL(window.location.href);
+  const pageOrigin = pageURL.origin;
+  const pagePath = pageURL.pathname;
+  return `${pageOrigin}/api${pagePath}`;
 }
 
 function getPlayers(matchData) {
   players = {}
   for (playerEndpoint of matchData.players) {
-    getJSONResponsePromise(playerEndpoint)
-    .then(function(playerData) {
-      players[playerEndoint] = playerData.username;
-    });
+    let username = getJSONResponsePromise(playerEndpoint)
+                   .then(function(playerData) {
+                     return playerData.username;
+                    });
+    players[playerEndpoint] = username;
   };
 }
 
