@@ -3,7 +3,6 @@ class Match {
   constructor() {
     this.players = {}
     this.matchEndpoint = getMatchEndpoint()
-    this.gameWrapper = document.getElementById("game-wrapper")
   }
 
   fillPage() {
@@ -18,13 +17,11 @@ class Match {
     return matchData;
   }
 
-  fillGames(matchData) {
-    let gameEndpoints = matchData.games;
-    for (let i in gameEndpoints) {
-      getJSONResponsePromise(gameEndpoints[i])
-      .then(function(gameData) {
-        this.gameWrapper += makeCard(gameData, this.players, i)
-      });
+  async fillGames(matchData) {
+    let gamesHTML = await getGamesHTML(matchData);
+
+    for (let card of gamesHTML) {
+      document.getElementById("game-wrapper") += card;
     };
   }
 
@@ -54,11 +51,24 @@ function getPlayers(matchData) {
                     });
     players[playerEndpoint] = username;
   };
+  return players;
 }
 
-function makeCard(gameData, playersObj, idx) {
+async function getGamesHTML(matchData) {
+  let gamesHTML = [];
+  let gameEndpoints = matchData.games;
+
+  for (gameEndpoint of gameEndpoints) {
+    let gameData = await getJSONResponsePromise(gameEndpoint);
+    let gameHTML = makeCard(gameData);
+
+    gamesHTML.push(gameHTML);
+  }
+  return gamesHTML;
+}
+
+function makeCard(gameData) {
   let winnerEndpoint = gameData.winner
-  let winnerUsername = playersObj[winnerEndpoint]
 
   let datePlayed = new Date(gameData.datetime_played).toDateString()
   let points = gameData.points
@@ -66,11 +76,11 @@ function makeCard(gameData, playersObj, idx) {
   let undercut = gameData.undercut
 
   let innerHTML = `
-    <div class="card mt-4 mb-4" id="game-card-${idx}">
+    <div class="card mt-4 mb-4">
       <div class="card-body row">
         <div class="col">
           <h6>Winner</h6>
-          <h5>${winnerUsername}</h5>
+          <h5>${winnerEndpoint}</h5>
         </div>
         <div class="col">
           <h6>Played</h6>
