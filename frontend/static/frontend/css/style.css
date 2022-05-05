@@ -5,10 +5,10 @@ h1, h2, h3, h4, h5, p, span, strike {
 #nav-item {
     color: white;
 }
-a.nav-link {
+a.nav-link, a.winner-link {
     color: rgb(77, 95, 128)
 }
-a.nav-link:hover {
+a.nav-link:hover, a.winner-link:hover {
     color: rgb(127, 154, 204);
 }
 #match-container {

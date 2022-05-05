@@ -85,7 +85,7 @@ function makeCard(gameData, idx) {
       <div class="card-body row">
         <div class="col">
           <h6>Winner</h6>
-          <a href="${winnerEndpoint}" class="winner-link" id="winner-${idx}">#</a>
+          <h5><a href="${winnerEndpoint}" class="winner-link" id="winner-${idx}">#</a></h5>
         </div>
         <div class="col">
           <h6>Played</h6>
