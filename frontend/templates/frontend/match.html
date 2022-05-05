@@ -21,7 +21,7 @@
     <div class="container-fluid bg-light border-bottom border-5 py-2 fixed-top">
         <div class="row">
             <div class="col-md d-flex">
-                <h4>Gin Rummy Scoresheet</h4>
+                <h4 id="site-title">Gin Rummy Scoresheet</h4>
             </div>
             
             <div class="col-md d-flex">
@@ -44,7 +44,29 @@
     </div>
 
     <div class="container bg-light">
+
         <div id="match-container">
+            <div id="new-game-form">
+                <form>
+                    <div class="form-group">
+                        <label for="winner-dropdown">Winner</label>
+                        <select class="form-control" id="winner-dropdown" name="winner-dropdown"></select>
+
+                        <label for="points-input">Points</label>
+                        <input type="number" class="form-control" id="points-input" name="points-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="gin-input">Gin</label>
+                        <input type="checkbox" id="gin-input" name="gin-input">
+
+                        <label for="undercut-input">Undercut</label>
+                        <input type="checkbox" id="undercut-input" name="undercut-input">
+                    </div>
+
+                    <button type="submit" id="new-game-submit" class="btn btn-small btn-info">Submit</button>
+                </form>
+            </div>
+            <!--List of games-->
             <div id="game-wrapper">
             </div>
         </div>

@@ -95,6 +95,12 @@ function makeCard(gameData, idx) {
             <h6>Points</h6>
             <h5>${points}</h5>
           </div>
+          <div>
+            <button class="btn btn-small btn-outline-info edit mx-1">Edit</button>
+          </div>
+          <div>
+            <button class="btn btn-small btn-outline-dark delete mx-1">Delete</button>
+          </div>
         </div>
       </div>
     </div>
@@ -102,5 +108,30 @@ function makeCard(gameData, idx) {
   return innerHTML;
 }
 
+class winnerDropdown {
+
+  constructor() {
+    this.winnerDropdown = document.getElementById('winner-dropdown')
+  }
+
+  async fillWinnerDropdown() {
+    let matchEndpoint = getMatchEndpoint();
+    let players = await getJSONResponsePromise(matchEndpoint)
+                  .then((matchData) => getPlayers(matchData));
+    
+    let dropdownOptions = ""
+
+    Object.values(players).forEach(function(username) {
+      let dropdownOption = `<option value=${username}>${username}</option>`;
+      dropdownOptions += dropdownOption;
+    })
+
+    this.winnerDropdown.innerHTML = dropdownOptions;
+  }
+}
+
 let match = new Match();
 match.fillPage();
+
+let dropdown = new winnerDropdown()
+dropdown.fillWinnerDropdown()
