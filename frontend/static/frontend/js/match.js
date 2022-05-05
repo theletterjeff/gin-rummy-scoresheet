@@ -2,7 +2,9 @@ class Match {
 
   constructor() {
     this.players = {}
+    this.gameCards = ""
     this.matchEndpoint = getMatchEndpoint()
+    this.gameWrapper = document.getElementById("game-wrapper")
   }
 
   fillPage() {
@@ -11,8 +13,8 @@ class Match {
     .then(matchData => this.fillGames(matchData))
   }
     
-  fillPlayers(matchData) {
-    let players = getPlayers(matchData);
+  async fillPlayers(matchData) {
+    let players = await getPlayers(matchData);
     this.players = players;
     return matchData;
   }
@@ -20,8 +22,8 @@ class Match {
   async fillGames(matchData) {
     let gamesHTML = await getGamesHTML(matchData);
 
-    for (let card of gamesHTML) {
-      document.getElementById("game-wrapper") += card;
+    for (let i in gamesHTML) {
+      this.gameWrapper.innerHTML += gamesHTML[i];
     };
   }
 
@@ -42,13 +44,11 @@ function getMatchEndpoint() {
   return `${pageOrigin}/api${pagePath}`;
 }
 
-function getPlayers(matchData) {
+async function getPlayers(matchData) {
   players = {}
   for (playerEndpoint of matchData.players) {
-    let username = getJSONResponsePromise(playerEndpoint)
-                   .then(function(playerData) {
-                     return playerData.username;
-                    });
+    let playerJSON = await getJSONResponsePromise(playerEndpoint)
+    let username = await playerJSON.username;
     players[playerEndpoint] = username;
   };
   return players;
@@ -58,16 +58,21 @@ async function getGamesHTML(matchData) {
   let gamesHTML = [];
   let gameEndpoints = matchData.games;
 
-  for (gameEndpoint of gameEndpoints) {
-    let gameData = await getJSONResponsePromise(gameEndpoint);
-    let gameHTML = makeCard(gameData);
+  for (let i in gameEndpoints) {
+    let gameData = await getJSONResponsePromise(gameEndpoints[i]);
+    let gameHTML = makeCard(gameData, idx=i);
+    
+    const endpointRe = new RegExp('(http.*?)(?=")')
 
+    let playerEndpoint = endpointRe.exec(gameHTML)[0]
+
+    gameHTML = gameHTML.replace("#", this.players[playerEndpoint])
     gamesHTML.push(gameHTML);
   }
   return gamesHTML;
 }
 
-function makeCard(gameData) {
+function makeCard(gameData, idx) {
   let winnerEndpoint = gameData.winner
 
   let datePlayed = new Date(gameData.datetime_played).toDateString()
@@ -80,7 +85,7 @@ function makeCard(gameData) {
       <div class="card-body row">
         <div class="col">
           <h6>Winner</h6>
-          <h5>${winnerEndpoint}</h5>
+          <a href="${winnerEndpoint}" class="winner-link" id="winner-${idx}">#</a>
         </div>
         <div class="col">
           <h6>Played</h6>
