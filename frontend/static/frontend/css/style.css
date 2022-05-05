@@ -35,12 +35,9 @@ a.nav-link:hover, a.winner-link:hover {
 .flex-wrapper {
     display: flex;
 }
-.game-wrapper {
-    margin: 5px;
-    padding: 5px;
-    padding: 20px;
-    cursor: pointer;
-    border-bottom: 1px solid;
+#game-wrapper {
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
 .game-attr-cell {
     margin: 10px;;

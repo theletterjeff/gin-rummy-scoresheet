@@ -82,18 +82,19 @@ function makeCard(gameData, idx) {
 
   let innerHTML = `
     <div class="card mt-4 mb-4">
-      <div class="card-body row">
-        <div class="col">
-          <h6>Winner</h6>
-          <h5><a href="${winnerEndpoint}" class="winner-link" id="winner-${idx}">#</a></h5>
+      <div class="card-body p-1">
+        <div class="row m-0 mt-1 pl-2">
+          <div class="card-title">${datePlayed}</div>
         </div>
-        <div class="col">
-          <h6>Played</h6>
-          <h5>${datePlayed}</h5>
-        </div>
-        <div class="col">
-          <h6>Points</h6>
-          <h5>${points}</h5>
+        <div class="row m-0">
+          <div class="col">
+            <h6>Winner</h6>
+            <h5><a href="${winnerEndpoint}" class="winner-link" id="winner-${idx}">#</a></h5>
+          </div>
+          <div class="col">
+            <h6>Points</h6>
+            <h5>${points}</h5>
+          </div>
         </div>
       </div>
     </div>
