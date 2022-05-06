@@ -3,7 +3,7 @@ class Match {
   constructor() {
     this.players = {}
     this.gameCards = ""
-    this.matchEndpoint = getMatchEndpoint()
+    this.matchEndpoint = getMatchDetailEndpoint()
     this.gameWrapper = document.getElementById("game-wrapper")
   }
 
@@ -37,19 +37,37 @@ function getJSONResponsePromise(endpoint) {
   return json;
 }
 
-function getMatchEndpoint() {
+function getMatchDetailEndpoint() {
   const pageURL = new URL(window.location.href);
   const pageOrigin = pageURL.origin;
   const pagePath = pageURL.pathname;
   return `${pageOrigin}/api${pagePath}`;
 }
 
+function getGameListCreateEndpoint() {
+  const pageURL = new URL(window.location.href);
+  const pageOrigin = pageURL.origin;
+  return `${pageOrigin}/api/game`
+}
+
+// Return a players object {username: endpoint}
 async function getPlayers(matchData) {
   players = {}
   for (playerEndpoint of matchData.players) {
     let playerJSON = await getJSONResponsePromise(playerEndpoint)
     let username = await playerJSON.username;
     players[playerEndpoint] = username;
+  };
+  return players;
+}
+
+// Return a players object {endpoint: username}
+async function getPlayersUsernameEndpoint(matchData) {
+  players = {}
+  for (playerEndpoint of matchData.players) {
+    let playerJSON = await getJSONResponsePromise(playerEndpoint)
+    let username = await playerJSON.username;
+    players[username] = playerEndpoint;
   };
   return players;
 }
@@ -115,7 +133,7 @@ class winnerDropdown {
   }
 
   async fillWinnerDropdown() {
-    let matchEndpoint = getMatchEndpoint();
+    let matchEndpoint = getMatchDetailEndpoint();
     let players = await getJSONResponsePromise(matchEndpoint)
                   .then((matchData) => getPlayers(matchData));
     
@@ -130,8 +148,55 @@ class winnerDropdown {
   }
 }
 
+async function submitNewGameForm(e) {
+  e.preventDefault();
+  console.log('Form Submitted');
+  
+  const gameEndpoint = getGameListCreateEndpoint();
+  const matchEndpoint = getMatchDetailEndpoint();
+
+  let players = await getJSONResponsePromise(matchEndpoint)
+                  .then((matchData) => getPlayersUsernameEndpoint(matchData));
+
+  // Form fields
+  let match = matchEndpoint;
+  
+  let winnerUsername = document.getElementById('winner-dropdown').value;
+  let winnerEndpoint = players[winnerUsername];
+
+  // Delete winner from `players`, leaving only the loser
+  delete players[winnerUsername]
+  let loserEndpoint = Object.values(players)[0]
+  
+  let points = document.getElementById('points-input').value;
+  let gin = document.getElementById('gin-input');
+  let undercut = document.getElementById('undercut-input');
+
+  // Logged in user placeholder, switch out later when I figure out login
+  let createdBy = winnerEndpoint
+
+  fetch(gameEndpoint, {
+    method: 'POST',
+    headers: {
+      'Content-type': 'application/json',
+    },
+    body: JSON.stringify({
+      'match': match,
+      'winner': winnerEndpoint,
+      'loser': loserEndpoint,
+      'points': points,
+      'gin': gin,
+      'undercut': undercut,
+      'created_by': createdBy,
+    }),
+  }).then((matchData) => match.fillPage());
+}
+
 let match = new Match();
 match.fillPage();
 
-let dropdown = new winnerDropdown()
-dropdown.fillWinnerDropdown()
+let dropdown = new winnerDropdown();
+dropdown.fillWinnerDropdown();
+
+let form = document.getElementById('new-game-form');
+form.addEventListener("submit", (e) => submitNewGameForm(e));
