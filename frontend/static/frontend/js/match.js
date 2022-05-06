@@ -1,42 +1,28 @@
-class Match {
+fillMatchDetailPage()
 
-  constructor() {
-    this.players = {}
-    this.gameCards = ""
-    this.matchEndpoint = getMatchDetailEndpoint()
-    this.gameWrapper = document.getElementById("game-wrapper")
-  }
+// Functions
 
-  fillPage() {
-    getJSONResponsePromise(this.matchEndpoint)
-    .then(matchData => this.fillPlayers(matchData))
-    .then(matchData => this.fillGames(matchData))
-  }
-    
-  async fillPlayers(matchData) {
-    let players = await getPlayers(matchData);
-    this.players = players;
-    return matchData;
-  }
+/** Main execution function */
+async function fillMatchDetailPage() {
+  const matchDetailEndpoint = getMatchDetailEndpoint();
 
-  async fillGames(matchData) {
-    let gamesHTML = await getGamesHTML(matchData);
-
-    for (let i in gamesHTML) {
-      this.gameWrapper.innerHTML += gamesHTML[i];
-    };
-  }
-
+  let playersEndpointUsername = await getPlayersEndpointUsername(matchDetailEndpoint);
+  
+  listGames(playersEndpointUsername);
 }
 
+/** Fill the `game-wrapper` element with a list of game details */
+async function listGames(playersEndpointUsername) {
+  let matchDetailJSON = await getMatchDetailJSON();
+  let gamesHTML = await getGamesHTML(matchDetailJSON, playersEndpointUsername);
 
-
-function getJSONResponsePromise(endpoint) {
-  let json = fetch(endpoint)
-             .then((response) => response.json());
-  return json;
+  for (let gameHTML of gamesHTML) {
+    gameWrapper = document.getElementById("game-wrapper");
+    gameWrapper.innerHTML += gameHTML;
+  }
 }
 
+/** Return the endpoint for the MatchDetail API view */
 function getMatchDetailEndpoint() {
   const pageURL = new URL(window.location.href);
   const pageOrigin = pageURL.origin;
@@ -44,35 +30,50 @@ function getMatchDetailEndpoint() {
   return `${pageOrigin}/api${pagePath}`;
 }
 
+/** Return the endoint for the GameListCreate API view */
 function getGameListCreateEndpoint() {
   const pageURL = new URL(window.location.href);
   const pageOrigin = pageURL.origin;
   return `${pageOrigin}/api/game`
 }
 
+function getJSONResponsePromise(endpoint) {
+  let json = fetch(endpoint)
+             .then((response) => response.json());
+  return json;
+}
+
+async function getMatchDetailJSON() {
+  const matchDetailEndpoint = getMatchDetailEndpoint()
+  return await getJSONResponsePromise(matchDetailEndpoint);
+}
+
 // Return a players object {username: endpoint}
-async function getPlayers(matchData) {
-  players = {}
+async function getPlayersEndpointUsername(matchDetailEndpoint) {
+  let players = {}
+  let matchData = await getJSONResponsePromise(matchDetailEndpoint)
+
   for (playerEndpoint of matchData.players) {
     let playerJSON = await getJSONResponsePromise(playerEndpoint)
     let username = await playerJSON.username;
     players[playerEndpoint] = username;
   };
+
   return players;
 }
 
-// Return a players object {endpoint: username}
-async function getPlayersUsernameEndpoint(matchData) {
-  players = {}
-  for (playerEndpoint of matchData.players) {
-    let playerJSON = await getJSONResponsePromise(playerEndpoint)
-    let username = await playerJSON.username;
-    players[username] = playerEndpoint;
-  };
-  return players;
+/** Return a players object {endpoint: username} */
+async function getPlayersUsernameEndpoint(matchDetailEndpoint) {
+  let players = getPlayersEndpointUsername(matchDetailEndpoint);
+  let playersFlipped = {};
+
+  // Make the keys into values and the values into keys
+  Object.entries(players).forEach(([key, value]) => {playersFlipped[value] = key});
+  
+  return playersFlipped;
 }
 
-async function getGamesHTML(matchData) {
+async function getGamesHTML(matchData, playersEndpointUsername) {
   let gamesHTML = [];
   let gameEndpoints = matchData.games;
 
@@ -84,7 +85,7 @@ async function getGamesHTML(matchData) {
 
     let playerEndpoint = endpointRe.exec(gameHTML)[0]
 
-    gameHTML = gameHTML.replace("#", this.players[playerEndpoint])
+    gameHTML = gameHTML.replace("#", playersEndpointUsername[playerEndpoint])
     gamesHTML.push(gameHTML);
   }
   return gamesHTML;
@@ -191,12 +192,3 @@ async function submitNewGameForm(e) {
     }),
   }).then((matchData) => match.fillPage());
 }
-
-let match = new Match();
-match.fillPage();
-
-let dropdown = new winnerDropdown();
-dropdown.fillWinnerDropdown();
-
-let form = document.getElementById('new-game-form');
-form.addEventListener("submit", (e) => submitNewGameForm(e));
