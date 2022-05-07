@@ -49,25 +49,29 @@
             <div class="card" id="new-game-form">
                 <div class="card-body">
                     <h5 class="card-title">New Game</h5>
-                    <form>
-                        <div class="form-row">
-                            <div class="col-lg-4">
+                    <form class="form-inline">
+                        <div class="form-row" style="width:100%">
+                            <div class="col-lg-5">
                                 <label for="winner-dropdown">Winner</label>
                                 <select class="form-control" id="winner-dropdown" name="winner-dropdown"></select>
                             </div>
-                            <div class="col-lg-4">
+                            <div class="col-lg-3 mr-4">
                                 <label for="points-input">Points</label>
                                 <input type="number" class="form-control" id="points-input" name="points-input">
                             </div>                            
                             <div class="col-lg">
-                                <label for="gin-input">Gin</label>
-                                <input type="checkbox" id="gin-input" name="gin-input">
+                                <div class="row">
+                                    <div class="col-lg">
+                                        <label for="gin-input">Gin</label>
+                                        <input type="checkbox" class="form-check" id="gin-input" name="gin-input">
+                                    </div>
+                                    <div class="col-lg">
+                                        <label for="undercut-input">Undercut</label>
+                                        <input type="checkbox" class="form-check" id="undercut-input" name="undercut-input">
+                                    </div>
+                                </div>
                             </div>
-                            <div class="col-lg">
-                                <label for="undercut-input">Undercut</label>
-                                <input type="checkbox" id="undercut-input" name="undercut-input">
-                            </div>
-                            <div class="col-lg">
+                            <div class="col-lg" style="text-align:right">
                                 <button type="submit" id="new-game-submit" class="btn btn-small btn-info">Submit</button>
                             </div>
                         </div>
@@ -76,20 +80,25 @@
             </div>
 
             <!--List of games-->
-            <div id="game-table-container">
-                <table class="table" id="game-table">
-                    <thead>
-                        <tr>
-                            <th scope="col">Date</th>
-                            <th scope="col">Winner</th>
-                            <th scope="col">Points</th>
-                            <th scope="col" class="button-col">Gin</th>
-                            <th scope="col">Undercut</th>
-                            <th scope="col"></th>
-                            <th scope="col"></th>
-                        </tr>
-                    </thead>
-                    <tbody id="game-table-body"></tbody>
+            <div class="card" id="game-table-container">
+                <div class="card-body">
+                    <h5 class="card-title">Games</h5>
+
+                    <table class="table" id="game-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Date</th>
+                                <th scope="col">Winner</th>
+                                <th scope="col">Points</th>
+                                <th scope="col" class="button-col">Gin</th>
+                                <th scope="col">Undercut</th>
+                                <th scope="col"></th>
+                                <th scope="col"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="game-table-body"></tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>

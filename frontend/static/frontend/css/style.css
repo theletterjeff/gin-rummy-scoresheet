@@ -46,6 +46,17 @@ a.nav-link:hover, a.winner-link:hover {
     margin: 10px;
 }
 
+/* New game form */
+#winner-dropdown {
+    width: 100%;
+}
+#points-input {
+    width: 100%;
+}
+.form-inline label {
+    justify-content: left;
+}
+
 /* Game table */
 #game-table-container {
     margin-top: 2rem;
