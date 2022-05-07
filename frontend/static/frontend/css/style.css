@@ -59,6 +59,9 @@ a.nav-link:hover, a.winner-link:hover {
 .form-inline label {
     justify-content: left;
 }
+.form-check {
+    margin-top: 10px;
+}
 
 /* Game table */
 #game-table-container {
