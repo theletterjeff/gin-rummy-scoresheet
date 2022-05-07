@@ -47,6 +47,9 @@ a.nav-link:hover, a.winner-link:hover {
 }
 
 /* New game form */
+#new-game-form {
+    top: 20px;
+}
 #winner-dropdown {
     width: 100%;
 }
