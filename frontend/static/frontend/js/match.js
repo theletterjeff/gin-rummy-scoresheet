@@ -17,7 +17,7 @@ async function listGames(playersEndpointUsername) {
   let gamesHTML = await getGamesHTML(matchDetailJSON, playersEndpointUsername);
 
   for (let gameHTML of gamesHTML) {
-    gameWrapper = document.getElementById("game-wrapper");
+    gameWrapper = document.getElementById("game-table-body");
     gameWrapper.innerHTML += gameHTML;
   }
 }
@@ -96,33 +96,23 @@ function makeCard(gameData, idx) {
 
   let datePlayed = new Date(gameData.datetime_played).toDateString()
   let points = gameData.points
+
   let gin = gameData.gin
+  let ginCheck = gin ? "X" : ""
+
   let undercut = gameData.undercut
+  let undercutCheck = undercut ? "X" : ""
 
   let innerHTML = `
-    <div class="card mt-4 mb-4">
-      <div class="card-body p-1">
-        <div class="row m-0 mt-1 pl-2">
-          <div class="card-title">${datePlayed}</div>
-        </div>
-        <div class="row m-0">
-          <div class="col">
-            <h6>Winner</h6>
-            <h5><a href="${winnerEndpoint}" class="winner-link" id="winner-${idx}">#</a></h5>
-          </div>
-          <div class="col">
-            <h6>Points</h6>
-            <h5>${points}</h5>
-          </div>
-          <div>
-            <button class="btn btn-small btn-outline-info edit mx-1">Edit</button>
-          </div>
-          <div>
-            <button class="btn btn-small btn-outline-dark delete mx-1">Delete</button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <tr>
+      <td>${datePlayed}</td>
+      <td><a href="${winnerEndpoint}">#</a></td>
+      <td>${points}</td>
+      <td class="checkbox-cell">${ginCheck}</td>
+      <td class="checkbox-cell">${undercutCheck}</td>
+      <td class="button-cell"><button class="btn btn-small btn-outline-info edit">Edit</button></td>
+      <td class="button-cell"><button class="btn btn-small btn-outline-dark delete">Delete</button></td>
+    </tr>
   `
   return innerHTML;
 }

@@ -11,8 +11,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@100;300&display=swap">
     <link rel="stylesheet" href="{% static 'frontend/css/style.css' %}">
-	<link href="https://fonts.googleapis.com/css2?family=Lato:wght@100;300&display=swap" rel="stylesheet">
     <link rel="shortcut icon" href="#">
 </head>
 
@@ -66,8 +66,22 @@
                     <button type="submit" id="new-game-submit" class="btn btn-small btn-info">Submit</button>
                 </form>
             </div>
+
             <!--List of games-->
-            <div id="game-wrapper">
+            <div id="game-table-container">
+                <table class="table" id="game-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Date</th>
+                            <th scope="col">Winner</th>
+                            <th scope="col">Points</th>
+                            <th scope="col" class="button-col">Gin</th>
+                            <th scope="col">Undercut</th>
+                            <th scope="col"></th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="game-table-body"></tbody>
             </div>
         </div>
     </div>
