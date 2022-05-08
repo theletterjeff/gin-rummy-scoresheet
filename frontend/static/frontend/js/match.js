@@ -48,7 +48,7 @@ async function getMatchDetailJSON() {
   return await getJSONResponsePromise(matchDetailEndpoint);
 }
 
-// Return a players object {username: endpoint}
+/* Return a players object {username: endpoint} */
 async function getPlayersEndpointUsername(matchDetailEndpoint) {
   let players = {}
   let matchData = await getJSONResponsePromise(matchDetailEndpoint)
@@ -73,13 +73,14 @@ async function getPlayersUsernameEndpoint(matchDetailEndpoint) {
   return playersFlipped;
 }
 
+/* Return an array of game table row HTML elements */
 async function getGamesHTML(matchData, playersEndpointUsername) {
   let gamesHTML = [];
   let gameEndpoints = matchData.games;
 
-  for (let i in gameEndpoints) {
-    let gameData = await getJSONResponsePromise(gameEndpoints[i]);
-    let gameHTML = makeCard(gameData, idx=i);
+  for (let gameEndpoint of gameEndpoints) {
+    let gameData = await getJSONResponsePromise(gameEndpoint);
+    let gameHTML = makeGameTableRow(gameData);
     
     const endpointRe = new RegExp('(http.*?)(?=")')
 
@@ -91,7 +92,7 @@ async function getGamesHTML(matchData, playersEndpointUsername) {
   return gamesHTML;
 }
 
-function makeCard(gameData, idx) {
+function makeGameTableRow(gameData) {
   let winnerEndpoint = gameData.winner
 
   let datePlayed = new Date(gameData.datetime_played).toDateString()
