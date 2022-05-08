@@ -1,6 +1,6 @@
 from rest_framework.decorators import api_view
-from rest_framework.generics import (ListAPIView, ListCreateAPIView,
-                                     RetrieveAPIView,
+from rest_framework.generics import (CreateAPIView, ListAPIView,
+                                     ListCreateAPIView, RetrieveAPIView,
                                      RetrieveUpdateDestroyAPIView)
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
@@ -34,6 +34,10 @@ class PlayerList(PlayerMixin, AuthenticationMixin, ListAPIView):
     """
     Return all Player instances.
     """
+    pass
+
+class PlayerCreate(PlayerMixin, CreateAPIView):
+    """Create a new Player"""
     pass
 
 class MatchDetail(MatchMixin, AuthenticationMixin, RetrieveUpdateDestroyAPIView):

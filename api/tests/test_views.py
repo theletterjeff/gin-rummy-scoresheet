@@ -341,6 +341,20 @@ class TestPlayerViews(TestCase):
         response = self.apiclient.get(url)
 
         self.assertEqual(response.data['username'], 'player1')
+    
+    def test_player_create_view(self):
+        """Sending a POST request with valid credentials to the player-create
+        view creates a new player.
+        """
+        url = reverse('player-create')
+        user_credentials = {
+            'email': 'test@test.com',
+            'username': 'testuser',
+            'password': 'testpassword',
+        }
+        self.apiclient.post(url, data=user_credentials)
+        
+        self.assertTrue(Player.objects.get(username='testuser'))
 
 class TestRootView(TestCase):
 
