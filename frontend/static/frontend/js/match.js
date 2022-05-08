@@ -144,8 +144,7 @@ async function submitNewGameForm(e) {
   const gameEndpoint = getGameListCreateEndpoint();
   const matchEndpoint = getMatchDetailEndpoint();
 
-  let players = await getJSONResponsePromise(matchEndpoint)
-                  .then((matchData) => getPlayersUsernameEndpoint(matchData));
+  let players = await getPlayersUsernameEndpoint(matchEndpoint);
 
   // Form fields
   let match = matchEndpoint;
@@ -180,5 +179,5 @@ async function submitNewGameForm(e) {
     }),
   })
   
-  fillPage();
+  fillMatchDetailPage();
 }
