@@ -20,8 +20,10 @@ async function listGames(playersEndpointUsername) {
   let matchDetailJSON = await getMatchDetailJSON();
   let gamesHTML = await getGamesHTML(matchDetailJSON, playersEndpointUsername);
 
+  gameWrapper = document.getElementById("game-table-body");
+  gameWrapper.innerHTML = ""
+
   for (let gameHTML of gamesHTML) {
-    gameWrapper = document.getElementById("game-table-body");
     gameWrapper.innerHTML += gameHTML;
   }
 }
