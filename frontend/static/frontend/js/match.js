@@ -1,10 +1,12 @@
-fillMatchDetailPage()
+import {fillTitle} from "./base.js";
+
+fillMatchDetailPage();
 
 // Functions
 
 /** Main execution function */
 async function fillMatchDetailPage() {
-  fillTitle();
+  fillTitle('Match');
 
   const matchDetailEndpoint = getMatchDetailEndpoint();
   let playersEndpointUsername = await getPlayersEndpointUsername(matchDetailEndpoint);
@@ -31,11 +33,6 @@ function getCookie(name) {
       }
   }
   return cookieValue;
-}
-
-function fillTitle() {
-  title = document.getElementsByTagName('title')[0];
-  title.innerHTML = "Match";
 }
 
 /** Fill the `game-wrapper` element with a list of game details */
