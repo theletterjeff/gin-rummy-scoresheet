@@ -15,6 +15,23 @@ async function fillMatchDetailPage() {
   newGameForm.addEventListener("submit", (e) => submitNewGameForm(e));
 }
 
+/** Get cookie value (used to pass CSRF token to POST requests) */
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          // Does this cookie string begin with the name we want?
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+          }
+      }
+  }
+  return cookieValue;
+}
+
 /** Fill the `game-wrapper` element with a list of game details */
 async function listGames(playersEndpointUsername) {
   let matchDetailJSON = await getMatchDetailJSON();
@@ -70,7 +87,7 @@ async function getPlayersEndpointUsername(matchDetailEndpoint) {
 
 /** Return a players object {endpoint: username} */
 async function getPlayersUsernameEndpoint(matchDetailEndpoint) {
-  let players = getPlayersEndpointUsername(matchDetailEndpoint);
+  let players = await getPlayersEndpointUsername(matchDetailEndpoint);
   let playersFlipped = {};
 
   // Make the keys into values and the values into keys
@@ -141,34 +158,37 @@ async function fillWinnerDropdown() {
 
 async function submitNewGameForm(e) {
   e.preventDefault();
-  console.log('Form Submitted');
+  
+  const csrfToken = getCookie("csrftoken");
   
   const gameEndpoint = getGameListCreateEndpoint();
-  const matchEndpoint = getMatchDetailEndpoint();
-
-  let players = await getPlayersUsernameEndpoint(matchEndpoint);
+  const matchDetailEndpoint = getMatchDetailEndpoint();
+  
+  let playersUserEnd = await getPlayersUsernameEndpoint(matchDetailEndpoint);
+  let playersEndUser = await getPlayersEndpointUsername(matchDetailEndpoint)
 
   // Form fields
-  let match = matchEndpoint;
+  let match = matchDetailEndpoint;
   
   let winnerUsername = document.getElementById('winner-dropdown').value;
-  let winnerEndpoint = players[winnerUsername];
-
+  let winnerEndpoint = playersUserEnd[winnerUsername];
+  
   // Delete winner from `players`, leaving only the loser
-  delete players[winnerUsername]
-  let loserEndpoint = Object.values(players)[0]
+  delete playersUserEnd[winnerUsername]
+  let loserEndpoint = Object.values(playersUserEnd)[0]
   
   let points = document.getElementById('points-input').value;
-  let gin = document.getElementById('gin-input');
-  let undercut = document.getElementById('undercut-input');
-
+  let gin = document.getElementById('gin-input').value;
+  let undercut = document.getElementById('undercut-input').value;
+  
   // Logged in user placeholder, switch out later when I figure out login
   let createdBy = winnerEndpoint
 
-  matchJSON = await fetch(gameEndpoint, {
+  fetch(gameEndpoint, {
     method: 'POST',
     headers: {
       'Content-type': 'application/json',
+      'X-CSRFToken': csrfToken,
     },
     body: JSON.stringify({
       'match': match,
@@ -179,7 +199,7 @@ async function submitNewGameForm(e) {
       'undercut': undercut,
       'created_by': createdBy,
     }),
-  })
+  }).then(() => listGames(playersEndUser));
   
-  fillMatchDetailPage();
+  console.log('Form Submitted');
 }
