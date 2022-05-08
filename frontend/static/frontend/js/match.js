@@ -14,7 +14,7 @@ async function fillMatchDetailPage() {
   fillWinnerDropdown();
   listGames(playersEndpointUsername);
 
-  newGameForm = document.getElementById("new-game-form");
+  let newGameForm = document.getElementById("new-game-form");
   newGameForm.addEventListener("submit", (e) => submitNewGameForm(e));
 }
 
@@ -40,7 +40,7 @@ async function listGames(playersEndpointUsername) {
   let matchDetailJSON = await getMatchDetailJSON();
   let gamesHTML = await getGamesHTML(matchDetailJSON, playersEndpointUsername);
 
-  gameWrapper = document.getElementById("game-table-body");
+  let gameWrapper = document.getElementById("game-table-body");
   gameWrapper.innerHTML = ""
 
   for (let gameHTML of gamesHTML) {
@@ -79,7 +79,7 @@ async function getPlayersEndpointUsername(matchDetailEndpoint) {
   let players = {}
   let matchData = await getJSONResponsePromise(matchDetailEndpoint)
 
-  for (playerEndpoint of matchData.players) {
+  for (let playerEndpoint of matchData.players) {
     let playerJSON = await getJSONResponsePromise(playerEndpoint)
     let username = await playerJSON.username;
     players[playerEndpoint] = username;
@@ -155,7 +155,7 @@ async function fillWinnerDropdown() {
     dropdownOptions += dropdownOption;
   })
 
-  winnerDropdown = document.getElementById('winner-dropdown');
+  let winnerDropdown = document.getElementById('winner-dropdown');
   winnerDropdown.innerHTML = dropdownOptions;
 }
 
