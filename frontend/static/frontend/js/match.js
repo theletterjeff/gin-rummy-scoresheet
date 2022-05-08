@@ -8,7 +8,11 @@ async function fillMatchDetailPage() {
 
   let playersEndpointUsername = await getPlayersEndpointUsername(matchDetailEndpoint);
   
+  fillWinnerDropdown();
   listGames(playersEndpointUsername);
+
+  newGameForm = document.getElementById("new-game-form");
+  newGameForm.addEventListener("submit", (e) => submitNewGameForm(e));
 }
 
 /** Fill the `game-wrapper` element with a list of game details */
@@ -118,26 +122,19 @@ function makeGameTableRow(gameData) {
   return innerHTML;
 }
 
-class winnerDropdown {
+async function fillWinnerDropdown() {
+  let matchEndpoint = getMatchDetailEndpoint();
+  let players = await getPlayersEndpointUsername(matchEndpoint);
+  
+  let dropdownOptions = ""
 
-  constructor() {
-    this.winnerDropdown = document.getElementById('winner-dropdown')
-  }
+  Object.values(players).forEach(function(username) {
+    let dropdownOption = `<option value=${username}>${username}</option>`;
+    dropdownOptions += dropdownOption;
+  })
 
-  async fillWinnerDropdown() {
-    let matchEndpoint = getMatchDetailEndpoint();
-    let players = await getJSONResponsePromise(matchEndpoint)
-                  .then((matchData) => getPlayers(matchData));
-    
-    let dropdownOptions = ""
-
-    Object.values(players).forEach(function(username) {
-      let dropdownOption = `<option value=${username}>${username}</option>`;
-      dropdownOptions += dropdownOption;
-    })
-
-    this.winnerDropdown.innerHTML = dropdownOptions;
-  }
+  winnerDropdown = document.getElementById('winner-dropdown');
+  winnerDropdown.innerHTML = dropdownOptions;
 }
 
 async function submitNewGameForm(e) {
@@ -167,7 +164,7 @@ async function submitNewGameForm(e) {
   // Logged in user placeholder, switch out later when I figure out login
   let createdBy = winnerEndpoint
 
-  fetch(gameEndpoint, {
+  matchJSON = await fetch(gameEndpoint, {
     method: 'POST',
     headers: {
       'Content-type': 'application/json',
@@ -181,5 +178,7 @@ async function submitNewGameForm(e) {
       'undercut': undercut,
       'created_by': createdBy,
     }),
-  }).then((matchData) => match.fillPage());
+  })
+  
+  fillPage();
 }
