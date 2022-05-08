@@ -11,7 +11,7 @@ urlpatterns = [
     # List and Create
     path('match', views.MatchList.as_view(), name='match-list-create'),
     path('game', views.GameList.as_view(), name='game-list-create'),
-    path('player', views.PlayerList.as_view(), name='player-list'),
+    path('all-players', views.PlayerList.as_view(), name='player-list'),
 
     # Detail
     path('match/<str:pk>/', views.MatchDetail.as_view(), name='match-detail'),
