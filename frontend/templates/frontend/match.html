@@ -1,111 +1,63 @@
 <!--Match detail page that links to each of the games-->
 
+{% extends "frontend/base.html" %}
 {% load static %}
 
-<!DOCTYPE html>
-<html>
+{% block content %}
 
-<head>
-    <title>Match</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@100;300&display=swap">
-    <link rel="stylesheet" href="{% static 'frontend/css/style.css' %}">
-    <link rel="shortcut icon" href="#">
-</head>
-
-<body>
-    <!--Navbar-->
-    <div class="container-fluid bg-light border-bottom border-5 py-2 fixed-top">
-        <div class="row">
-            <div class="col-md d-flex">
-                <h4 id="site-title">Gin Rummy Scoresheet</h4>
+    <div class="card" id="new-game-form">
+    <div class="card-body">
+        <h5 class="card-title">New Game</h5>
+        <form class="form-inline">
+        <div class="form-row" style="width:100%">
+            <div class="col-lg-5">
+            <label for="winner-dropdown">Winner</label>
+            <select class="form-control" id="winner-dropdown" name="winner-dropdown"></select>
             </div>
-            
-            <div class="col-md d-flex">
-                <ul class="nav ml-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" id="matches-nav-link" href="#">Matches</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" id="stats-nav-link" href="#">Stats</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" id="players-nav-link" href="#">Players</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" id="account-nav-link" href="#">Account</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
-
-    <div class="container bg-light">
-
-        <div id="content-container">
-
-            <div class="card" id="new-game-form">
-                <div class="card-body">
-                    <h5 class="card-title">New Game</h5>
-                    <form class="form-inline">
-                        <div class="form-row" style="width:100%">
-                            <div class="col-lg-5">
-                                <label for="winner-dropdown">Winner</label>
-                                <select class="form-control" id="winner-dropdown" name="winner-dropdown"></select>
-                            </div>
-                            <div class="col-lg-3 mr-4">
-                                <label for="points-input">Points</label>
-                                <input type="number" class="form-control" id="points-input" name="points-input">
-                            </div>                            
-                            <div class="col-lg">
-                                <div class="row">
-                                    <div class="col-lg">
-                                        <label for="gin-input">Gin</label>
-                                        <input type="checkbox" class="form-check" id="gin-input" name="gin-input">
-                                    </div>
-                                    <div class="col-lg">
-                                        <label for="undercut-input">Undercut</label>
-                                        <input type="checkbox" class="form-check" id="undercut-input" name="undercut-input">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg" style="text-align:right">
-                                <button type="submit" id="new-game-submit" class="btn btn-small btn-info">Submit</button>
-                            </div>
-                        </div>
-                    </form>
+            <div class="col-lg-3 mr-4">
+            <label for="points-input">Points</label>
+            <input type="number" class="form-control" id="points-input" name="points-input">
+            </div>              
+            <div class="col-lg">
+            <div class="row">
+                <div class="col-lg">
+                <label for="gin-input">Gin</label>
+                <input type="checkbox" class="form-check" id="gin-input" name="gin-input">
+                </div>
+                <div class="col-lg">
+                <label for="undercut-input">Undercut</label>
+                <input type="checkbox" class="form-check" id="undercut-input" name="undercut-input">
                 </div>
             </div>
-
-            <!--List of games-->
-            <div class="card" id="game-table-container">
-                <div class="card-body">
-                    <h5 class="card-title">Games</h5>
-
-                    <table class="table" id="game-table">
-                        <thead>
-                            <tr>
-                                <th scope="col">Date</th>
-                                <th scope="col">Winner</th>
-                                <th scope="col">Points</th>
-                                <th scope="col" class="button-col">Gin</th>
-                                <th scope="col">Undercut</th>
-                                <th scope="col"></th>
-                                <th scope="col"></th>
-                            </tr>
-                        </thead>
-                        <tbody id="game-table-body"></tbody>
-                    </table>
-                </div>
+            </div>
+            <div class="col-lg" style="text-align:right">
+            <button type="submit" id="new-game-submit" class="btn btn-small btn-info">Submit</button>
             </div>
         </div>
+        </form>
+    </div>
     </div>
 
-    <script src="{% static 'frontend/js/match.js' %}" type="module"></script>
+    <!--List of games-->
+    <div class="card" id="game-table-container">
+    <div class="card-body">
+        <h5 class="card-title">Games</h5>
 
-</body>
+        <table class="table" id="game-table">
+        <thead>
+            <tr>
+            <th scope="col">Date</th>
+            <th scope="col">Winner</th>
+            <th scope="col">Points</th>
+            <th scope="col" class="button-col">Gin</th>
+            <th scope="col">Undercut</th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody id="game-table-body"></tbody>
+        </table>
+    </div>
+    </div>
 
-</html>
+{% endblock %}
