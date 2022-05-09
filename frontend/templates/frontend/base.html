@@ -1,0 +1,67 @@
+<!--Base template that other pages inherit from-->
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title></title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@100;300&display=swap">
+  <link rel="stylesheet" href="{% static 'frontend/css/style.css' %}">
+  <link rel="shortcut icon" href="#">
+</head>
+
+<body>
+  <!--Navbar-->
+  <div class="container-fluid bg-light border-bottom border-5 py-2 fixed-top">
+    <div class="row">
+      <div class="col-md d-flex">
+        <h4 id="site-title">Gin Rummy Scoresheet</h4>
+      </div>
+      
+      <div class="col-md d-flex" id="navbar-links">
+        {% if user.is_authenticated %}
+          <ul class="nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link" id="matches-nav-link" href="#">Matches</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="stats-nav-link" href="#">Stats</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="players-nav-link" href="#">Players</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="account-nav-link" href="#">Account</a>
+            </li>
+          </ul>
+        {% else %}
+          <ul class="nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link" id="login-link" href="#">Log In</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="signup-link" href="#">Sign Up</a>
+            </li>
+          </ul>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="container bg-light">
+    <div id="content-container">
+        {% block content %}
+        {% endblock %}
+    </div>
+  </div>
+
+  <script src="{% static './frontend/js/match.js' %}" type="module"></script>
+
+</body>
+
+</html>
