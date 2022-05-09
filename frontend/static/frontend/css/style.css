@@ -14,7 +14,7 @@ a.nav-link, a.winner-link {
 a.nav-link:hover, a.winner-link:hover {
     color: rgb(127, 154, 204);
 }
-#match-container {
+#content-container {
     max-width: 900px;
     margin: 0 auto;
     margin-top: 100px;
