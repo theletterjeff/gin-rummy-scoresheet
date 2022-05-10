@@ -9,23 +9,25 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@100;300&display=swap">
   <link rel="stylesheet" href="{% static 'frontend/css/style.css' %}">
   <link rel="shortcut icon" href="#">
 </head>
 
 <body>
+
   <!--Navbar-->
-  <div class="container-fluid bg-light border-bottom border-5 py-2 fixed-top">
-    <div class="row">
-      <div class="col-md d-flex">
-        <h4 id="site-title">Gin Rummy Scoresheet</h4>
-      </div>
-      
-      <div class="col-md d-flex" id="navbar-links">
+  <!--
+  <nav class="navbar navbar-expand navbar-light bg-light">
+    <div class="container-fluid">
+      <a href="#" class="navbar-brand" id="navbar-brand">Gin Rummy Scoresheet</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
         {% if user.is_authenticated %}
-          <ul class="nav ml-auto">
+          <ul class="navbar-nav">
             <li class="nav-item">
               <a class="nav-link" id="matches-nav-link" href="#">Matches</a>
             </li>
@@ -40,7 +42,7 @@
             </li>
           </ul>
         {% else %}
-          <ul class="nav ml-auto">
+          <ul class="navbar-nav">
             <li class="nav-item">
               <a class="nav-link" id="login-link" href="#">Log In</a>
             </li>
@@ -49,16 +51,41 @@
             </li>
           </ul>
         {% endif %}
+        </div>
       </div>
     </div>
-  </div>
+  </nav>
+  --> 
 
-  <div class="container bg-light">
-    <div id="content-container">
-        {% block content %}
-        {% endblock %}
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid mx-md-5">
+      <a class="navbar-brand" id="navbar-brand" href="#">Gin Rummy Scoresheet</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarText">
+        <ul class="navbar-nav mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link" id="login-link" href="#">Log In</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="signup-link" href="#">Sign Up</a>
+          </li>
+        </ul>
+      </div>
     </div>
-  </div>
+  </nav>
+
+  <section class="bg-light my-5 mx-5 py-5">
+    <div class="container">
+      <div id="content-container">
+          {% block content %}
+          {% endblock %}
+      </div>
+    </div>
+  </section>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 
 </body>
 
