@@ -17,8 +17,6 @@ a.nav-link:hover, a.winner-link:hover {
 #content-container {
     max-width: 900px;
     margin: 0 auto;
-    margin-top: 100px;
-    margin-bottom: 100px;
     justify-content: space-around;
     align-items: flex-start;
     border: white;
@@ -44,11 +42,6 @@ a.nav-link:hover, a.winner-link:hover {
 }
 .game-attr-cell {
     margin: 10px;
-}
-
-/* New game form */
-#new-game-form {
-    top: 20px;
 }
 #winner-dropdown {
     width: 100%;
