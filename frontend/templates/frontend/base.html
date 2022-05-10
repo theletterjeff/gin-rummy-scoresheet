@@ -18,16 +18,15 @@
 <body>
 
   <!--Navbar-->
-  <!--
-  <nav class="navbar navbar-expand navbar-light bg-light">
-    <div class="container-fluid">
-      <a href="#" class="navbar-brand" id="navbar-brand">Gin Rummy Scoresheet</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid mx-md-5">
+      <a class="navbar-brand" id="navbar-brand" href="#">Gin Rummy Scoresheet</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        {% if user.is_authenticated %}
-          <ul class="navbar-nav">
+      {% if user.is_authenticated %}
+        <div class="collapse navbar-collapse justify-content-end" id="navbarText">
+          <ul class="navbar-nav mb-2 mb-lg-0">
             <li class="nav-item">
               <a class="nav-link" id="matches-nav-link" href="#">Matches</a>
             </li>
@@ -41,8 +40,10 @@
               <a class="nav-link" id="account-nav-link" href="#">Account</a>
             </li>
           </ul>
-        {% else %}
-          <ul class="navbar-nav">
+        </div>
+      {% else %}
+        <div class="collapse navbar-collapse justify-content-end" id="navbarText">
+          <ul class="navbar-nav mb-2 mb-lg-0">
             <li class="nav-item">
               <a class="nav-link" id="login-link" href="#">Log In</a>
             </li>
@@ -50,29 +51,8 @@
               <a class="nav-link" id="signup-link" href="#">Sign Up</a>
             </li>
           </ul>
-        {% endif %}
         </div>
-      </div>
-    </div>
-  </nav>
-  --> 
-
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container-fluid mx-md-5">
-      <a class="navbar-brand" id="navbar-brand" href="#">Gin Rummy Scoresheet</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse justify-content-end" id="navbarText">
-        <ul class="navbar-nav mb-2 mb-lg-0">
-          <li class="nav-item">
-            <a class="nav-link" id="login-link" href="#">Log In</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" id="signup-link" href="#">Sign Up</a>
-          </li>
-        </ul>
-      </div>
+      {% endif %}
     </div>
   </nav>
 
