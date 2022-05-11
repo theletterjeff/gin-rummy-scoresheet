@@ -137,8 +137,8 @@ function makeGameTableRow(gameData) {
       <td>${points}</td>
       <td class="checkbox-cell">${ginCheck}</td>
       <td class="checkbox-cell">${undercutCheck}</td>
-      <td class="button-cell"><button class="btn btn-small btn-outline-info edit">Edit</button></td>
-      <td class="button-cell"><button class="btn btn-small btn-outline-dark delete">Delete</button></td>
+      <td class="button-cell"><button class="btn btn-small btn-outline-success edit">Edit</button></td>
+      <td class="button-cell"><button class="btn btn-small btn-outline-secondary delete">Delete</button></td>
     </tr>
   `
   return innerHTML;
