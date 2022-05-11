@@ -14,13 +14,6 @@ a.nav-link, a.winner-link {
 a.nav-link:hover, a.winner-link:hover {
     color: rgb(127, 154, 204);
 }
-#content-container {
-    max-width: 900px;
-    margin: 0 auto;
-    justify-content: space-around;
-    align-items: flex-start;
-    border: white;
-}
 #form-wrapper {
     position: -webkit-sticky;
     position: sticky;
