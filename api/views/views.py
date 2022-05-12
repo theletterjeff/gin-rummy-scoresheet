@@ -4,7 +4,9 @@ from rest_framework.generics import (CreateAPIView, ListAPIView,
                                      RetrieveUpdateDestroyAPIView)
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
+from rest_framework_simplejwt.views import TokenObtainPairView
 
+from api.serializers import CustomTokenObtainPairSerializer
 from api.views.mixins import (AuthenticationMixin, MatchMixin,
                               GameMixin, PlayerMixin)
 
@@ -57,3 +59,6 @@ class PlayerDetail(PlayerMixin, AuthenticationMixin, RetrieveAPIView):
     Return a specific Player object.
     """
     pass
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
