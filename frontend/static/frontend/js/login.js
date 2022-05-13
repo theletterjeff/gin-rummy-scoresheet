@@ -15,25 +15,22 @@ async function submitLoginForm(e) {
   const loginEndpoint = getLoginEndpoint();
   const csrfToken = getCookie("csrftoken");
 
-  const username = document.getElementById("username").value;
-  const password = document.getElementById("password").value;
-
   let response = await fetch(loginEndpoint, {
     method:"POST",
     headers:{
-      "Content-Type":"application/json",
+      "Content-Type": "application/json",
       "X-CSRFToken": csrfToken
     },
-    body:JSON.stringify({"username":username, "password":password})
+    body:JSON.stringify({
+      "username": e.target.username.value,
+      "password": e.target.password.value,
+    })
   });
 
-  if (response.status == 200) {
-    let tokenData = await response.json();
-
-    document.cookie = `access_token=${tokenData["access"]}; path="/"`;
-    document.cookie = `refresh_token=${tokenData["refresh"]}; path="/"`;
-    
+  if (response.status === 200) {
+    let tokenData = await response.json();    
     const homeURL = getHomeURL();
+
     window.location.href = homeURL;
   } else {
     resetLoginForm();
