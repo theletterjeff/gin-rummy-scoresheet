@@ -1,4 +1,4 @@
-import {fillTitle} from "./base.js";
+import {fillTitle, getCookie} from "./base.js";
 
 fillMatchDetailPage();
 
@@ -16,23 +16,6 @@ async function fillMatchDetailPage() {
 
   let newGameForm = document.getElementById("new-game-form");
   newGameForm.addEventListener("submit", (e) => submitNewGameForm(e));
-}
-
-/** Get cookie value (used to pass CSRF token to POST requests) */
-function getCookie(name) {
-  let cookieValue = null;
-  if (document.cookie && document.cookie !== '') {
-      const cookies = document.cookie.split(';');
-      for (let i = 0; i < cookies.length; i++) {
-          const cookie = cookies[i].trim();
-          // Does this cookie string begin with the name we want?
-          if (cookie.substring(0, name.length + 1) === (name + '=')) {
-              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-              break;
-          }
-      }
-  }
-  return cookieValue;
 }
 
 /** Fill the `game-wrapper` element with a list of game details */
