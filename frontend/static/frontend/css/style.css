@@ -2,17 +2,19 @@ h1, h2, h3, h4, h5, p, th, td, label, form {
     font-family: 'Lato', sans-serif;
     color: rgb(67, 67, 79);
 }
+a {
+    font-family: 'Lato', sans-serif;
+    color: rgb(77, 95, 128);
+    text-decoration: none;
+}
+a:hover {
+    color: rgb(127, 154, 204);
+}
 #nav-item {
     color: white;
 }
 #site-title {
     margin-bottom: 0px;
-}
-a.nav-link, a.winner-link {
-    color: rgb(77, 95, 128)
-}
-a.nav-link:hover, a.winner-link:hover {
-    color: rgb(127, 154, 204);
 }
 #form-wrapper {
     position: -webkit-sticky;
