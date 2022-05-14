@@ -164,8 +164,8 @@ async function submitNewGameForm(e) {
   let loserEndpoint = Object.values(playersUserEnd)[0]
   
   let points = document.getElementById('points-input').value;
-  let gin = document.getElementById('gin-input').value;
-  let undercut = document.getElementById('undercut-input').value;
+  let gin = document.getElementById('gin-input').checked;
+  let undercut = document.getElementById('undercut-input').checked;
   
   // Logged in user placeholder, switch out later when I figure out login
   let createdBy = winnerEndpoint
