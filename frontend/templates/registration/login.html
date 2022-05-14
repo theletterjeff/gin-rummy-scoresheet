@@ -5,8 +5,7 @@
 
   {% if next %}
     {% if user.is_authenticated %}
-      <p>Your account doesn't have access to this page. To proceed,
-      please login with an account that has access.</p>
+      <p>Your account doesn't have access to this page. To proceed, please login with an account that has access.</p>
     {% else %}
       <p>Please login to see this page.</p>
     {% endif %}
@@ -20,13 +19,14 @@
         {% csrf_token %}
         <div class="mb-3">
           <label for="username" class="form-label">Username</label>
-          <input type="text" class="form-control" id="username" name="username">
+          <input type="text" class="form-control" id="username" name="username" />
         </div>
         <div class="mb-3">
           <label for"password" class="form-label">Password</label>
-          <input type="password" class="form-control" id="password" name="password">
+          <input type="password" class="form-control" id="password" name="password" />
         </div>
         <button type="submit" class="btn btn-outline-primary" id="submit-button">Submit</button>
+        <input type="hidden" name="next" value="{{ next }}" />
       </form>
       <p class="mt-3"><a href="{% url 'password_reset' %}">Lost password?</a></p>          
     </div>
