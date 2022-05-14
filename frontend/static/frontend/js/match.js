@@ -1,4 +1,8 @@
-import {fillTitle, getCookie} from "./base.js";
+import { getJsonResponse, fillTitle } from "./utils.js";
+import { getApiDetailEndpoint, getPlayersEndpointUsername } from './endpoints.js';
+
+
+import { fillWinnerDropdown, submitGameForm } from "./game-form.js";
 
 fillMatchDetailPage();
 
@@ -8,19 +12,20 @@ fillMatchDetailPage();
 async function fillMatchDetailPage() {
   fillTitle('Match');
 
-  const matchDetailEndpoint = getMatchDetailEndpoint();
+  const matchDetailEndpoint = getApiDetailEndpoint();
   let playersEndpointUsername = await getPlayersEndpointUsername(matchDetailEndpoint);
   
-  fillWinnerDropdown();
+  fillWinnerDropdown(matchDetailEndpoint);
   listGames(playersEndpointUsername);
 
   let newGameForm = document.getElementById("new-game-form");
-  newGameForm.addEventListener("submit", (e) => submitNewGameForm(e));
+  newGameForm.addEventListener("submit", (e) => submitGameForm(e));
 }
 
 /** Fill the `game-wrapper` element with a list of game details */
 async function listGames(playersEndpointUsername) {
-  let matchDetailJSON = await getMatchDetailJSON();
+  let matchEndpoint = getApiDetailEndpoint()
+  let matchDetailJSON = await getJsonResponse(matchEndpoint);
   let gamesHTML = await getGamesHTML(matchDetailJSON, playersEndpointUsername);
 
   let gameWrapper = document.getElementById("game-table-body");
@@ -31,64 +36,13 @@ async function listGames(playersEndpointUsername) {
   }
 }
 
-/** Return the endpoint for the MatchDetail API view */
-function getMatchDetailEndpoint() {
-  const pageURL = new URL(window.location.href);
-  const pageOrigin = pageURL.origin;
-  const pagePath = pageURL.pathname;
-  return `${pageOrigin}/api${pagePath}/`;
-}
-
-/** Return the endoint for the GameListCreate API view */
-function getGameListCreateEndpoint() {
-  const pageURL = new URL(window.location.href);
-  const pageOrigin = pageURL.origin;
-  return `${pageOrigin}/api/game/`
-}
-
-function getJSONResponsePromise(endpoint) {
-  let json = fetch(endpoint)
-             .then((response) => response.json());
-  return json;
-}
-
-async function getMatchDetailJSON() {
-  const matchDetailEndpoint = getMatchDetailEndpoint()
-  return await getJSONResponsePromise(matchDetailEndpoint);
-}
-
-/* Return a players object {username: endpoint} */
-async function getPlayersEndpointUsername(matchDetailEndpoint) {
-  let players = {}
-  let matchData = await getJSONResponsePromise(matchDetailEndpoint)
-
-  for (let playerEndpoint of matchData.players) {
-    let playerJSON = await getJSONResponsePromise(playerEndpoint)
-    let username = await playerJSON.username;
-    players[playerEndpoint] = username;
-  };
-
-  return players;
-}
-
-/** Return a players object {endpoint: username} */
-async function getPlayersUsernameEndpoint(matchDetailEndpoint) {
-  let players = await getPlayersEndpointUsername(matchDetailEndpoint);
-  let playersFlipped = {};
-
-  // Make the keys into values and the values into keys
-  Object.entries(players).forEach(([key, value]) => {playersFlipped[value] = key});
-  
-  return playersFlipped;
-}
-
 /* Return an array of game table row HTML elements */
 async function getGamesHTML(matchData, playersEndpointUsername) {
   let gamesHTML = [];
   let gameEndpoints = matchData.games;
 
   for (let gameEndpoint of gameEndpoints) {
-    let gameData = await getJSONResponsePromise(gameEndpoint);
+    let gameData = await getJsonResponse(gameEndpoint);
     let gameHTML = makeGameTableRow(gameData);
     
     const endpointRe = new RegExp('(http.*?)(?=")')
@@ -125,67 +79,4 @@ function makeGameTableRow(gameData) {
     </tr>
   `
   return innerHTML;
-}
-
-async function fillWinnerDropdown() {
-  let matchEndpoint = getMatchDetailEndpoint();
-  let players = await getPlayersEndpointUsername(matchEndpoint);
-  
-  let dropdownOptions = ""
-
-  Object.values(players).forEach(function(username) {
-    let dropdownOption = `<option value=${username}>${username}</option>`;
-    dropdownOptions += dropdownOption;
-  })
-
-  let winnerDropdown = document.getElementById('winner-dropdown');
-  winnerDropdown.innerHTML = dropdownOptions;
-}
-
-async function submitNewGameForm(e) {
-  e.preventDefault();
-  
-  const csrfToken = getCookie("csrftoken");
-  
-  const gameEndpoint = getGameListCreateEndpoint();
-  const matchDetailEndpoint = getMatchDetailEndpoint();
-  
-  let playersUserEnd = await getPlayersUsernameEndpoint(matchDetailEndpoint);
-  let playersEndUser = await getPlayersEndpointUsername(matchDetailEndpoint)
-
-  // Form fields
-  let match = matchDetailEndpoint;
-  
-  let winnerUsername = document.getElementById('winner-dropdown').value;
-  let winnerEndpoint = playersUserEnd[winnerUsername];
-  
-  // Delete winner from `players`, leaving only the loser
-  delete playersUserEnd[winnerUsername]
-  let loserEndpoint = Object.values(playersUserEnd)[0]
-  
-  let points = document.getElementById('points-input').value;
-  let gin = document.getElementById('gin-input').checked;
-  let undercut = document.getElementById('undercut-input').checked;
-  
-  // Logged in user placeholder, switch out later when I figure out login
-  let createdBy = winnerEndpoint
-
-  fetch(gameEndpoint, {
-    method: 'POST',
-    headers: {
-      'Content-type': 'application/json',
-      'X-CSRFToken': csrfToken,
-    },
-    body: JSON.stringify({
-      'match': match,
-      'winner': winnerEndpoint,
-      'loser': loserEndpoint,
-      'points': points,
-      'gin': gin,
-      'undercut': undercut,
-      'created_by': createdBy,
-    }),
-  }).then(() => listGames(playersEndUser));
-  
-  console.log('Form Submitted');
 }
