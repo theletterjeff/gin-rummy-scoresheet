@@ -36,14 +36,14 @@ function getMatchDetailEndpoint() {
   const pageURL = new URL(window.location.href);
   const pageOrigin = pageURL.origin;
   const pagePath = pageURL.pathname;
-  return `${pageOrigin}/api${pagePath}`;
+  return `${pageOrigin}/api${pagePath}/`;
 }
 
 /** Return the endoint for the GameListCreate API view */
 function getGameListCreateEndpoint() {
   const pageURL = new URL(window.location.href);
   const pageOrigin = pageURL.origin;
-  return `${pageOrigin}/api/game`
+  return `${pageOrigin}/api/game/`
 }
 
 function getJSONResponsePromise(endpoint) {
