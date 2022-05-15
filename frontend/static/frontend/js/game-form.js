@@ -1,5 +1,10 @@
-import { getPlayersEndpointUsername, getGameListCreateEndpoint } from "./endpoints.js";
-import { getCookie } from "./utils.js";
+import {
+  getApiDetailEndpoint,
+  getPlayersUsernameEndpoint,
+  getPlayersEndpointUsername,
+  getGameListCreateEndpoint
+} from "./endpoints.js";
+import { getCookie } from './utils.js';
 
 export async function fillWinnerDropdown(matchDetailEndpoint, defaultWinner=null) {
   let players = await getPlayersEndpointUsername(matchDetailEndpoint);
@@ -62,7 +67,15 @@ export async function submitGameForm(e) {
       'undercut': undercut,
       'created_by': createdBy,
     }),
-  }).then(() => listGames(playersEndUser));
-  
-  console.log('Form Submitted');
+  })
+}
+
+export function fillPoints(points) {
+  let pointsInput = document.getElementById('points-input');
+  pointsInput.value = points;
+}
+
+export function fillCheckbox(elementId, boolVal) {
+  let checkboxElem = document.getElementById(elementId);
+  checkboxElem.checked = boolVal;
 }
