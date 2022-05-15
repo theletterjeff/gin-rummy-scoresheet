@@ -4,14 +4,16 @@ import { getApiDetailEndpoint, getPlayersEndpointUsername, getFrontendURL } from
 
 import { fillWinnerDropdown, submitGameForm } from "./game-form.js";
 
+// Page constants
+const matchDetailEndpoint = getApiDetailEndpoint();
+const playersEndUser = await getPlayersEndpointUsername(matchDetailEndpoint);
+const csrfToken = getCookie('csrftoken');
+
 fillMatchDetailPage();
 
 /** Main execution function */
 async function fillMatchDetailPage() {
   fillTitle('Match');
-
-  const matchDetailEndpoint = getApiDetailEndpoint();
-  let playersEndUser = await getPlayersEndpointUsername(matchDetailEndpoint);
   
   fillWinnerDropdown(matchDetailEndpoint);
   listGames(playersEndUser);
@@ -26,8 +28,7 @@ async function fillMatchDetailPage() {
 
 /** Fill the `game-wrapper` element with a list of game details */
 async function listGames(playersEndpointUsername) {
-  let matchEndpoint = getApiDetailEndpoint()
-  let matchDetailJson = await getJsonResponse(matchEndpoint);
+  let matchDetailJson = await getJsonResponse(matchDetailEndpoint);
   let gamesHTML = await getGamesHTML(matchDetailJson, playersEndpointUsername);
 
   let gameWrapper = document.getElementById("game-table-body");
@@ -90,10 +91,6 @@ async function addEditDeleteButtons(matchDetailJson) {
   let gameEndpoints = matchDetailJson.games;
   let editBtns = document.getElementsByClassName('edit')
   let deleteBtns = document.getElementsByClassName('delete')
-  const csrfToken = getCookie('csrftoken')
-
-  const matchDetailEndpoint = getApiDetailEndpoint();
-  let playersEndUser = await getPlayersEndpointUsername(matchDetailEndpoint);
 
   for (let i in gameEndpoints) {
     let gameEndpoint = gameEndpoints[i];
