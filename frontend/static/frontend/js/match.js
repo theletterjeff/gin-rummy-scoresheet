@@ -6,20 +6,22 @@ import { fillWinnerDropdown, submitGameForm } from "./game-form.js";
 
 fillMatchDetailPage();
 
-// Functions
-
 /** Main execution function */
 async function fillMatchDetailPage() {
   fillTitle('Match');
 
   const matchDetailEndpoint = getApiDetailEndpoint();
-  let playersEndpointUsername = await getPlayersEndpointUsername(matchDetailEndpoint);
+  let playersEndUser = await getPlayersEndpointUsername(matchDetailEndpoint);
   
   fillWinnerDropdown(matchDetailEndpoint);
-  listGames(playersEndpointUsername);
+  listGames(playersEndUser);
 
   let newGameForm = document.getElementById("new-game-form");
-  newGameForm.addEventListener("submit", (e) => submitGameForm(e));
+  newGameForm.addEventListener("submit", function(e) {
+    submitGameForm(e)
+    .then(() => document.getElementById('new-game-form').reset())
+    .then(() => listGames(playersEndUser))
+  });
 }
 
 /** Fill the `game-wrapper` element with a list of game details */
