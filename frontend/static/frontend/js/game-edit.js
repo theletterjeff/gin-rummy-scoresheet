@@ -38,6 +38,6 @@ async function addGameEditSubmitEvent(matchDetailEndpoint) {
   gameEditForm.addEventListener('submit', function(e) {
     submitGameForm(e, 'PATCH')
     .then((resp) => console.log(resp.status))
-    .then(() => {window.location = 'http://127.0.0.1:8000/match/3/'})
+    .then(() => {window.location = getFrontendURL(matchDetailEndpoint)})
   })
 }
