@@ -1,4 +1,4 @@
-h1, h2, h3, h4, h5, p, th, td, label, form {
+h1, h2, h3, h4, h5, h6, p, th, td, label, form {
     font-family: 'Lato', sans-serif;
     color: rgb(67, 67, 79);
 }
@@ -52,9 +52,6 @@ a:hover {
 }
 
 /* Game table */
-#game-table-container {
-    margin-top: 2rem;
-}
 td {
     vertical-align: middle;
 }
