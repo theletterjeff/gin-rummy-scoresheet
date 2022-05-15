@@ -1,4 +1,4 @@
-import { getJsonResponse, fillTitle } from "./utils.js";
+import { getJsonResponse, fillTitle, getCookie } from "./utils.js";
 import { getApiDetailEndpoint, getPlayersEndpointUsername, getFrontendURL } from './endpoints.js';
 
 
@@ -33,7 +33,7 @@ async function listGames(playersEndpointUsername) {
   let gameWrapper = document.getElementById("game-table-body");
   gameWrapper.innerHTML = "";
   gamesHTML.forEach(addGameRowToPage);
-  addEditButtons(matchDetailJson)
+  addEditDeleteButtons(matchDetailJson);
 }
 
 /* Return an array of game table row HTML elements */
@@ -86,14 +86,31 @@ function addGameRowToPage(gameHTML) {
   gameWrapper.innerHTML += gameHTML;
 }
 
-function addEditButtons(matchDetailJson) {
+async function addEditDeleteButtons(matchDetailJson) {
   let gameEndpoints = matchDetailJson.games;
   let editBtns = document.getElementsByClassName('edit')
+  let deleteBtns = document.getElementsByClassName('delete')
+  const csrfToken = getCookie('csrftoken')
+
+  const matchDetailEndpoint = getApiDetailEndpoint();
+  let playersEndUser = await getPlayersEndpointUsername(matchDetailEndpoint);
+
   for (let i in gameEndpoints) {
     let gameEndpoint = gameEndpoints[i];
     let editBtn = editBtns[i];
+    let deleteBtn = deleteBtns[i];
+
     editBtn.addEventListener('click', function() {
       window.location = getFrontendURL(gameEndpoint)
     });
+    deleteBtn.addEventListener('click', function() {
+      fetch(gameEndpoint, {
+        method: 'DELETE',
+        headers: {
+          'Content-type': 'application/json',
+          'X-CSRFToken': csrfToken,
+        }
+      }).then(() => listGames(playersEndUser))
+    })
   }
 }
