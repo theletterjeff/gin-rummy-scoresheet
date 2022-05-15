@@ -39,3 +39,8 @@ export async function getPlayersUsernameEndpoint(matchDetailEndpoint) {
   
   return playersFlipped;
 }
+
+/** Derive frontend URL for a match from the API endpoint */
+export function getFrontendURL(apiEndpoint) {
+  return apiEndpoint.replace('api/', '');
+}
