@@ -2,6 +2,8 @@ import { fillTitle, getJsonResponse } from './utils.js';
 import { getApiDetailEndpoint, getFrontendURL } from './endpoints.js';
 import { fillWinnerDropdown, fillPoints, fillCheckbox, submitGameForm } from './game-form.js';
 
+const gameDetailEndpoint = getApiDetailEndpoint();
+
 fillGameEditPage();
 
 async function fillGameEditPage() {
@@ -10,7 +12,6 @@ async function fillGameEditPage() {
 }
 
 async function fillGameEditForm() {
-  const gameDetailEndpoint = getApiDetailEndpoint();
   const gameJson = await getJsonResponse(gameDetailEndpoint);
   
   const winnerEndpoint = gameJson.winner;
