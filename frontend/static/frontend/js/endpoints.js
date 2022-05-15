@@ -6,7 +6,7 @@ import { getJsonResponse } from "./utils.js";
   const pageURL = new URL(window.location.href);
   const pageOrigin = pageURL.origin;
   const pagePath = pageURL.pathname;
-  return `${pageOrigin}/api${pagePath}/`;
+  return `${pageOrigin}/api${pagePath}`;
 }
 
 /** Return the endoint for the GameListCreate API view */
