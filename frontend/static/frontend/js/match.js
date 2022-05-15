@@ -1,5 +1,5 @@
 import { getJsonResponse, fillTitle } from "./utils.js";
-import { getApiDetailEndpoint, getPlayersEndpointUsername } from './endpoints.js';
+import { getApiDetailEndpoint, getPlayersEndpointUsername, getFrontendURL } from './endpoints.js';
 
 
 import { fillWinnerDropdown, submitGameForm } from "./game-form.js";
@@ -18,7 +18,7 @@ async function fillMatchDetailPage() {
 
   let newGameForm = document.getElementById("new-game-form");
   newGameForm.addEventListener("submit", function(e) {
-    submitGameForm(e)
+    submitGameForm(e, 'POST')
     .then(() => document.getElementById('new-game-form').reset())
     .then(() => listGames(playersEndUser))
   });
@@ -27,15 +27,13 @@ async function fillMatchDetailPage() {
 /** Fill the `game-wrapper` element with a list of game details */
 async function listGames(playersEndpointUsername) {
   let matchEndpoint = getApiDetailEndpoint()
-  let matchDetailJSON = await getJsonResponse(matchEndpoint);
-  let gamesHTML = await getGamesHTML(matchDetailJSON, playersEndpointUsername);
+  let matchDetailJson = await getJsonResponse(matchEndpoint);
+  let gamesHTML = await getGamesHTML(matchDetailJson, playersEndpointUsername);
 
   let gameWrapper = document.getElementById("game-table-body");
-  gameWrapper.innerHTML = ""
-
-  for (let gameHTML of gamesHTML) {
-    gameWrapper.innerHTML += gameHTML;
-  }
+  gameWrapper.innerHTML = "";
+  gamesHTML.forEach(addGameRowToPage);
+  addEditButtons(matchDetailJson)
 }
 
 /* Return an array of game table row HTML elements */
@@ -81,4 +79,21 @@ function makeGameTableRow(gameData) {
     </tr>
   `
   return innerHTML;
+}
+
+function addGameRowToPage(gameHTML) {
+  let gameWrapper = document.getElementById('game-table-body');
+  gameWrapper.innerHTML += gameHTML;
+}
+
+function addEditButtons(matchDetailJson) {
+  let gameEndpoints = matchDetailJson.games;
+  let editBtns = document.getElementsByClassName('edit')
+  for (let i in gameEndpoints) {
+    let gameEndpoint = gameEndpoints[i];
+    let editBtn = editBtns[i];
+    editBtn.addEventListener('click', function() {
+      window.location = getFrontendURL(gameEndpoint)
+    });
+  }
 }

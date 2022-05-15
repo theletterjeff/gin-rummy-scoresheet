@@ -1,6 +1,6 @@
 import { fillTitle, getJsonResponse } from './utils.js';
-import { getApiDetailEndpoint } from './endpoints.js';
-import { fillWinnerDropdown, fillPoints, fillCheckbox } from './game-form.js';
+import { getApiDetailEndpoint, getFrontendURL } from './endpoints.js';
+import { fillWinnerDropdown, fillPoints, fillCheckbox, submitGameForm } from './game-form.js';
 
 fillGameEditPage();
 
@@ -28,4 +28,15 @@ async function fillGameEditForm() {
   fillPoints(points);
   fillCheckbox("gin-input", gin);
   fillCheckbox("undercut-input", undercut);
+
+  addGameEditSubmitEvent(matchDetailEndpoint);
+}
+
+async function addGameEditSubmitEvent(matchDetailEndpoint) {
+  let gameEditForm = document.getElementById('edit-game-form');
+  gameEditForm.addEventListener('submit', function(e) {
+    submitGameForm(e, 'PATCH')
+    .then((resp) => console.log(resp.status))
+    .then(() => {window.location = 'http://127.0.0.1:8000/match/3/'})
+  })
 }

@@ -4,7 +4,7 @@ import {
   getPlayersEndpointUsername,
   getGameListCreateEndpoint
 } from "./endpoints.js";
-import { getCookie } from './utils.js';
+import { getCookie, getJsonResponse } from './utils.js';
 
 export async function fillWinnerDropdown(matchDetailEndpoint, defaultWinner=null) {
   let players = await getPlayersEndpointUsername(matchDetailEndpoint);
@@ -24,16 +24,29 @@ export async function fillWinnerDropdown(matchDetailEndpoint, defaultWinner=null
   winnerDropdown.innerHTML = dropdownOptions;
 }
 
-export async function submitGameForm(e) {
+export async function submitGameForm(e, method) {
   e.preventDefault();
   
   const csrfToken = getCookie("csrftoken");
   
-  const gameEndpoint = getGameListCreateEndpoint();
-  const matchDetailEndpoint = getApiDetailEndpoint();
+  let gameEndpoint = null
+  if (method == 'POST') {
+    gameEndpoint = getGameListCreateEndpoint();
+  } else {
+    gameEndpoint = getApiDetailEndpoint();
+  }
+
+  let matchDetailEndpoint = null
+
+  if (window.location.href.includes('match')) {
+    matchDetailEndpoint = getApiDetailEndpoint();
+  } else if (window.location.href.includes('game')) {
+    const gameDetailEndpoint = window.location.origin + '/api' + window.location.pathname;
+    let gameJson = await getJsonResponse(gameDetailEndpoint);
+    matchDetailEndpoint = gameJson.match;
+  };
   
   let playersUserEnd = await getPlayersUsernameEndpoint(matchDetailEndpoint);
-  let playersEndUser = await getPlayersEndpointUsername(matchDetailEndpoint)
 
   // Form fields
   let match = matchDetailEndpoint;
@@ -52,8 +65,8 @@ export async function submitGameForm(e) {
   // Logged in user placeholder, switch out later when I figure out login
   let createdBy = winnerEndpoint
 
-  fetch(gameEndpoint, {
-    method: 'POST',
+  return fetch(gameEndpoint, {
+    method: method,
     headers: {
       'Content-type': 'application/json',
       'X-CSRFToken': csrfToken,
