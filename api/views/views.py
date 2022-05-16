@@ -2,11 +2,15 @@ from rest_framework.decorators import api_view
 from rest_framework.generics import (CreateAPIView, ListAPIView,
                                      ListCreateAPIView, RetrieveAPIView,
                                      RetrieveUpdateDestroyAPIView)
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
+from api.permissions import IsOwnerOrReadyOnly
+from api.serializers import ScoreSerializer
 from api.views.mixins import (AuthenticationMixin, MatchMixin,
                               GameMixin, PlayerMixin)
+from base.models import Score
 
 @api_view(['GET'])
 def api_root(request, format=None):
@@ -56,4 +60,13 @@ class PlayerDetail(PlayerMixin, AuthenticationMixin, RetrieveAPIView):
     """
     Return a specific Player object.
     """
-    pass
+    
+
+class ScoreDetail(RetrieveAPIView):
+    """Return a single player's Score for a Match."""
+    queryset = Score.objects.all()
+    serializer_class = ScoreSerializer
+    permission_classes = [
+        IsAuthenticatedOrReadOnly,
+        IsOwnerOrReadyOnly,
+    ]
