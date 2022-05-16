@@ -1,5 +1,4 @@
 from rest_framework import serializers
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from accounts.models import Player
 from base.models import Game, Match, Outcome, Score
@@ -47,10 +46,3 @@ class ScoreSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Score
         fields = '__all__'
-
-class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
-    @classmethod
-    def get_token(cls, player):
-        token = super().get_token(player)
-        token['username'] = player.username
-        return token
