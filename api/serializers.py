@@ -2,7 +2,6 @@ from rest_framework import serializers
 
 from accounts.models import Player
 from base.models import Game, Match, Outcome, Score
-from base.models.match import MatchPlayer
 
 class PlayerSerializer(serializers.HyperlinkedModelSerializer):
     """
