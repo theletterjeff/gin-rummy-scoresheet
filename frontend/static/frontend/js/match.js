@@ -6,13 +6,13 @@ import { fillWinnerDropdown, submitGameForm } from "./game-form.js";
 
 // Page constants
 const matchDetailEndpoint = getApiDetailEndpoint();
-const playersEndUser = await getPlayersEndpointUsername(matchDetailEndpoint);
 const csrfToken = getCookie('csrftoken');
 
 // Data
 const matchJson = await getJsonResponse(matchDetailEndpoint);
 const gamesJson = await getJsonResponseArray(matchJson.games);
 const playersJson = await getJsonResponseArray(matchJson.players);
+const scoresJson = await getJsonResponseArray(matchJson.score_set);
 
 fillMatchDetailPage();
 
@@ -21,14 +21,14 @@ async function fillMatchDetailPage() {
   fillTitle('Match');
   
   fillWinnerDropdown(matchDetailEndpoint);
-  listGames(playersEndUser);
+  listGames();
   fillScores();
 
   let newGameForm = document.getElementById("new-game-form");
   newGameForm.addEventListener("submit", function(e) {
     submitGameForm(e, 'POST')
     .then(() => document.getElementById('new-game-form').reset())
-    .then(() => listGames(playersEndUser))
+    .then(() => listGames())
   });
 }
 
@@ -112,5 +112,18 @@ async function addEditDeleteButtons() {
         }
       }).then(() => listGames())
     })
+  }
+}
+
+function fillScores() {
+  let scoreboardUsernameElems = document.getElementsByClassName('scoreboard-username');
+  let scoreboardPointsElems = document.getElementsByClassName('scoreboard-points');
+  
+  for (let i in playersJson) {
+    scoreboardUsernameElems[i].innerHTML = playersJson[i].username;
+    let scoreJson = scoresJson.filter(function(score) {
+      return score.player == playersJson[i].url;
+    });
+    scoreboardPointsElems[i].innerHTML = scoreJson[0].player_score;
   }
 }
