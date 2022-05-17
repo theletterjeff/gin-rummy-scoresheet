@@ -29,7 +29,11 @@ class MatchSerializer(serializers.HyperlinkedModelSerializer):
         many=True,
         read_only=True,
     )
-
+    score_set = serializers.HyperlinkedRelatedField(
+        view_name='score-detail',
+        many=True,
+        read_only=True,
+    )
     class Meta:
         model = Match
         fields = '__all__'

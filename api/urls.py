@@ -19,7 +19,8 @@ urlpatterns = [
     path('match/<str:pk>/', views.MatchDetail.as_view(), name='match-detail'),
     path('game/<str:pk>/', views.GameDetail.as_view(), name='game-detail'),
     path('player/<str:pk>/', views.PlayerDetail.as_view(), name='player-detail'),
-
+    path('match/player-score/<str:pk>/',views.ScoreDetail.as_view(),
+         name='score-detail'),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
