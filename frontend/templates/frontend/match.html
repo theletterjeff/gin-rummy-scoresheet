@@ -5,63 +5,71 @@
 
 {% block content %}
 
-  <div class="card">
-    <div class="card-body">
-      <h5 class="card-title mb-3">Scoreboard</h5>
-      <div class="row d-flex align-items-end justify-content-around">
-        <div class="col ps-4">
-          <h6 class="scoreboard-username"></h6>
-        </div>
-        <div class="col ps-4">
-          <h6 class="scoreboard-username"></h6>
-        </div>
-      </div>
-      <div class="row d-flex align-items-start justify-content-around">
-        <div class="col ps-4">
-          <h3 class="m-0 scoreboard-points"></h3>
-        </div>
-        <div class="col ps-4">
-          <h3 class="m-0 scoreboard-points"></h3>
-        </div>
-      </div>
-      <div class="row d-flex align-items-start justify-content-around">
-        <div class="col ps-4">
-          <i><p class="m-0 scoreboard-wins-losses"></p></i>
-        </div>
-        <div class="col ps-4">
-          <i><p class="m-0 scoreboard-wins-losses"></p></i>
+  <div class="row">
+    <div class="col-xl">
+      <div class="d-flex flex-column h-100">
+        <div class="card" style="flex: 1">
+          <div class="card-body">
+            <h5 class="card-title mb-3">Scoreboard</h5>
+            <div class="row d-flex align-items-end justify-content-around">
+              <div class="col ps-4">
+                <h6 class="scoreboard-username"></h6>
+              </div>
+              <div class="col ps-4">
+                <h6 class="scoreboard-username"></h6>
+              </div>
+            </div>
+            <div class="row d-flex align-items-start justify-content-around">
+              <div class="col ps-4">
+                <h3 class="mt-1 scoreboard-points"></h3>
+              </div>
+              <div class="col ps-4">
+                <h3 class="mt-1 scoreboard-points"></h3>
+              </div>
+            </div>
+            <div class="row d-flex align-items-start justify-content-around">
+              <div class="col ps-4">
+                <i><p class="mt-1 scoreboard-wins-losses"></p></i>
+              </div>
+              <div class="col ps-4">
+                <i><p class="mt-1 scoreboard-wins-losses"></p></i>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <div class="card mt-3">
-    <div class="card-body">
-      <h5 class="card-title mb-3">Add a Game</h5>
-      
-      <form class="row g-3" id="new-game-form">
-        <div class="col-md-6">
-          <label class="form-label" for="winner-dropdown">Winner</label>
-          <select class="form-select" id="winner-dropdown" name="winner-dropdown"></select>
+    <div class="col-xl mb-3 mb-xl-0">
+      <div class="card mt-3 h-100 mt-xl-0">
+        <div class="card-body">
+          <h5 class="card-title mb-3">Add a Game</h5>
+          
+          <form class="row g-3" id="new-game-form">
+            <div class="col-12 col-md-8">
+              <label class="form-label" for="winner-dropdown">Winner</label>
+              <select class="form-select" id="winner-dropdown" name="winner-dropdown"></select>
+            </div>
+            <div class="col-12 col-md-4">
+              <label class="form-label" for="points-input">Points</label>
+              <input type="number" class="form-control" id="points-input" name="points-input">
+            </div>
+            <div class="col-md-12 d-flex flex-row flex-wrap align-items-center">
+              <div class="form-check me-4">
+                <label class="form-check-label" for="gin-input">Gin</label>
+                <input type="checkbox" class="form-check-input" id="gin-input" name="gin-input">
+              </div>
+              <div class="form-check me-4">
+                <label class="form-check-label" for="undercut-input">Undercut</label>
+                <input type="checkbox" class="form-check-input" id="undercut-input" name="undercut-input">
+              </div>
+              <div class="mt-3 mt-md-0">
+                <button type="submit" id="new-game-submit" class="btn btn-small btn-outline-primary submit">Submit</button>
+              </div>
+            </div>
+          </form>
         </div>
-        <div class="col col-xl-3">
-          <label class="form-label" for="points-input">Points</label>
-          <input type="number" class="form-control" id="points-input" name="points-input">
-        </div>
-        <div class="col-md-12 d-flex flex-row flex-wrap align-items-center">
-          <div class="form-check me-4">
-            <label class="form-check-label" for="gin-input">Gin</label>
-            <input type="checkbox" class="form-check-input" id="gin-input" name="gin-input">
-          </div>
-          <div class="form-check me-4">
-            <label class="form-check-label" for="undercut-input">Undercut</label>
-            <input type="checkbox" class="form-check-input" id="undercut-input" name="undercut-input">
-          </div>
-          <div>
-            <button type="submit" id="new-game-submit" class="btn btn-small btn-outline-primary submit">Submit</button>
-          </div>
-        </div>
-      </form>
+      </div>
     </div>
   </div>
 
