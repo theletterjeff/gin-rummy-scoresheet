@@ -9,10 +9,10 @@ const matchDetailEndpoint = getApiDetailEndpoint();
 const csrfToken = getCookie('csrftoken');
 
 // Data
-const matchJson = await getJsonResponse(matchDetailEndpoint);
-const gamesJson = await getJsonResponseArray(matchJson.games);
-const playersJson = await getJsonResponseArray(matchJson.players);
-const scoresJson = await getJsonResponseArray(matchJson.score_set);
+let matchJson = await getJsonResponse(matchDetailEndpoint);
+let gamesJson = await getJsonResponseArray(matchJson.games);
+let playersJson = await getJsonResponseArray(matchJson.players);
+let scoresJson = await getJsonResponseArray(matchJson.score_set);
 
 fillMatchDetailPage();
 
@@ -28,7 +28,9 @@ async function fillMatchDetailPage() {
   newGameForm.addEventListener("submit", function(e) {
     submitGameForm(e, 'POST')
     .then(() => document.getElementById('new-game-form').reset())
+    .then(() => updateMatchJsons())
     .then(() => listGames())
+    .then(() => fillScoreboard())
   });
 }
 
@@ -40,6 +42,13 @@ async function listGames() {
   gameWrapper.innerHTML = "";
   gamesHTML.forEach(addGameRowToPage);
   addEditDeleteButtons(matchJson);
+}
+
+async function updateMatchJsons() {
+  matchJson = await getJsonResponse(matchDetailEndpoint);
+  gamesJson = await getJsonResponseArray(matchJson.games);
+  playersJson = await getJsonResponseArray(matchJson.players);
+  scoresJson = await getJsonResponseArray(matchJson.score_set);
 }
 
 /* Return an array of game table row HTML elements */
@@ -60,16 +69,16 @@ async function getGamesHTML() {
   return gamesHTML;
 }
 
-function makeGameTableRow(gameData) {
-  let winnerEndpoint = gameData.winner
+function makeGameTableRow(gameJson) {
+  let winnerEndpoint = gameJson.winner
 
-  let datePlayed = new Date(gameData.datetime_played).toDateString()
-  let points = gameData.points
+  let datePlayed = new Date(gameJson.datetime_played).toDateString()
+  let points = gameJson.points
 
-  let gin = gameData.gin
+  let gin = gameJson.gin
   let ginCheck = gin ? "X" : ""
 
-  let undercut = gameData.undercut
+  let undercut = gameJson.undercut
   let undercutCheck = undercut ? "X" : ""
 
   let innerHTML = `
@@ -100,19 +109,30 @@ async function addEditDeleteButtons() {
     let editBtn = editBtns[i];
     let deleteBtn = deleteBtns[i];
 
-    editBtn.addEventListener('click', function() {
-      window.location = getFrontendURL(gameEndpoint)
-    });
-    deleteBtn.addEventListener('click', function() {
-      fetch(gameEndpoint, {
-        method: 'DELETE',
-        headers: {
-          'Content-type': 'application/json',
-          'X-CSRFToken': csrfToken,
-        }
-      }).then(() => listGames())
-    })
+    addEditButton(editBtn, gameEndpoint);
+    addDeleteButton(deleteBtn, gameEndpoint);
   }
+}
+
+function addEditButton(editButtonElem, gameEndpoint) {
+  editButtonElem.addEventListener('click', function() {
+    window.location = getFrontendURL(gameEndpoint)
+  });
+}
+
+async function addDeleteButton(deleteButtonElem, gameEndpoint) {
+  deleteButtonElem.addEventListener('click', function() {
+    fetch(gameEndpoint, {
+      method: 'DELETE',
+      headers: {
+        'Content-type': 'application/json',
+        'X-CSRFToken': csrfToken,
+      }
+    })
+    .then(() => updateMatchJsons())
+    .then(() => listGames())
+    .then(() => fillScoreboard())
+  })
 }
 
 function fillScoreboard() {
