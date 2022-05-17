@@ -4,6 +4,14 @@ export async function getJsonResponse(endpoint) {
   return json;
 }
 
+export async function getJsonResponseArray(endpointArray) {
+  let jsonArray = [];
+  for (let endpoint of endpointArray) {
+    jsonArray.push(await getJsonResponse(endpoint));
+  };
+  return jsonArray;
+}
+
 export function fillTitle(titleString) {
   let title = document.getElementsByTagName('title')[0];
   title.innerHTML = titleString;
