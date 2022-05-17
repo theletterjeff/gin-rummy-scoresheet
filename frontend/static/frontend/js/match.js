@@ -1,4 +1,4 @@
-import { getJsonResponse, fillTitle, getCookie } from "./utils.js";
+import { getJsonResponse, getJsonResponseArray, fillTitle, getCookie } from "./utils.js";
 import { getApiDetailEndpoint, getPlayersEndpointUsername, getFrontendURL } from './endpoints.js';
 
 
@@ -9,6 +9,11 @@ const matchDetailEndpoint = getApiDetailEndpoint();
 const playersEndUser = await getPlayersEndpointUsername(matchDetailEndpoint);
 const csrfToken = getCookie('csrftoken');
 
+// Data
+const matchJson = await getJsonResponse(matchDetailEndpoint);
+const gamesJson = await getJsonResponseArray(matchJson.games);
+const playersJson = await getJsonResponseArray(matchJson.players);
+
 fillMatchDetailPage();
 
 /** Main execution function */
@@ -17,6 +22,7 @@ async function fillMatchDetailPage() {
   
   fillWinnerDropdown(matchDetailEndpoint);
   listGames(playersEndUser);
+  fillScores();
 
   let newGameForm = document.getElementById("new-game-form");
   newGameForm.addEventListener("submit", function(e) {
@@ -27,30 +33,28 @@ async function fillMatchDetailPage() {
 }
 
 /** Fill the `game-wrapper` element with a list of game details */
-async function listGames(playersEndpointUsername) {
-  let matchDetailJson = await getJsonResponse(matchDetailEndpoint);
-  let gamesHTML = await getGamesHTML(matchDetailJson, playersEndpointUsername);
+async function listGames() {
+  let gamesHTML = await getGamesHTML();
 
   let gameWrapper = document.getElementById("game-table-body");
   gameWrapper.innerHTML = "";
   gamesHTML.forEach(addGameRowToPage);
-  addEditDeleteButtons(matchDetailJson);
+  addEditDeleteButtons(matchJson);
 }
 
 /* Return an array of game table row HTML elements */
-async function getGamesHTML(matchData, playersEndpointUsername) {
+async function getGamesHTML() {
   let gamesHTML = [];
-  let gameEndpoints = matchData.games;
-
-  for (let gameEndpoint of gameEndpoints) {
-    let gameData = await getJsonResponse(gameEndpoint);
-    let gameHTML = makeGameTableRow(gameData);
+  for (let gameJson of gamesJson) {
+    // Get winner
+    let winnerJson = playersJson.filter(function(playerJson) {
+      return playerJson.url == gameJson.winner;
+    });
+    let winnerUsername = winnerJson[0].username
     
-    const endpointRe = new RegExp('(http.*?)(?=")')
-
-    let playerEndpoint = endpointRe.exec(gameHTML)[0]
-
-    gameHTML = gameHTML.replace("#", playersEndpointUsername[playerEndpoint])
+    // Make HTML
+    let gameHTML = makeGameTableRow(gameJson);
+    gameHTML = gameHTML.replace("#", winnerUsername)
     gamesHTML.push(gameHTML);
   }
   return gamesHTML;
@@ -87,13 +91,12 @@ function addGameRowToPage(gameHTML) {
   gameWrapper.innerHTML += gameHTML;
 }
 
-async function addEditDeleteButtons(matchDetailJson) {
-  let gameEndpoints = matchDetailJson.games;
+async function addEditDeleteButtons() {
   let editBtns = document.getElementsByClassName('edit')
   let deleteBtns = document.getElementsByClassName('delete')
 
-  for (let i in gameEndpoints) {
-    let gameEndpoint = gameEndpoints[i];
+  for (let i in gamesJson) {
+    let gameEndpoint = gamesJson[i].url;
     let editBtn = editBtns[i];
     let deleteBtn = deleteBtns[i];
 
@@ -107,7 +110,7 @@ async function addEditDeleteButtons(matchDetailJson) {
           'Content-type': 'application/json',
           'X-CSRFToken': csrfToken,
         }
-      }).then(() => listGames(playersEndUser))
+      }).then(() => listGames())
     })
   }
 }
