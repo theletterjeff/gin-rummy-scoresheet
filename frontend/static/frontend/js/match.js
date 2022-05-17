@@ -22,7 +22,7 @@ async function fillMatchDetailPage() {
   
   fillWinnerDropdown(matchDetailEndpoint);
   listGames();
-  fillScores();
+  fillScoreboard();
 
   let newGameForm = document.getElementById("new-game-form");
   newGameForm.addEventListener("submit", function(e) {
@@ -115,15 +115,59 @@ async function addEditDeleteButtons() {
   }
 }
 
-function fillScores() {
+function fillScoreboard() {
   let scoreboardUsernameElems = document.getElementsByClassName('scoreboard-username');
   let scoreboardPointsElems = document.getElementsByClassName('scoreboard-points');
+  let scoreboardWinsLossesElems = document.getElementsByClassName('scoreboard-wins-losses')
   
+  countWinsAndLosses();
+
   for (let i in playersJson) {
-    scoreboardUsernameElems[i].innerHTML = playersJson[i].username;
-    let scoreJson = scoresJson.filter(function(score) {
-      return score.player == playersJson[i].url;
-    });
-    scoreboardPointsElems[i].innerHTML = scoreJson[0].player_score;
+    
+    let scoreJson = getScoreJson(playersJson[i])
+    
+    // Stats
+    let points = scoreJson.player_score;
+    let wins = playersJson[i].wins;
+    let losses = playersJson[i].losses;
+    
+    fillScoreboardUsernames(scoreboardUsernameElems[i], playersJson[i]);
+    fillScoreboardPoints(scoreboardPointsElems[i], points);
+    fillScoreboardWinsLosses(scoreboardWinsLossesElems[i], wins, losses);
+  }
+}
+
+function fillScoreboardUsernames(scoreboardUsernameElem, playerJson) {
+  scoreboardUsernameElem.innerHTML = playerJson.username;
+}
+
+function getScoreJson(playerJson) {
+  return scoresJson.filter(function(score) {
+    return score.player == playerJson.url;
+  })[0]
+}
+
+function fillScoreboardPoints(scoreboardPointsElem, points) {
+  scoreboardPointsElem.innerHTML = points;
+}
+
+function fillScoreboardWinsLosses(scoreboardWinsLossesElem, wins, losses) {
+  scoreboardWinsLossesElem.innerHTML = `(${wins} Wins, ${losses} losses)`
+}
+
+function countWinsAndLosses() {
+  for (let playerJson of playersJson) {
+    playerJson.wins = 0;
+    playerJson.losses = 0;
+  };
+  for (let gameJson of gamesJson) {
+    let winner = playersJson.filter(function(playerJson) {
+      return playerJson.url == gameJson.winner;
+    })[0];
+    let loser = playersJson.filter(function(playerJson) {
+      return playerJson.url == gameJson.loser;
+    })[0];
+    winner.wins += 1;
+    loser.losses += 1;
   }
 }
