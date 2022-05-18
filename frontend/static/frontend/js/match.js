@@ -1,5 +1,5 @@
 import { getJsonResponse, getJsonResponseArray, fillTitle, getCookie } from "./utils.js";
-import { getApiDetailEndpoint, getPlayersEndpointUsername, getFrontendURL } from './endpoints.js';
+import { getApiDetailEndpoint, getFrontendURL } from './endpoints.js';
 
 
 import { fillWinnerDropdown, submitGameForm } from "./game-form.js";
