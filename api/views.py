@@ -9,9 +9,9 @@ from rest_framework.reverse import reverse
 
 from accounts.models import Player
 from api.permissions import IsOwnerOrReadOnly, IsRequestUser
-from api.serializers import (GameSerializer, MatchSerializer,
+from api.serializers import (GameSerializer, MatchSerializer, OutcomeSerializer,
                              PlayerSerializer, ScoreSerializer)
-from base.models import Game, Match, Score
+from base.models import Game, Match, Outcome, Score
 
 @api_view(['GET'])
 def api_root(request, format=None):
@@ -105,4 +105,13 @@ class PlayerEdit(UpdateAPIView):
     serializer_class = PlayerSerializer
     permission_classes = [
         IsRequestUser,
+    ]
+
+class OutcomeDetail(RetrieveAPIView):
+    """GET an Outcome instance for a Match."""
+    queryset = Outcome.objects.all()
+    serializer_class = OutcomeSerializer
+    permission_classes = [
+        IsAuthenticatedOrReadOnly,
+        IsOwnerOrReadOnly,
     ]
