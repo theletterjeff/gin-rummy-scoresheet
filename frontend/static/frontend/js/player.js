@@ -26,6 +26,7 @@ function fillProfileCard() {
   linkPlayerEmail();
   fillProfileElem('player-date-joined', makeDateString(playerJson.date_joined));
   fillProfileElem('player-last-login', makeDateString(playerJson.last_login));
+  addEditButtonRedirect();
 }
 
 function fillProfileElem(elemName, value) {
@@ -48,4 +49,12 @@ function linkPlayerEmail() {
 
 function makeDateString(date) {
   return new Date(date).toDateString();
+}
+
+function addEditButtonRedirect() {
+  const editPlayerEndpoint = window.location.href + 'edit/'
+  const editBtn = document.getElementById('edit-button');
+  editBtn.addEventListener('click', function() {
+    window.location = editPlayerEndpoint;
+  })
 }
