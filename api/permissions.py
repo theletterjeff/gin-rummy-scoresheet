@@ -1,6 +1,6 @@
 from rest_framework import permissions
 
-class IsOwnerOrReadyOnly(permissions.BasePermission):
+class IsOwnerOrReadOnly(permissions.BasePermission):
     """
     Custom permission to only allow Players who are associated with the
     `created_by` attribute of an object to edit it.

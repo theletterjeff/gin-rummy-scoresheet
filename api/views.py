@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
 from accounts.models import Player
-from api.permissions import IsOwnerOrReadyOnly, IsRequestUser
+from api.permissions import IsOwnerOrReadOnly, IsRequestUser
 from api.serializers import (GameSerializer, MatchSerializer,
                              PlayerSerializer, ScoreSerializer)
 from base.models import Game, Match, Score
@@ -29,7 +29,7 @@ class MatchList(ListCreateAPIView):
     serializer_class = MatchSerializer
     permission_classes = [
         IsAuthenticatedOrReadOnly,
-        IsOwnerOrReadyOnly,
+        IsOwnerOrReadOnly,
     ]
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user)
@@ -42,7 +42,7 @@ class GameList(ListCreateAPIView):
     serializer_class = GameSerializer
     permission_classes = [
         IsAuthenticatedOrReadOnly,
-        IsOwnerOrReadyOnly,
+        IsOwnerOrReadOnly,
     ]
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user)
@@ -53,7 +53,7 @@ class PlayerList(ListAPIView):
     serializer_class = PlayerSerializer
     permission_classes = [
         IsAuthenticatedOrReadOnly,
-        IsOwnerOrReadyOnly,
+        IsOwnerOrReadOnly,
     ]
 
 class PlayerCreate(CreateAPIView):
@@ -67,7 +67,7 @@ class MatchDetail(RetrieveUpdateDestroyAPIView):
     serializer_class = MatchSerializer
     permission_classes = [
         IsAuthenticatedOrReadOnly,
-        IsOwnerOrReadyOnly,
+        IsOwnerOrReadOnly,
     ]
 
 class GameDetail(RetrieveUpdateDestroyAPIView):
@@ -76,7 +76,7 @@ class GameDetail(RetrieveUpdateDestroyAPIView):
     serializer_class = GameSerializer
     permission_classes = [
         IsAuthenticatedOrReadOnly,
-        IsOwnerOrReadyOnly,
+        IsOwnerOrReadOnly,
     ]
 
 class PlayerDetail(RetrieveAPIView):
@@ -85,7 +85,7 @@ class PlayerDetail(RetrieveAPIView):
     serializer_class = PlayerSerializer
     permission_classes = [
         IsAuthenticatedOrReadOnly,
-        IsOwnerOrReadyOnly,
+        IsOwnerOrReadOnly,
     ]
 
 class ScoreDetail(RetrieveAPIView):
@@ -94,7 +94,7 @@ class ScoreDetail(RetrieveAPIView):
     serializer_class = ScoreSerializer
     permission_classes = [
         IsAuthenticatedOrReadOnly,
-        IsOwnerOrReadyOnly,
+        IsOwnerOrReadOnly,
     ]
 
 class PlayerEdit(UpdateAPIView):
