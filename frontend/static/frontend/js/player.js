@@ -23,6 +23,7 @@ function fillProfileCard() {
   fillProfileElem('player-username', playerJson.username);
   fillProfileElem('player-name', getPlayerFullName());
   fillProfileElem('player-email', playerJson.email);
+  linkPlayerEmail();
   fillProfileElem('player-date-joined', makeDateString(playerJson.date_joined));
   fillProfileElem('player-last-login', makeDateString(playerJson.last_login));
 }
@@ -38,6 +39,11 @@ function fillProfileElem(elemName, value) {
 
 function getPlayerFullName() {
   return playerJson.first_name + " " + playerJson.last_name;
+}
+
+function linkPlayerEmail() {
+  let emailElem = document.getElementById('player-email');
+  emailElem.href = `mailto:${playerJson.email}`;
 }
 
 function makeDateString(date) {
