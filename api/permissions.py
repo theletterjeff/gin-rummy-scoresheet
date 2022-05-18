@@ -12,3 +12,10 @@ class IsOwnerOrReadyOnly(permissions.BasePermission):
         
         # Restrict write permissions to `created_by` Player
         return obj.created_by == request.user
+
+class IsRequestUser(permissions.BasePermission):
+    """Custom permission for editing Player instances; you have to be the
+    Player to edit.
+    """
+    def has_object_permission(self, request, view, obj):
+        return obj == request.user

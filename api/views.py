@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
 from accounts.models import Player
-from api.permissions import IsOwnerOrReadyOnly
+from api.permissions import IsOwnerOrReadyOnly, IsRequestUser
 from api.serializers import (GameSerializer, MatchSerializer,
                              PlayerSerializer, ScoreSerializer)
 from base.models import Game, Match, Score
@@ -104,6 +104,5 @@ class PlayerEdit(UpdateAPIView):
     queryset = Player.objects.all()
     serializer_class = PlayerSerializer
     permission_classes = [
-        IsAuthenticatedOrReadOnly,
-        IsOwnerOrReadyOnly,
+        IsRequestUser,
     ]
