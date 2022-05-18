@@ -6,37 +6,30 @@
     <div class="card-body">
       <h5 class="card-title mb-3" id="player-username"></h5>
 
-      <div class="row d-flex align-items-end justify-content-around">
-        <div class="col ps-4">
+      <div class="row d-flex align-items-start">
+        <div class="col-12 col-sm-6 col-lg-3 ps-4 mb-3 mb-lg-0">
           <h6>Name</h6>
+          <h6 class="mt-1" id="player-name"></h6>
         </div>
-        <div class="col ps-4">
+        <div class="col-12 col-sm-6 col-lg-3 ps-4 mb-3 mb-lg-0">
           <h6>Email Address</h6>
+          <h6 class="mt-1" id="player-email"></h6>
         </div>
-        <div class="col ps-4">
+        <div class="col-12 col-sm-6 col-lg-3 ps-4 mb-3 mb-lg-0">
           <h6>Date Joined</h6>
+          <h6 class="mt-1" id="player-date-joined"></h6>
         </div>
-        <div class="col ps-4">
+        <div class="col-12 col-sm-6 col-lg-3 ps-4 mb-3 mb-lg-0">
           <h6>Last Login</h6>
+          <h6 class="mt-1" id="player-last-login"></h6>
         </div>
       </div>
 
-      <div class="row d-flex align-items-start justify-content-around">
-        <div class="col ps-4">
-          <h3 class="mt-1" id="player-name"></h3>
-        </div>
-        <div class="col ps-4">
-          <h3 class="mt-1" id="player-email"></h3>
-        </div>
-        <div class="col ps-4">
-          <h3 class="mt-1" id="player-date-joined"></h3>
-        </div>
-        <div class="col ps-4">
-          <h3 class="mt-1" id="player-last-login"></h3>
-        </div>
-      </div>
-      
     </div>
   </div>
+
+  <script src="{% static './frontend/js/endpoints.js' %}" type="module"></script>
+  <script src="{% static './frontend/js/utils.js' %}" type="module"></script>
+  <script src="{% static './frontend/js/player.js' %}" type="module"></script>
 
 {% endblock %}
