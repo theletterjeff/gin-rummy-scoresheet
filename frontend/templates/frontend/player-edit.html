@@ -1,0 +1,39 @@
+<!--Player edit page to change profile details-->
+
+{% extends "frontend/base.html" %}
+{% load static %}
+
+{% block content %}
+
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title mb-3">Edit Player Profile</h5>
+      
+      <form class="row d-flex align-items-start" id="edit-player-form">
+        <div class="col-12 col-xl-3 ps-4 my-1 mb-lg-0">
+          <label class="form-label" for="player-username-input"><h6>Username</h6></label>
+          <input type="text" class="form-control mt-1" id="player-username-input" name="player-username-input">
+        </div>
+        <div class="col-12 col-sm-6 col-xl-3 ps-4 ps-xl-2 my-1 mb-lg-0">
+          <label class="form-label mt-3 mt-xl-0" for="player-first-name-input"><h6>First Name</h6></label>
+          <input type="text" class="form-control mt-1" id="player-first-name-input" name="player-first-name-input">
+        </div>
+        <div class="col-12 col-sm-6 col-xl-3 ps-4 ps-xl-2 mb-lg-0">
+          <label class="form-label mt-3 mt-xl-0" for="player-last-name-input"><h6>Last Name</h6></label>
+          <input type="text" class="form-control mt-1" id="player-last-name-input" name="player-last-name-input">
+        </div>
+        <div class="col-12 col-xl-3 ps-4 ps-xl-2 mb-lg-0">
+          <label class="form-label mt-3 mt-xl-0" for="player-email-input"><h6>Email Address</h6></label>
+          <input type="email" class="form-control mt-1" id="player-email-input" name="player-email-input">
+        </div>
+        <div class="d-grid col-4 col-md-3 col-lg-2 mx-auto mt-4">
+          <button type="button" class="btn btn-outline-success" id="edit-button">Submit</button>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+  <script src="{% static './frontend/js/player/player-edit.js' %}" type="module"></script>
+
+{% endblock %}

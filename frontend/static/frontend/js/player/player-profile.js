@@ -1,13 +1,8 @@
-import { getApiDetailEndpoint } from './endpoints.js';
-import { getJsonResponse, fillTitle } from './utils.js';
+import { fillTitle } from '../utils.js';
+import { getPlayerFullName, getPlayerJson } from './utils.js';
 
 let playerJson = await getPlayerJson();
 fillPlayerPage();
-
-async function getPlayerJson() {
-  const playerApiEndpoint = getApiDetailEndpoint();
-  return getJsonResponse(playerApiEndpoint);
-}
 
 function fillPlayerPage() {
   fillPlayerPageTitle('');
@@ -21,7 +16,7 @@ function fillPlayerPageTitle() {
 
 function fillProfileCard() {
   fillProfileElem('player-username', playerJson.username);
-  fillProfileElem('player-name', getPlayerFullName());
+  fillProfileElem('player-name', getPlayerFullName(playerJson));
   fillProfileElem('player-email', playerJson.email);
   linkPlayerEmail();
   fillProfileElem('player-date-joined', makeDateString(playerJson.date_joined));
@@ -38,17 +33,13 @@ function fillProfileElem(elemName, value) {
   elem.innerHTML = fillValue;
 }
 
-function getPlayerFullName() {
-  return playerJson.first_name + " " + playerJson.last_name;
+function makeDateString(date) {
+  return new Date(date).toDateString();
 }
 
 function linkPlayerEmail() {
   let emailElem = document.getElementById('player-email');
-  emailElem.href = `mailto:${playerJson.email}`;
-}
-
-function makeDateString(date) {
-  return new Date(date).toDateString();
+  emailElem.href = "mailto:" + playerJson.email;
 }
 
 function addEditButtonRedirect() {
