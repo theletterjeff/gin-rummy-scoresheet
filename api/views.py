@@ -1,7 +1,8 @@
 from rest_framework.decorators import api_view
 from rest_framework.generics import (CreateAPIView, ListAPIView,
                                      ListCreateAPIView, RetrieveAPIView,
-                                     RetrieveUpdateDestroyAPIView)
+                                     RetrieveUpdateDestroyAPIView,
+                                     UpdateAPIView)
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
@@ -91,6 +92,17 @@ class ScoreDetail(RetrieveAPIView):
     """GET a Player's Score for a Match."""
     queryset = Score.objects.all()
     serializer_class = ScoreSerializer
+    permission_classes = [
+        IsAuthenticatedOrReadOnly,
+        IsOwnerOrReadyOnly,
+    ]
+
+class PlayerEdit(UpdateAPIView):
+    """PUT or PATCH a Player profile.
+    To do: figure out correct `permission_classes`.
+    """
+    queryset = Player.objects.all()
+    serializer_class = PlayerSerializer
     permission_classes = [
         IsAuthenticatedOrReadOnly,
         IsOwnerOrReadyOnly,
