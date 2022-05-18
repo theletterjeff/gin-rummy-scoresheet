@@ -10,7 +10,7 @@ def home(request):
     return render(request, 'frontend/home.html')
 
 def player_profile(request, player_id):
-    return render(request, 'frontend/player.html')
+    return render(request, 'frontend/player-profile.html')
 
 def player_edit(request, player_id):
     return render(request, 'frontend/player-edit.html')
