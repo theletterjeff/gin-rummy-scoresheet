@@ -75,11 +75,12 @@ function makeGameTableRow(gameJson) {
   let datePlayed = new Date(gameJson.datetime_played).toDateString()
   let points = gameJson.points
 
+  const check_circle_html = '<span class="material-symbols-outlined pt-1">check_circle</span>'
   let gin = gameJson.gin
-  let ginCheck = gin ? "X" : ""
+  let ginCheck = gin ? check_circle_html : ""
 
   let undercut = gameJson.undercut
-  let undercutCheck = undercut ? "X" : ""
+  let undercutCheck = undercut ? check_circle_html : ""
 
   let innerHTML = `
     <tr>
