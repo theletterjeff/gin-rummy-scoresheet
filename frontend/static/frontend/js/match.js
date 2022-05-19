@@ -221,4 +221,31 @@ function disableNewGameFormFields() {
 
 function setMatchAsComplete() {
   disableNewGameFormFields();
+  addWinnerToScoreboardCardTitle();
+}
+
+function getMatchWinnerEndpoint() {
+  let outcomeArray = matchJson.outcome_set;
+  let winnerEndpoint = null
+  for (outcomeEndpoint of outcomeArray) {
+    let outcomeJson = getJsonResponse(outcomeEndpoint);
+    if (outcomeJson.player_outcome == 1) {
+      winnerEndpoint = outcomeJson.player;
+      break;
+    }
+  }
+  return winnerEndpoint;
+}
+
+function getMatchWinnerUsername() {
+  let winnerEndpoint = getMatchWinnerEndpoint();
+  let winnerJson = playerJson.filter(function(playerJson) {
+    return playerJson.url == winnerEndpoint;
+  })[0];
+  return winnerJson.username;
+}
+
+function addWinnerToScoreboardCardTitle() {
+  let winnerUsername = getMatchWinnerUsername();
+  document.getElementById('scoreboard-card-title').innerHTML = `Scoreboard :: <span><b>${winnerUsername} Wins!</b></span>`
 }
