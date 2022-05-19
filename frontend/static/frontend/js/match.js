@@ -18,7 +18,7 @@ fillMatchDetailPage();
 
 /** Main execution function */
 async function fillMatchDetailPage() {
-  fillTitle('Match');
+  fillTitle(`Match - ${playersJson[0].username} v. ${playersJson[1].username}`);
   
   fillWinnerDropdown(matchDetailEndpoint);
   listGames();
