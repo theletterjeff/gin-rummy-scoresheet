@@ -33,3 +33,7 @@ export function getCookie(name) {
   }
   return cookieValue;
 }
+
+export function setFormElemAsDisabled(elemName) {
+  document.getElementById(elemName).setAttribute('disabled', '');
+}

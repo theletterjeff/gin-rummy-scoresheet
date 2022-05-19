@@ -1,7 +1,11 @@
-import { getJsonResponse, getJsonResponseArray, fillTitle, getCookie } from "./utils.js";
+import {
+  getJsonResponse,
+  getJsonResponseArray,
+  fillTitle,
+  getCookie,
+  setFormElemAsDisabled,
+} from "./utils.js";
 import { getApiDetailEndpoint, getFrontendURL } from './endpoints.js';
-
-
 import { fillWinnerDropdown, submitGameForm } from "./game-form.js";
 
 // Page constants
@@ -23,6 +27,11 @@ async function fillMatchDetailPage() {
   fillWinnerDropdown(matchDetailEndpoint);
   listGames();
   fillScoreboard();
+  
+  let matchOutcome = checkMatchOutcome();
+  if (matchOutcome) {
+    setMatchAsComplete();
+  }
 
   let newGameForm = document.getElementById("new-game-form");
   newGameForm.addEventListener("submit", function(e) {
@@ -191,4 +200,25 @@ function countWinsAndLosses() {
     winner.wins += 1;
     loser.losses += 1;
   }
+}
+
+function checkMatchOutcome() {
+  return matchJson.outcome_set.length > 0;
+}
+
+function disableNewGameFormFields() {
+  const formElemNames = [
+    'winner-dropdown',
+    'points-input',
+    'gin-input',
+    'undercut-input',
+    'new-game-submit',
+  ];
+  for (let formElemName of formElemNames) {
+    setFormElemAsDisabled(formElemName);
+  }
+}
+
+function setMatchAsComplete() {
+  disableNewGameFormFields();
 }
