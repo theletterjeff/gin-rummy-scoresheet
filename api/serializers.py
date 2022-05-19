@@ -34,6 +34,11 @@ class MatchSerializer(serializers.HyperlinkedModelSerializer):
         many=True,
         read_only=True,
     )
+    outcome_set = serializers.HyperlinkedRelatedField(
+        view_name='outcome-detail',
+        many=True,
+        read_only=True,
+    )
     class Meta:
         model = Match
         fields = '__all__'

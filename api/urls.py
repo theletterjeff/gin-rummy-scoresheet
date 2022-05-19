@@ -22,7 +22,7 @@ urlpatterns = [
     path('game/<str:pk>/', views.GameDetail.as_view(), name='game-detail'),
     path('match/player-score/<str:pk>/', views.ScoreDetail.as_view(),
          name='score-detail'),
-    path('outcome/<str:pk>/', views.OutcomeDetail.as_view(),
+    path('match/player-outcome/<str:pk>/', views.OutcomeDetail.as_view(),
          name='outcome-detail'),
 ]
 
