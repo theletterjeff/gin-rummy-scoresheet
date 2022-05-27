@@ -19,7 +19,7 @@ function fillNavbarBrandLink() {
 
 function fillNavbarLoginLink() {
   let navbarLogin = document.getElementById('login-link');
-  navbarLogin.href = window.location.origin + '/login/';
+  navbarLogin.href = window.location.origin + '/accounts/login/';
 }
 
 function fillNavbarLogoutLink() {
