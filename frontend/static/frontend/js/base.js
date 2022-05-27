@@ -7,6 +7,7 @@ function fillNavbarLinks() {
     fillNavbarLoginLink();
     console.log('to do: fill sign up link');
   } else {
+    fillNavbarLogoutLink();
     console.log('to do: fill logged in navbar links');
   };
 }
@@ -19,4 +20,9 @@ function fillNavbarBrandLink() {
 function fillNavbarLoginLink() {
   let navbarLogin = document.getElementById('login-link');
   navbarLogin.href = window.location.origin + '/login/';
+}
+
+function fillNavbarLogoutLink() {
+  let navbarLogout = document.getElementById('logout-nav-link');
+  navbarLogout.href = window.location.origin + '/accounts/logout/';
 }
