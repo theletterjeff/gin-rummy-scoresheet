@@ -1,5 +1,8 @@
 from django.shortcuts import render
 
+def matches(request):
+    return render(request, 'frontend/matches.html')
+
 def match(request, match_id):
     return render(request, 'frontend/match.html')
 
