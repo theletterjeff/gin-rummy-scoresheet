@@ -8,19 +8,20 @@
   <div class="card mt-3">
     <div class="card-body">
       <h5 class="card-title mb-3">Current Matches</h5>
-      <div class="card">
-        <div class="card-title mb-2">Something</div>
-        <div class="row">
-          <div class="col">Date Started</div>
-          <div class="col">Opponent</div>
-          <div class="col">Points</div>
-          <div class="col">Games</div>
+      <div class="card p-3">
+        <div class="table-responsive">
+          <table class="table" id="current-matches-table">
+            <thead>
+              <tr>
+                <th scope="col">Date Started</th>
+                <th scope="col">Opponent</th>
+                <th scope="col">Current Score</th>
+                <th scope="col" id="view-current-match-header"></th>
+              </tr>
+            </thead>
+            <tbody id="current-matches-body"></tbody>
+          </table>
         </div>
-        <div class="row">
-          <div class="col">1/2/55</div>
-          <div class="col">msbolon</div>
-          <div class="col">33-15</div>
-          <div class="col">1-3</div>
       </div>
     </div>
   </div>
