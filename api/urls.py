@@ -12,6 +12,9 @@ urlpatterns = [
     path('game/', views.GameList.as_view(), name='game-list-create'),
     path('all-players/', views.PlayerList.as_view(), name='player-list'),
 
+    # Player matches (to refactor/rename later)
+    path('player-matches/', views.PlayerMatches.as_view(), name='player-matches'),
+
     # Players
     path('player-create/', views.PlayerCreate.as_view(), name='player-create'),
     path('player/<str:pk>/', views.PlayerDetail.as_view(), name='player-detail'),

@@ -6,11 +6,13 @@ from rest_framework.generics import (CreateAPIView, ListAPIView,
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
+from rest_framework.views import APIView
 
-from accounts.models import Player
 from api.permissions import IsOwnerOrReadOnly, IsRequestUser
 from api.serializers import (GameSerializer, MatchSerializer, OutcomeSerializer,
                              PlayerSerializer, ScoreSerializer)
+
+from accounts.models import Player
 from base.models import Game, Match, Outcome, Score
 
 @api_view(['GET'])
@@ -19,6 +21,7 @@ def api_root(request, format=None):
         'matches': reverse('match-list-create', request=request, format=format),
         'games': reverse('game-list-create', request=request, format=format),
         'players': reverse('player-list', request=request, format=format),
+        'player-matches': reverse('player-matches', request=request, format=format),
     })
 
 class MatchList(ListCreateAPIView):
@@ -115,3 +118,12 @@ class OutcomeDetail(RetrieveAPIView):
         IsAuthenticatedOrReadOnly,
         IsOwnerOrReadOnly,
     ]
+
+class PlayerMatches(APIView):
+    """GET Match instances played by a Player."""
+    def get(self, request, format=None):
+        player_matches = Match.objects.filter(players__in=str(request.user.pk))
+        serializer = MatchSerializer(player_matches,
+                                     context={'request': request},
+                                     many=True)
+        return Response(serializer.data)
