@@ -127,3 +127,14 @@ class PlayerMatches(APIView):
                                      context={'request': request},
                                      many=True)
         return Response(serializer.data)
+
+class LoggedInPlayerDetail(APIView):
+    """GET serialized data for the currently logged in Player.
+    This should solve some of my challenges around accessing the identity
+    of the currently logged in Player.
+    """
+    def get(self, request, format=None):
+        player = request.user
+        serializer = PlayerSerializer(player,
+                                      context={'request': request})
+        return Response(serializer.data)

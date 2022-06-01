@@ -19,6 +19,7 @@ urlpatterns = [
     path('player-create/', views.PlayerCreate.as_view(), name='player-create'),
     path('player/<str:pk>/', views.PlayerDetail.as_view(), name='player-detail'),
     path('player/<str:pk>/edit/', views.PlayerEdit.as_view(), name='player-edit'),
+    path('logged-in-player/', views.LoggedInPlayerDetail.as_view(), name='logged-in-player'),
 
     # Detail
     path('match/<str:pk>/', views.MatchDetail.as_view(), name='match-detail'),
