@@ -1,4 +1,5 @@
 import {
+  formatDate,
   getJsonResponse,
   getJsonResponseArray,
   fillTitle,
@@ -45,9 +46,10 @@ async function addMatchToCurrentMatches(match, loggedInPlayerData) {
   let scoresObj = await getScoresObj(match.score_set);
   let scoresFormatted = formatScoresFromObj(scoresObj, loggedInPlayerData);
   let opponentUsername = await getOpponentUsername(match, loggedInPlayerData);
+  let dateFormatted = formatDate(match.datetime_started)
   let matchHTML = `
     <tr>
-      <td>${match.datetime_started}</td>
+      <td>${dateFormatted}</td>
       <td>${opponentUsername}</td>
       <td>${scoresFormatted}</td>
       <td class="button-cell"><button class="btn btn-small btn-outline-success edit">Edit</button></td>

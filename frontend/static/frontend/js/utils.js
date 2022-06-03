@@ -37,3 +37,13 @@ export function getCookie(name) {
 export function setFormElemAsDisabled(elemName) {
   document.getElementById(elemName).setAttribute('disabled', '');
 }
+
+export function formatDate(dateObj) {
+  if ((dateObj instanceof Date) == false) {
+    dateObj = new Date(dateObj);
+  }
+  let monthNum = dateObj.getMonth();
+  let dateNum = dateObj.getDate();
+  let yearNum = dateObj.getUTCFullYear();
+  return `${monthNum}/${dateNum}/${yearNum}`
+}
