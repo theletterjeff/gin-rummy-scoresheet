@@ -6,6 +6,8 @@ import {
   getCookie,
 } from "./utils.js";
 
+const csrfToken = getCookie('csrftoken');
+
 const matchesEndpoint = getMatchesEndpoint();
 const loggedInPlayerEndpoint = getLoggedInPlayerEndpoint();
 
@@ -17,13 +19,40 @@ fillPlayerMatchesPage();
 async function fillPlayerMatchesPage() {
   const loggedInPlayerData = await getLoggedInPlayerData();
   let matchesData = await getMatchesData();
-  for (let match of matchesData) {
-    if (match.complete == false) {
-      addMatchToCurrentMatches(match, loggedInPlayerData);
-    } else {
-      addMatchToPastMatches(match);
-    }
-  }
+  fillCurrentAndPastMatchesTables(matchesData, loggedInPlayerData);
+}
+
+function fillCurrentAndPastMatchesTables(matchesData, loggedInPlayerData) {
+  let fillRowPromise = new Promise((resolve) => {
+    matchesData.map((match) => {
+      if (match.complete == false) {
+        addMatchToCurrentMatches(match, loggedInPlayerData);
+      } else {
+        addMatchToPastMatches(match);
+      };
+    });
+    resolve();
+  })
+  fillRowPromise
+  .then(addEditMatchButtons)
+  .then(addDeleteMatchButtons);
+  // let x = Promise.all(
+  //   matchesData.map((match) => {
+  //     return new Promise((resolve) => {
+  //       if (match.complete == false) {
+  //         addMatchToCurrentMatches(match, loggedInPlayerData);
+  //       } else {
+  //         addMatchToPastMatches(match);
+  //       };
+  //       resolve();
+  //     })
+  //   })
+  // )
+
+  // x
+  // .then(() => console.log(document.getElementsByClassName('edit-match')))
+  // .then(() => addEditMatchButtons())
+  // .then(() => addDeleteMatchButtons());
 }
 
 function getMatchesEndpoint() {
@@ -43,20 +72,27 @@ async function getLoggedInPlayerData() {
 }
 
 async function addMatchToCurrentMatches(match, loggedInPlayerData) {
+  let matchPk = getMatchPkFromURL(match.url)
   let scoresObj = await getScoresObj(match.score_set);
   let scoresFormatted = formatScoresFromObj(scoresObj, loggedInPlayerData);
   let opponentUsername = await getOpponentUsername(match, loggedInPlayerData);
   let dateFormatted = formatDate(match.datetime_started)
+
   let matchHTML = `
-    <tr>
+    <tr id="row-match-${matchPk}">
       <td>${dateFormatted}</td>
       <td>${opponentUsername}</td>
       <td>${scoresFormatted}</td>
-      <td class="button-cell"><button class="btn btn-small btn-outline-success edit">Edit</button></td>
-      <td class="button-cell"><button class="btn btn-small btn-outline-secondary delete">Delete</button></td>
+      <td class="button-cell"><button class="btn btn-small btn-outline-success edit-match" id="edit-match-${matchPk}">Edit</button></td>
+      <td class="button-cell"><button class="btn btn-small btn-outline-secondary delete-match" id="delete-match-${matchPk}">Delete</button></td>
     </tr>
   `
   currentMatchesTable.innerHTML += matchHTML;
+}
+
+function getMatchPkFromURL(matchURL) {
+  const re = new RegExp('\\d+(?=\/$)')
+  return re.exec(matchURL);
 }
 
 async function getScoresObj(scoreEndpointsArray) {
@@ -95,4 +131,42 @@ async function getOpponentUsername(matchData, loggedInPlayerData) {
       return playerUsername;
     };
   }
+}
+
+function addEditMatchButtons() {
+  let editBtns = document.getElementsByClassName('edit-match')
+  console.log(editBtns);
+  const re = new RegExp('\\d+');
+
+  for (let btn of editBtns) {
+    let matchPk = re.exec(btn.id);
+    btn.addEventListener('click', function() {
+      window.location = window.location.href + matchPk;
+    })
+  }
+}
+
+async function addDeleteMatchButtons() {
+  let deleteBtns = document.getElementsByClassName('delete-match')
+  const re = new RegExp('\\d+');
+
+  for (let btn of deleteBtns) {
+    let matchPk = re.exec(btn.id);
+    btn.addEventListener('click', function() {
+      let deleteMatchEndpoint = window.location.origin + '/api/match/' + matchPk;
+      fetch(deleteMatchEndpoint, {
+        method: 'DELETE',
+        headers: {
+          'Content-type': 'application/json',
+          'X-CSRFToken': csrfToken,
+        }
+      })
+      .then(() => deleteMatchFromTable(`row-match-${matchPk}`));
+    })
+  }
+}
+
+function deleteMatchFromTable(matchElemID) {
+  let matchElem = document.getElementById(matchElemID);
+  matchElem.remove();
 }
