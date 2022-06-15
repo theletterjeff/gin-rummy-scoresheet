@@ -23,36 +23,25 @@ async function fillPlayerMatchesPage() {
 }
 
 function fillCurrentAndPastMatchesTables(matchesData, loggedInPlayerData) {
-  let fillRowPromise = new Promise((resolve) => {
-    matchesData.map((match) => {
-      if (match.complete == false) {
-        addMatchToCurrentMatches(match, loggedInPlayerData);
-      } else {
-        addMatchToPastMatches(match);
-      };
-    });
-    resolve();
-  })
-  fillRowPromise
-  .then(addEditMatchButtons)
-  .then(addDeleteMatchButtons);
-  // let x = Promise.all(
-  //   matchesData.map((match) => {
-  //     return new Promise((resolve) => {
-  //       if (match.complete == false) {
-  //         addMatchToCurrentMatches(match, loggedInPlayerData);
-  //       } else {
-  //         addMatchToPastMatches(match);
-  //       };
-  //       resolve();
-  //     })
-  //   })
-  // )
+  let fillRowPromises = [];
+  for (let matchData of matchesData) {
+    let fillRowPromise = fillRow(matchData, loggedInPlayerData);
+    fillRowPromises.push(fillRowPromise);
+  };
+  Promise.all(fillRowPromises)
+    .then(addEditMatchButtons)
+    .then(addDeleteMatchButtons);
+}
 
-  // x
-  // .then(() => console.log(document.getElementsByClassName('edit-match')))
-  // .then(() => addEditMatchButtons())
-  // .then(() => addDeleteMatchButtons());
+function fillRow(matchData, loggedInPlayerData) {
+  return new Promise((resolve, reject) => {
+    if (!matchData.complete) {
+      addMatchToCurrentMatches(matchData, loggedInPlayerData);
+    } else {
+      addMatchToPastMatches(matchData, loggedInPlayerData);
+    };
+    resolve();
+  });
 }
 
 function getMatchesEndpoint() {
@@ -72,22 +61,34 @@ async function getLoggedInPlayerData() {
 }
 
 async function addMatchToCurrentMatches(match, loggedInPlayerData) {
-  let matchPk = getMatchPkFromURL(match.url)
-  let scoresObj = await getScoresObj(match.score_set);
-  let scoresFormatted = formatScoresFromObj(scoresObj, loggedInPlayerData);
-  let opponentUsername = await getOpponentUsername(match, loggedInPlayerData);
-  let dateFormatted = formatDate(match.datetime_started)
+  let currentMatchObj = new Promise((resolve, reject) => {
+    let matchPk = getMatchPkFromURL(match.url);
+    let scoresObj = await getScoresObj(match.score_set);
+    let scoresFormatted = formatScoresFromObj(scoresObj, loggedInPlayerData);
+    let opponentUsername = await getOpponentUsername(match, loggedInPlayerData);
+    let dateFormatted = formatDate(match.datetime_started);
+    resolve({
+      matchPk: matchPk,
+      scoresObj: scoresObj,
+      scoresFormatted: scoresFormatted,
+      opponentUsername: opponentUsername,
+      dateFormatted: dateFormatted,
+    })
+  })
+  console.log(currentMatchObj);
 
-  let matchHTML = `
-    <tr id="row-match-${matchPk}">
-      <td>${dateFormatted}</td>
-      <td>${opponentUsername}</td>
-      <td>${scoresFormatted}</td>
-      <td class="button-cell"><button class="btn btn-small btn-outline-success edit-match" id="edit-match-${matchPk}">Edit</button></td>
-      <td class="button-cell"><button class="btn btn-small btn-outline-secondary delete-match" id="delete-match-${matchPk}">Delete</button></td>
-    </tr>
-  `
-  currentMatchesTable.innerHTML += matchHTML;
+  currentMatchObj.then((data) => {
+    let matchHTML = `
+      <tr id="row-match-${data.matchPk}">
+        <td>${data.dateFormatted}</td>
+        <td>${data.opponentUsername}</td>
+        <td>${data.scoresFormatted}</td>
+        <td class="button-cell"><button class="btn btn-small btn-outline-success edit-match" id="edit-match-${data.matchPk}">Edit</button></td>
+        <td class="button-cell"><button class="btn btn-small btn-outline-secondary delete-match" id="delete-match-${data.matchPk}">Delete</button></td>
+      </tr>
+    `
+    currentMatchesTable.innerHTML += matchHTML;
+  })
 }
 
 function getMatchPkFromURL(matchURL) {
@@ -135,7 +136,6 @@ async function getOpponentUsername(matchData, loggedInPlayerData) {
 
 function addEditMatchButtons() {
   let editBtns = document.getElementsByClassName('edit-match')
-  console.log(editBtns);
   const re = new RegExp('\\d+');
 
   for (let btn of editBtns) {
