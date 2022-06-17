@@ -33,12 +33,12 @@ function fillCurrentAndPastMatchesTables(matchesData, loggedInPlayerData) {
     .then(addDeleteMatchButtons);
 }
 
-function fillRow(matchData, loggedInPlayerData) {
+function fillRow(match, loggedInPlayerData) {
   return new Promise((resolve, reject) => {
-    if (!matchData.complete) {
-      addMatchToCurrentMatches(matchData, loggedInPlayerData);
+    if (!match.complete) {
+      addMatchToCurrentMatches(match, loggedInPlayerData);
     } else {
-      addMatchToPastMatches(matchData, loggedInPlayerData);
+      addMatchToPastMatches(match, loggedInPlayerData);
     };
     resolve();
   });
@@ -60,40 +60,51 @@ async function getLoggedInPlayerData() {
   return await getJsonResponse(loggedInPlayerEndpoint);
 }
 
-async function addMatchToCurrentMatches(match, loggedInPlayerData) {
-  let currentMatchObj = new Promise((resolve, reject) => {
-    let matchPk = getMatchPkFromURL(match.url);
-    let scoresObj = await getScoresObj(match.score_set);
-    let scoresFormatted = formatScoresFromObj(scoresObj, loggedInPlayerData);
-    let opponentUsername = await getOpponentUsername(match, loggedInPlayerData);
-    let dateFormatted = formatDate(match.datetime_started);
-    resolve({
-      matchPk: matchPk,
-      scoresObj: scoresObj,
-      scoresFormatted: scoresFormatted,
-      opponentUsername: opponentUsername,
-      dateFormatted: dateFormatted,
-    })
-  })
-  console.log(currentMatchObj);
+function addMatchToCurrentMatches(match, loggedInPlayerData) {
+  addPkToMatch(match)
+    .then()
+}
 
-  currentMatchObj.then((data) => {
-    let matchHTML = `
-      <tr id="row-match-${data.matchPk}">
-        <td>${data.dateFormatted}</td>
-        <td>${data.opponentUsername}</td>
-        <td>${data.scoresFormatted}</td>
-        <td class="button-cell"><button class="btn btn-small btn-outline-success edit-match" id="edit-match-${data.matchPk}">Edit</button></td>
-        <td class="button-cell"><button class="btn btn-small btn-outline-secondary delete-match" id="delete-match-${data.matchPk}">Delete</button></td>
-      </tr>
-    `
-    currentMatchesTable.innerHTML += matchHTML;
+//   let currentMatchObj = new Promise((resolve, reject) => {
+//     let matchPk = getMatchPkFromURL(match.url);
+//     let scoresObj = await getScoresObj(match.score_set);
+//     let scoresFormatted = formatScoresFromObj(scoresObj, loggedInPlayerData);
+//     let opponentUsername = await getOpponentUsername(match, loggedInPlayerData);
+//     let dateFormatted = formatDate(match.datetime_started);
+//     resolve({
+//       matchPk: matchPk,
+//       scoresObj: scoresObj,
+//       scoresFormatted: scoresFormatted,
+//       opponentUsername: opponentUsername,
+//       dateFormatted: dateFormatted,
+//     })
+//   })
+//   console.log(currentMatchObj);
+
+//   currentMatchObj.then((data) => {
+//     let matchHTML = `
+//       <tr id="row-match-${data.matchPk}">
+//         <td>${data.dateFormatted}</td>
+//         <td>${data.opponentUsername}</td>
+//         <td>${data.scoresFormatted}</td>
+//         <td class="button-cell"><button class="btn btn-small btn-outline-success edit-match" id="edit-match-${data.matchPk}">Edit</button></td>
+//         <td class="button-cell"><button class="btn btn-small btn-outline-secondary delete-match" id="delete-match-${data.matchPk}">Delete</button></td>
+//       </tr>
+//     `
+//     currentMatchesTable.innerHTML += matchHTML;
+//   })
+// }
+
+function addPkToMatch(match) {
+  const re = new RegExp('\\d+(?=\/$)')
+  return new Promise((resolve) => {
+    match.pk = re.exec(match.url);
+    resolve(match);
   })
 }
 
-function getMatchPkFromURL(matchURL) {
-  const re = new RegExp('\\d+(?=\/$)')
-  return re.exec(matchURL);
+function addFormattedScoresToMatch(match) {
+  console.log('Promise.all() for getScoresObj?')
 }
 
 async function getScoresObj(scoreEndpointsArray) {
