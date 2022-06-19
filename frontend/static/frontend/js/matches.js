@@ -61,8 +61,10 @@ async function getLoggedInPlayerData() {
 }
 
 function addMatchToCurrentMatches(match, loggedInPlayerData) {
+  match.loggedInPlayer = loggedInPlayerData;
   addPkToMatch(match)
-    .then()
+    .then(addScoresObjToMatch)
+    .then(match => {console.log(match)})
 }
 
 //   let currentMatchObj = new Promise((resolve, reject) => {
@@ -103,17 +105,14 @@ function addPkToMatch(match) {
   })
 }
 
-function addFormattedScoresToMatch(match) {
-  console.log('Promise.all() for getScoresObj?')
-}
-
-async function getScoresObj(scoreEndpointsArray) {
-  let scoresObj = {};
-  for (let scoreEndpoint of scoreEndpointsArray) {
-    let scoreObj = await getJsonResponse(scoreEndpoint);
-    scoresObj[scoreObj.player] = scoreObj.player_score;
+function addScoresObjToMatch(match) {
+  for (let i in match.score_set) {
+    getJsonResponse(match.score_set[i])
+      .then((score) => {
+        match.score_set[i] = score;
+      })
   }
-  return scoresObj;
+  return match;
 }
 
 function formatScoresFromObj(scoresObj, loggedInPlayerData) {
