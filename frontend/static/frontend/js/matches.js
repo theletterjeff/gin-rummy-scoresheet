@@ -65,7 +65,7 @@ function addMatchToCurrentMatches(match, loggedInPlayerData) {
   addPkToMatch(match)
     .then(addScoresObjToMatch)
     .then(formatScoresFromObj)
-    .then(addPlayerUsernamesToMatch)
+    .then(addOpponentUsernameToMatch)
     .then(() => console.log(match))
     // .then(match => {console.log(match)})
 }
@@ -135,7 +135,7 @@ function formatScoresFromObj(match) {
   return match;
 }
 
-async function addPlayerUsernamesToMatch(match) {
+async function addOpponentUsernameToMatch(match) {
   match.opponent = {};
   for (let playerEndpoint of match.players) {
     if (playerEndpoint != match.loggedInPlayer.url) {
