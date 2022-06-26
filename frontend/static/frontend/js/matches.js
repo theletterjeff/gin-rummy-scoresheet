@@ -64,7 +64,9 @@ function addMatchToCurrentMatches(match, loggedInPlayerData) {
   match.loggedInPlayer = loggedInPlayerData;
   addPkToMatch(match)
     .then(addScoresObjToMatch)
-    .then(match => {console.log(match)})
+    .then(formatScoresFromObj)
+    .then(() => console.log(match))
+    // .then(match => {console.log(match)})
 }
 
 //   let currentMatchObj = new Promise((resolve, reject) => {
@@ -106,26 +108,29 @@ function addPkToMatch(match) {
 }
 
 function addScoresObjToMatch(match) {
-  for (let i in match.score_set) {
-    getJsonResponse(match.score_set[i])
-      .then((score) => {
-        match.score_set[i] = score;
-      })
-  }
-  return match;
+  let promises = [];
+  for (let scoreEndpoint of match.score_set) {
+    promises.push(getJsonResponse(scoreEndpoint));
+  };
+  return Promise.all(promises)
+    .then((scoreData) => {
+      for (let i in scoreData) {
+        match.score_set[i] = scoreData[i];
+        }
+      return match;
+      });
 }
 
-function formatScoresFromObj(scoresObj, loggedInPlayerData) {
-  let formattedScoresArray = []
-  
-  for (let playerEndpoint in scoresObj) {
-    if (playerEndpoint == loggedInPlayerData.url) {
-      formattedScoresArray[0] = scoresObj[playerEndpoint];
+function formatScoresFromObj(match) {
+  let formattedScoresArray = [];
+  for (let scoreObj of match.score_set) {
+    if (scoreObj.player == match.loggedInPlayer.url) {
+      formattedScoresArray[0] = scoreObj.player_score;
     } else {
-      formattedScoresArray[1] = scoresObj[playerEndpoint];
-    }
-  };
-  return `${formattedScoresArray[0]}-${formattedScoresArray[1]}`
+      formattedScoresArray[1] = scoreObj.player_score;
+    };
+  match.formattedScores =  `${formattedScoresArray[0]}-${formattedScoresArray[1]}`
+  }
 }
 
 async function getPlayerUsername(playerEndpoint) {
