@@ -149,22 +149,6 @@ async function addOpponentUsernameToMatch(match) {
     })
 }
 
-async function getPlayerUsername(playerEndpoint) {
-  let playerData = await getJsonResponse(playerEndpoint)
-  return playerData.username;
-}
-
-async function getOpponentUsername(matchData, loggedInPlayerData) {
-  for (let playerEndpoint of matchData.players) {
-    let playerUsername = await getPlayerUsername(playerEndpoint)
-    if (playerUsername == loggedInPlayerData.username) {
-      continue;
-    } else {
-      return playerUsername;
-    };
-  }
-}
-
 function addEditMatchButtons() {
   let editBtns = document.getElementsByClassName('edit-match')
   const re = new RegExp('\\d+');
