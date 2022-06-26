@@ -66,39 +66,7 @@ function addMatchToCurrentMatches(match, loggedInPlayerData) {
     .then(addFormattedDateToMatch)
     .then(addHTMLRowToCurrentMatchesTable)
     .then(addEditMatchButton)
-    .then(() => console.log(match))
-    // .then(match => {console.log(match)})
 }
-
-//   let currentMatchObj = new Promise((resolve, reject) => {
-//     let matchPk = getMatchPkFromURL(match.url);
-//     let scoresObj = await getScoresObj(match.score_set);
-//     let scoresFormatted = formatScoresFromObj(scoresObj, loggedInPlayerData);
-//     let opponentUsername = await getOpponentUsername(match, loggedInPlayerData);
-//     let dateFormatted = formatDate(match.datetime_started);
-//     resolve({
-//       matchPk: matchPk,
-//       scoresObj: scoresObj,
-//       scoresFormatted: scoresFormatted,
-//       opponentUsername: opponentUsername,
-//       dateFormatted: dateFormatted,
-//     })
-//   })
-//   console.log(currentMatchObj);
-
-//   currentMatchObj.then((data) => {
-//     let matchHTML = `
-//       <tr id="row-match-${data.matchPk}">
-//         <td>${data.dateFormatted}</td>
-//         <td>${data.opponentUsername}</td>
-//         <td>${data.scoresFormatted}</td>
-//         <td class="button-cell"><button class="btn btn-small btn-outline-success edit-match" id="edit-match-${data.matchPk}">Edit</button></td>
-//         <td class="button-cell"><button class="btn btn-small btn-outline-secondary delete-match" id="delete-match-${data.matchPk}">Delete</button></td>
-//       </tr>
-//     `
-//     currentMatchesTable.innerHTML += matchHTML;
-//   })
-// }
 
 function addPkToMatch(match) {
   const re = new RegExp('\\d+(?=\/$)')
