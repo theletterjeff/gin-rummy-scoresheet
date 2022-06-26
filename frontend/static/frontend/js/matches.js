@@ -65,6 +65,7 @@ function addMatchToCurrentMatches(match, loggedInPlayerData) {
   addPkToMatch(match)
     .then(addScoresObjToMatch)
     .then(formatScoresFromObj)
+    .then(addPlayerUsernamesToMatch)
     .then(() => console.log(match))
     // .then(match => {console.log(match)})
 }
@@ -131,6 +132,21 @@ function formatScoresFromObj(match) {
     };
   match.formattedScores =  `${formattedScoresArray[0]}-${formattedScoresArray[1]}`
   }
+  return match;
+}
+
+function addPlayerUsernamesToMatch(match) {
+  match.opponent = {};
+  for (let playerEndpoint of match.players) {
+    if (playerEndpoint != match.loggedInPlayer.url) {
+      match.opponent.url = playerEndpoint;
+    }
+  }
+  return getJsonResponse(match.opponent.url)
+    .then((playerData) => {
+      match.opponent.username = playerData.username;
+      return match;
+    })
 }
 
 async function getPlayerUsername(playerEndpoint) {
