@@ -28,9 +28,6 @@ function fillCurrentAndPastMatchesTables(matchesData, loggedInPlayerData) {
     let fillRowPromise = fillRow(matchData, loggedInPlayerData);
     fillRowPromises.push(fillRowPromise);
   };
-  Promise.all(fillRowPromises)
-    .then(addEditMatchButtons)
-    .then(addDeleteMatchButtons);
 }
 
 function fillRow(match, loggedInPlayerData) {
@@ -66,6 +63,9 @@ function addMatchToCurrentMatches(match, loggedInPlayerData) {
     .then(addScoresObjToMatch)
     .then(formatScoresFromObj)
     .then(addOpponentUsernameToMatch)
+    .then(addFormattedDateToMatch)
+    .then(addHTMLRowToCurrentMatchesTable)
+    .then(addEditMatchButton)
     .then(() => console.log(match))
     // .then(match => {console.log(match)})
 }
@@ -149,17 +149,32 @@ async function addOpponentUsernameToMatch(match) {
     })
 }
 
-function addEditMatchButtons() {
-  let editBtns = document.getElementsByClassName('edit-match')
-  const re = new RegExp('\\d+');
-
-  for (let btn of editBtns) {
-    let matchPk = re.exec(btn.id);
-    btn.addEventListener('click', function() {
-      window.location = window.location.href + matchPk;
-    })
-  }
+function addFormattedDateToMatch(match) {
+  match.datetime_started_formatted = formatDate(match.datetime_started);
+  return match;
 }
+
+function addHTMLRowToCurrentMatchesTable(match) {
+  let currentMatchesTable = document.getElementById('current-matches-table');
+  let matchHTML = `
+      <tr id="row-match-${match.pk}">
+        <td>${match.datetime_started_formatted}</td>
+        <td>${match.opponent.username}</td>
+        <td>${match.formattedScores}</td>
+        <td class="button-cell"><button class="btn btn-small btn-outline-success edit-match" id="edit-match-${match.pk}">Edit</button></td>
+        <td class="button-cell"><button class="btn btn-small btn-outline-secondary delete-match" id="delete-match-${match.pk}">Delete</button></td>
+      </tr>
+    `
+    currentMatchesTable.innerHTML += matchHTML;
+    return match;
+}
+
+function addEditMatchButton(match) {
+  let editBtn = document.getElementById(`edit-match-${match.pk}`)
+  editBtn.addEventListener('click', function() {
+    window.location = window.location.href + match.pk;
+  })
+} 
 
 async function addDeleteMatchButtons() {
   let deleteBtns = document.getElementsByClassName('delete-match')
