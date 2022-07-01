@@ -66,6 +66,7 @@ function addMatchToCurrentMatches(match, loggedInPlayerData) {
     .then(addFormattedDateToMatch)
     .then(addHTMLRowToCurrentMatchesTable)
     .then(addEditMatchButton)
+    .then(addDeleteMatchButton)
 }
 
 function addPkToMatch(match) {
@@ -141,27 +142,25 @@ function addEditMatchButton(match) {
   let editBtn = document.getElementById(`edit-match-${match.pk}`)
   editBtn.addEventListener('click', function() {
     window.location = window.location.href + match.pk;
-  })
+  });
+  return match;
 } 
 
-async function addDeleteMatchButtons() {
-  let deleteBtns = document.getElementsByClassName('delete-match')
-  const re = new RegExp('\\d+');
+async function addDeleteMatchButton(match) {
+  let deleteBtn = document.getElementById(`delete-match-${match.pk}`)
 
-  for (let btn of deleteBtns) {
-    let matchPk = re.exec(btn.id);
-    btn.addEventListener('click', function() {
-      let deleteMatchEndpoint = window.location.origin + '/api/match/' + matchPk;
-      fetch(deleteMatchEndpoint, {
-        method: 'DELETE',
-        headers: {
-          'Content-type': 'application/json',
-          'X-CSRFToken': csrfToken,
-        }
-      })
-      .then(() => deleteMatchFromTable(`row-match-${matchPk}`));
+  deleteBtn.addEventListener('click', function() {
+    let deleteMatchEndpoint = window.location.origin + '/api/match/' + match.pk;
+    fetch(deleteMatchEndpoint, {
+      method: 'DELETE',
+      headers: {
+        'Content-type': 'application/json',
+        'X-CSRFToken': csrfToken,
+      }
+      .then(() => deleteMatchFromTable(`row-match-${match.pk}`))
     })
-  }
+  })
+  return match;
 }
 
 function deleteMatchFromTable(matchElemID) {
