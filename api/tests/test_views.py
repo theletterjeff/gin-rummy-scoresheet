@@ -53,6 +53,9 @@ class TestMatchViews(TestCase):
                 self.BASE_URL + reverse('player-detail', kwargs={'pk': '1'})
             ),
             'games': [],
+            'score_set': [],
+            'outcome_set': [],
+            'players': [],
         }
 
         # Test each response value individually
