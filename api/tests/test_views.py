@@ -100,8 +100,8 @@ class TestMatchViews(TestCase):
         ending in .json returns a JSON object. Doing the same
         with a URL ending in HTML returns an HTML object.
         """
-        url_json = reverse('match-list-create') + '.json'
-        url_browsable_api = reverse('match-list-create') + '.api'
+        url_json = reverse('match-list-create')[:-1] + '.json'
+        url_browsable_api = reverse('match-list-create')[:-1] + '.api'
         
         response_json = self.apiclient.get(url_json)
         response_browsable_api = self.apiclient.get(url_browsable_api)
@@ -396,6 +396,7 @@ class TestRootView(TestCase):
         target_keys = [
             'games',
             'matches',
+            'player-matches',
             'players',
         ]
 
