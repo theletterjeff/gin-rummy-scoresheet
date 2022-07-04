@@ -54,7 +54,7 @@ async function getMatchesData() {
 }
 
 async function getLoggedInPlayerData() {
-  return await getJsonResponse(loggedInPlayerEndpoint);
+  return getJsonResponse(loggedInPlayerEndpoint);
 }
 
 function addMatchToCurrentMatches(match, loggedInPlayerData) {
