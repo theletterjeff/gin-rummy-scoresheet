@@ -126,7 +126,7 @@ function addFormattedDateToMatch(match) {
 function addHTMLRowToCurrentMatchesTable(match) {
   let currentMatchesTable = document.getElementById('current-matches-table');
   let matchHTML = `
-      <tr id="row-match-${match.pk}">
+      <tr id="row-current-match-${match.pk}" class="row-current-match">
         <td>${match.datetime_started_formatted}</td>
         <td>${match.opponent.username}</td>
         <td>${match.formattedScores}</td>
@@ -157,7 +157,7 @@ async function addDeleteMatchButton(match) {
         'Content-type': 'application/json',
         'X-CSRFToken': csrfToken,
       }
-      .then(() => deleteMatchFromTable(`row-match-${match.pk}`))
+      .then(() => deleteMatchFromTable(`row-current-match-${match.pk}`))
     })
   })
   return match;
