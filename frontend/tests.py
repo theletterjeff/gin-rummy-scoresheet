@@ -1,11 +1,15 @@
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.urls import reverse
 
+import selenium
 from selenium.webdriver.common.by import By
-from selenium.webdriver.firefox.webdriver import WebDriver
 from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.firefox.webdriver import WebDriver
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
 
 from accounts.models import Player
+from base.models import Match
 
 class TestSetUpTearDown(StaticLiveServerTestCase):
 
@@ -54,9 +58,11 @@ class TestSetUpTearDown(StaticLiveServerTestCase):
     
 class MatchesTests(TestSetUpTearDown):
 
+    fixtures = ['accounts']
+
     def setUp(self):
         # Create and log in user
-        super(TestSetUpTearDown, self).setUp()
+        super().setUp()
 
         # Load driver for the matches view
         self.driver.get('%s%s' % (self.live_server_url, reverse('matches-all')))
@@ -65,6 +71,28 @@ class MatchesTests(TestSetUpTearDown):
         """Current matches table has no rows prior to the creation of
         a match.
         """
-        table_body = self.driver.find_element(By.ID, 'current-matches-body')
-        table_rows = table_body.find_elements(By.XPATH, './child::*')
-        self.assertEqual(len(table_rows), 0)
+        wait = WebDriverWait(self.driver, 1)
+        with self.assertRaises(selenium.common.exceptions.TimeoutException):
+            wait.until(EC.presence_of_all_elements_located(
+                (By.CLASS_NAME, 'row-current-match')))
+
+    def test_current_matches_table_lists_match_after_match_creation(self):
+        """Current matches table has one row for a match after tha match
+        is created.
+        """
+        # Create a new match
+        player_self = Player.objects.get(username='username')
+        player_opponent = Player.objects.get(username='player1')
+
+        match = Match.objects.create()
+        match.players.add(player_self)
+        match.players.add(player_opponent)
+        match.save()
+        
+        self.driver.refresh()
+        
+        # Wait until table rows are present
+        wait = WebDriverWait(self.driver, 1)
+        table_rows = wait.until(EC.presence_of_all_elements_located(
+            (By.CLASS_NAME, 'row-current-match')))
+        self.assertEqual(len(table_rows), 1)
