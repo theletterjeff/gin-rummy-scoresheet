@@ -157,10 +157,10 @@ async function addDeleteMatchButton(match) {
         'Content-type': 'application/json',
         'X-CSRFToken': csrfToken,
       }
-      .then(() => deleteMatchFromTable(`row-current-match-${match.pk}`))
     })
-  })
+    .then(() => deleteMatchFromTable(`row-current-match-${match.pk}`));
   return match;
+  })
 }
 
 function deleteMatchFromTable(matchElemID) {
