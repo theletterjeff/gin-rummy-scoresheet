@@ -19,7 +19,7 @@ class TestSetUpTearDown(StaticLiveServerTestCase):
         super().setUpClass()
 
         options = Options()
-        options.headless = True
+        options.headless = False
 
         cls.driver = WebDriver(options=options)
     
@@ -95,4 +95,33 @@ class MatchesTests(TestSetUpTearDown):
         wait = WebDriverWait(self.driver, 1)
         table_rows = wait.until(EC.presence_of_all_elements_located(
             (By.CLASS_NAME, 'row-current-match')))
+
         self.assertEqual(len(table_rows), 1)
+    
+    def test_current_matches_table_delete_button_deletes_match(self):
+        """Clicking the delete button next to a match deletes that match."""
+        # Create a new match
+        player_self = Player.objects.get(username='username')
+        player_opponent = Player.objects.get(username='player1')
+
+        match = Match.objects.create()
+        match.players.add(player_self)
+        match.players.add(player_opponent)
+        match.save()
+        
+        self.driver.refresh()
+
+        # Wait until delete button is present
+        wait = WebDriverWait(self.driver, 3)
+        delete_button = wait.until(EC.presence_of_element_located(
+            (By.ID, f'delete-match-{match.pk}')
+        ))
+
+        # Test if row disappears when delete button is clicked
+        delete_button.click()
+
+        self.assertTrue(
+            wait.until_not(EC.presence_of_element_located(
+                (By.ID, f'delete-match-{match.pk}')
+            ))
+        )
