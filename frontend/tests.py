@@ -19,7 +19,7 @@ class TestSetUpTearDown(StaticLiveServerTestCase):
         super().setUpClass()
 
         options = Options()
-        options.headless = False
+        options.headless = True
 
         cls.driver = WebDriver(options=options)
     
@@ -125,3 +125,10 @@ class MatchesTests(TestSetUpTearDown):
                 (By.ID, f'delete-match-{match.pk}')
             ))
         )
+        
+        # Make sure that the match doesn't appear after re-pinging API
+        self.driver.refresh()
+        with self.assertRaises(selenium.common.exceptions.TimeoutException):
+            wait.until(EC.presence_of_element_located(
+                (By.ID, f'delete-match-{match.pk}')
+            ))
