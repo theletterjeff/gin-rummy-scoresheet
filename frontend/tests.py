@@ -104,7 +104,7 @@ class MatchesTests(TestSetUpTearDown):
         player_self = Player.objects.get(username='username')
         player_opponent = Player.objects.get(username='player1')
 
-        match = Match.objects.create()
+        match = Match.objects.create(created_by=player_self)
         match.players.add(player_self)
         match.players.add(player_opponent)
         match.save()
