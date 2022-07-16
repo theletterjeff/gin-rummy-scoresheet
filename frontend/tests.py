@@ -1,4 +1,6 @@
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+from django.middleware.csrf import get_token
+from django.test import RequestFactory
 from django.urls import reverse
 
 import selenium
@@ -44,13 +46,25 @@ class TestSetUpTearDown(StaticLiveServerTestCase):
             password='password',
         ))
 
-        # Add cookie to log in the browser
-        cookie = self.client.cookies['sessionid']
+        # Add session ID cookie to log in the browser
+        session_id_cookie = self.client.cookies['sessionid']
         self.driver.get(self.live_server_url)
         self.driver.add_cookie(
             {
                 'name': 'sessionid',
-                'value': cookie.value,
+                'value': session_id_cookie.value,
+                'secure': False,
+                'path': '/',
+            }
+        )
+
+        # Add CSRF token cookie
+        factory = RequestFactory()
+        csrftoken = get_token(factory.get(self.live_server_url))
+        self.driver.add_cookie(
+            {
+                'name': 'csrftoken',
+                'value': csrftoken,
                 'secure': False,
                 'path': '/',
             }
