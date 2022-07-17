@@ -41,9 +41,15 @@ export function setFormElemAsDisabled(elemName) {
 export function formatDate(dateObj) {
   if ((dateObj instanceof Date) == false) {
     dateObj = new Date(dateObj);
-  }
+  };
   let monthNum = dateObj.getMonth();
   let dateNum = dateObj.getDate();
   let yearNum = dateObj.getUTCFullYear();
-  return `${monthNum}/${dateNum}/${yearNum}`
+  return `${monthNum}/${dateNum}/${yearNum}`;
+}
+
+export function formatDateRange(dateObjStart, dateObjEnd) {
+  let formattedStart = formatDate(dateObjStart);
+  let formattedEnd = formatDate(dateObjEnd);
+  return `${formattedStart}-${formattedEnd}`;
 }
