@@ -1,5 +1,6 @@
 import {
   formatDate,
+  formatDateRange,
   getJsonResponse,
   getJsonResponseArray,
   fillTitle,
@@ -63,8 +64,21 @@ function addMatchToCurrentMatches(match, loggedInPlayerData) {
     .then(addScoresObjToMatch)
     .then(formatScoresFromObj)
     .then(addOpponentUsernameToMatch)
-    .then(addFormattedDateToMatch)
+    .then(addFormattedDatesToMatch)
     .then(addHTMLRowToCurrentMatchesTable)
+    .then(addEditMatchButton)
+    .then(addDeleteMatchButton)
+}
+
+function addMatchToPastMatches(match, loggedInPlayerData) {
+  match.loggedInPlayer = loggedInPlayerData;
+  addPkToMatch(match)
+    .then(addScoresObjToMatch)
+    .then(formatScoresFromObj)
+    .then(addOpponentUsernameToMatch)
+    .then(addFormattedDatesToMatch)
+    .then(addFormattedOutcomeToMatch)
+    .then(addHTMLRowToPastMatchesTable)
     .then(addEditMatchButton)
     .then(addDeleteMatchButton)
 }
@@ -118,9 +132,22 @@ async function addOpponentUsernameToMatch(match) {
     })
 }
 
-function addFormattedDateToMatch(match) {
+function addFormattedDatesToMatch(match) {
   match.datetime_started_formatted = formatDate(match.datetime_started);
+  if (match.datetime_ended) {
+    match.datetime_range_formatted = formatDateRange(
+      match.datetime_started, match.datetime_ended);
+  };
   return match;
+}
+
+async function addFormattedOutcomeToMatch(match) {
+  if (match.complete) {
+    for (let playerOutcomeEndpoint of match.outcome_set) {
+      getJsonResponse(playerOutcomeEndpoint)
+      .then(console.log)
+    }
+  }
 }
 
 function addHTMLRowToCurrentMatchesTable(match) {
@@ -166,4 +193,8 @@ async function addDeleteMatchButton(match) {
 function deleteMatchFromTable(matchElemID) {
   let matchElem = document.getElementById(matchElemID);
   matchElem.remove();
+}
+
+function addFormattedDateRangeToMatch(match) {
+
 }

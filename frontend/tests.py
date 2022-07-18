@@ -1,3 +1,5 @@
+from bs4 import BeautifulSoup
+
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.middleware.csrf import get_token
 from django.test import RequestFactory
@@ -11,7 +13,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
 from accounts.models import Player
-from base.models import Match
+from base.models import Match, Outcome, Score
 
 class TestSetUpTearDown(StaticLiveServerTestCase):
 
@@ -21,7 +23,7 @@ class TestSetUpTearDown(StaticLiveServerTestCase):
         super().setUpClass()
 
         options = Options()
-        options.headless = True
+        options.headless = False
 
         cls.driver = WebDriver(options=options)
     
@@ -146,3 +148,23 @@ class MatchesTests(TestSetUpTearDown):
             wait.until(EC.presence_of_element_located(
                 (By.ID, f'delete-match-{match.pk}')
             ))
+    
+    def test_past_matches(self):
+        """TODO DOCSTRING"""
+        # Create a past match
+        player_self = Player.objects.get(username='username')
+        player_opponent = Player.objects.get(username='player1')
+
+        # Add players
+        match = Match.objects.create(created_by=player_self)
+        match.players.add(player_self)
+        match.players.add(player_opponent)
+        match.save()
+
+        # Set score to 501 for player_self (ends match)
+        score_self = Score.objects.get(player=player_self)
+        score_self.player_score = 501
+        score_self.save()
+        
+        self.driver.refresh()
+        breakpoint()
