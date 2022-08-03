@@ -23,7 +23,7 @@ class TestSetUpTearDown(StaticLiveServerTestCase):
         super().setUpClass()
 
         options = Options()
-        options.headless = False
+        options.headless = True
 
         cls.driver = WebDriver(options=options)
     
@@ -167,4 +167,33 @@ class MatchesTests(TestSetUpTearDown):
         score_self.save()
         
         self.driver.refresh()
-        breakpoint()
+
+class LoginTests(StaticLiveServerTestCase):
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        super().setUpClass()
+
+        options = Options()
+        options.headless = True
+
+        cls.driver = WebDriver(options=options)
+
+        player = Player.objects.create(username='username')
+        player.set_password('testpassword1')
+        player.save()
+    
+    def test_login(self):
+        """Logging in from the login page authenticates the user."""
+        login_url = '%s%s' % (self.live_server_url, reverse('login'))
+        self.driver.get(login_url)
+
+        username_field = self.driver.find_element(By.ID, 'username')
+        password_field = self.driver.find_element(By.ID, 'password')
+        submit_button = self.driver.find_element(By.ID, 'submit-button')
+
+        username_field.send_keys('username')
+        password_field.send_keys('testpassword1')
+        submit_button.click()
+
+        self.assertTrueEC.url_changes(login_url)
