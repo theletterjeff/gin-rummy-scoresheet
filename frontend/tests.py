@@ -183,7 +183,7 @@ class LoginTests(StaticLiveServerTestCase):
         player.set_password('testpassword1')
         player.save()
     
-    def test_login(self):
+    def test_login_redirects_and_authenticates(self):
         """Logging in from the login page authenticates the user."""
         login_url = '%s%s' % (self.live_server_url, reverse('login'))
         self.driver.get(login_url)
@@ -196,4 +196,10 @@ class LoginTests(StaticLiveServerTestCase):
         password_field.send_keys('testpassword1')
         submit_button.click()
 
-        self.assertTrueEC.url_changes(login_url)
+        self.assertTrue(EC.url_changes(login_url))
+
+        # Presence of matches-nav-link shows the user is authenticated
+        wait = WebDriverWait(self.driver, 1)
+        self.assertTrue(
+            wait.until(
+                EC.presence_of_element_located((By.ID, 'matches-nav-link'))))
