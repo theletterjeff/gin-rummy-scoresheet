@@ -1,5 +1,7 @@
 asgiref==3.5.0
 astroid==2.11.2
+beautifulsoup4==4.11.1
+bs4==0.0.1
 certifi==2021.10.8
 cffi==1.15.0
 charset-normalizer==2.0.12
@@ -32,6 +34,7 @@ pytz==2022.1
 PyYAML==6.0
 requests==2.27.1
 requests-toolbelt==0.9.1
+soupsieve==2.3.2.post1
 sqlparse==0.4.2
 tomli==2.0.1
 typing_extensions==4.1.1
