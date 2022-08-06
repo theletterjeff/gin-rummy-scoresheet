@@ -72,7 +72,7 @@ class TestSetUpTearDown(StaticLiveServerTestCase):
             }
         )
     
-class MatchesTests(TestSetUpTearDown):
+class CurrentMatchesTests(TestSetUpTearDown):
 
     fixtures = ['accounts']
 
@@ -148,25 +148,59 @@ class MatchesTests(TestSetUpTearDown):
             wait.until(EC.presence_of_element_located(
                 (By.ID, f'delete-match-{match.pk}')
             ))
+
+class PastMatchesTests(TestSetUpTearDown):
+
+    fixtures = ['accounts']
+
+    def setUp(self):
+        # Create and log in user
+        super().setUp()
+
+        # Set players as instance variables
+        self.player_self = Player.objects.get(username='username')
+        self.player_opponent = Player.objects.get(username='player1')
+
+        # Create match and add players
+        self.match = Match.objects.create(created_by=self.player_self)
+        self.match.players.add(self.player_self)
+        self.match.players.add(self.player_opponent)
+        self.match.save()
+
+        # Load driver for the matches view
+        self.driver.get('%s%s' % (self.live_server_url, reverse('matches-all')))
     
-    def test_past_matches(self):
-        """TODO DOCSTRING"""
-        # Create a past match
-        player_self = Player.objects.get(username='username')
-        player_opponent = Player.objects.get(username='player1')
-
-        # Add players
-        match = Match.objects.create(created_by=player_self)
-        match.players.add(player_self)
-        match.players.add(player_opponent)
-        match.save()
-
-        # Set score to 501 for player_self (ends match)
-        score_self = Score.objects.get(player=player_self)
+    def test_win_outcome_on_past_match(self):
+        """A completed/past match that the logged in player won will
+        have a 'W' in the 'Outcome' field.
+        """
+        # Set score to 501 for player_self (ends match as a W for)
+        score_self = Score.objects.get(player=self.player_self)
         score_self.player_score = 501
         score_self.save()
-        
+
         self.driver.refresh()
+        wait = WebDriverWait(self.driver, 1)
+        outcome = wait.until(EC.presence_of_element_located(
+            (By.ID, f'past-match-outcome-{self.match.pk}')))
+
+        self.assertEqual(outcome.text, 'W')
+
+    def test_loss_outcome_on_past_match(self):
+        """A completed/past match that the logged in player lost will
+        have a 'L' in the 'Outcome' field.
+        """
+        # Set score to 501 for player_self (ends match as a W for)
+        score_opponent = Score.objects.get(player=self.player_opponent)
+        score_opponent.player_score = 501
+        score_opponent.save()
+
+        self.driver.refresh()
+        wait = WebDriverWait(self.driver, 1)
+        outcome = wait.until(EC.presence_of_element_located(
+            (By.ID, f'past-match-outcome-{self.match.pk}')))
+
+        self.assertEqual(outcome.text, 'L')
 
 class LoginTests(StaticLiveServerTestCase):
 

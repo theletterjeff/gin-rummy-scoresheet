@@ -142,12 +142,26 @@ function addFormattedDatesToMatch(match) {
 }
 
 async function addFormattedOutcomeToMatch(match) {
+  const outcomeTable = {
+    0: 'L',
+    1: 'W',
+  }
+  let promises = []
   if (match.complete) {
     for (let playerOutcomeEndpoint of match.outcome_set) {
-      getJsonResponse(playerOutcomeEndpoint)
-      .then(console.log)
+      console.log(playerOutcomeEndpoint);
+      promises.push(getJsonResponse(playerOutcomeEndpoint));
     }
-  }
+    return Promise.all(promises)
+      .then((outcomeData) => {
+        for (let playerOutcome of outcomeData) {
+          if (playerOutcome.player == match.loggedInPlayer.url) {
+            match.formattedOutcome = outcomeTable[playerOutcome.player_outcome];
+          };
+        }
+        return match;
+      })
+  };
 }
 
 function addHTMLRowToCurrentMatchesTable(match) {
@@ -162,6 +176,21 @@ function addHTMLRowToCurrentMatchesTable(match) {
       </tr>
     `
     currentMatchesTable.innerHTML += matchHTML;
+    return match;
+}
+
+function addHTMLRowToPastMatchesTable(match) {
+  let pastMatchesTable = document.getElementById('past-matches-table');
+  let matchHTML = `
+      <tr id="row-past-match-${match.pk}" class="row-past-match">
+        <td id="past-match-datetime-${match.pk}">${match.datetime_range_formatted}</td>
+        <td id="past-match-opponent-username-${match.pk}">${match.opponent.username}</td>
+        <td id="past-match-outcome-${match.pk}">${match.formattedOutcome}</td>
+        <td id="past-match-scores-${match.pk}">${match.formattedScores}</td>
+        <td id="past-match-edit-${match.pk}" class="button-cell"><button class="btn btn-small btn-outline-success edit-match" id="edit-match-${match.pk}">Edit</button></td>
+        <td id="past-match-delete-${match.pk}" class="button-cell"><button class="btn btn-small btn-outline-secondary delete-match" id="delete-match-${match.pk}">Delete</button></td>
+    `
+    pastMatchesTable.innerHTML += matchHTML;
     return match;
 }
 
