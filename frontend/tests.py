@@ -170,7 +170,7 @@ class PastMatchesTests(TestSetUpTearDown):
         # Load driver for the matches view
         self.driver.get('%s%s' % (self.live_server_url, reverse('matches-all')))
     
-    def test_win_outcome_on_past_match(self):
+    def test_win_outcome(self):
         """A completed/past match that the logged in player won will
         have a 'W' in the 'Outcome' field.
         """
@@ -186,7 +186,7 @@ class PastMatchesTests(TestSetUpTearDown):
 
         self.assertEqual(outcome.text, 'W')
 
-    def test_loss_outcome_on_past_match(self):
+    def test_loss_outcome(self):
         """A completed/past match that the logged in player lost will
         have a 'L' in the 'Outcome' field.
         """
