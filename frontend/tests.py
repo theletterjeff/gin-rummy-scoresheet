@@ -1,3 +1,7 @@
+from datetime import datetime
+import pytz
+from unittest import mock
+
 from bs4 import BeautifulSoup
 
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
@@ -201,6 +205,31 @@ class PastMatchesTests(TestSetUpTearDown):
             (By.ID, f'past-match-outcome-{self.match.pk}')))
 
         self.assertEqual(outcome.text, 'L')
+    
+    def test_date_range(self):
+        """A match that began 1/1/2022 and ended 3/31/2022 presents in the
+        'Date Range' column of the past matches table as '1/1/2022-3/31/2022'
+        """
+        target_start_date = datetime(year=2022,month=1,day=1, tzinfo=pytz.timezone('utc'))
+        target_end_date = datetime(year=2022,month=3,day=31, tzinfo=pytz.timezone('utc'))
+
+        with mock.patch('django.utils.timezone.now', return_value=target_end_date):
+            score_self = Score.objects.get(player=self.player_self)
+            score_self.player_score = 501
+            score_self.save()
+            
+            match = Match.objects.get(pk=1)
+            match.datetime_started = target_start_date
+            match.save()
+
+        self.driver.refresh()
+        wait = WebDriverWait(self.driver, 1)
+        date_range = wait.until(EC.presence_of_element_located(
+            (By.ID, f'past-match-datetime-{self.match.pk}')
+        ))
+
+        self.assertEqual(date_range.text, '1/1/2022-3/31/2022')
+
 
 class LoginTests(StaticLiveServerTestCase):
 
