@@ -3,6 +3,7 @@ Signals to update Game and Match records.
 """
 from django.db.models.signals import pre_delete, post_save, pre_save
 from django.dispatch import receiver
+from django.utils import timezone
 
 from .models import Game, Match, Outcome, Score
 
@@ -53,9 +54,10 @@ def finish_match(sender, instance, **kwargs):
             username=winner.username)
         loser = loser_queryset[0]
         
-        # Set match as complete
+        # Set `complete` and `datetime_ended` attrs
         match = instance.match
         match.complete = True
+        match.datetime_ended = timezone.now()
         match.save()
         
         # Set winner's outcome as WIN (1)

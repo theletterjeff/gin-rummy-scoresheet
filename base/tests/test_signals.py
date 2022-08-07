@@ -1,3 +1,7 @@
+from datetime import datetime
+import pytz
+from unittest import mock
+
 from django.test import TestCase
 
 from accounts.models import Player
@@ -185,5 +189,18 @@ class TestSignals(TestCase):
         its target_score, Match.complete changes to False.
         """
         Game.objects.get(pk=2).delete()
-
         self.assertFalse(Match.objects.get(pk=4).complete)
+    
+    def test_finish_match_adds_datetime_ended(self):
+        """When a Score object for a Match exceeds the point threshold,
+        the Match's `datetime_ended` attribute gets set to timezone.now().
+        """
+        target_date = datetime(2022, 1, 1, tzinfo=pytz.timezone('utc'))
+
+        with mock.patch('django.utils.timezone.now', return_value=target_date):
+            score = Score.objects.get(pk=1)
+            score.player_score = 501
+            score.save()
+
+            match = Match.objects.get(pk=2)
+            self.assertEqual(match.datetime_ended, target_date)
