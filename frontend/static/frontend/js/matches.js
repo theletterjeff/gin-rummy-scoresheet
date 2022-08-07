@@ -223,7 +223,3 @@ function deleteMatchFromTable(matchElemID) {
   let matchElem = document.getElementById(matchElemID);
   matchElem.remove();
 }
-
-function addFormattedDateRangeToMatch(match) {
-
-}
