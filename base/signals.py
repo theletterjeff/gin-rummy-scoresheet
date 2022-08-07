@@ -90,6 +90,7 @@ def delete_game(sender, instance, **kwargs):
     
     if instance.match.complete:
         instance.match.complete = False
+        instance.match.datetime_ended = None
         instance.match.save()
         
         Outcome.objects.filter(match=instance.match).delete()
