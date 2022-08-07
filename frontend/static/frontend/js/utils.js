@@ -42,7 +42,7 @@ export function formatDate(dateObj) {
   if ((dateObj instanceof Date) == false) {
     dateObj = new Date(dateObj);
   };
-  let monthNum = dateObj.getMonth();
+  let monthNum = dateObj.getMonth() + 1;
   let dateNum = dateObj.getDate();
   let yearNum = dateObj.getUTCFullYear();
   return `${monthNum}/${dateNum}/${yearNum}`;
