@@ -2,27 +2,16 @@ fillNavbarLinks();
 
 // Base template functions
 function fillNavbarLinks() {
-  fillNavbarBrandLink();
+  fillNavbarLink('navbar-brand', '');
   if (document.getElementById('login-link')) {
-    fillNavbarLoginLink();
-    console.log('to do: fill sign up link');
+    fillNavbarLink('login-link', '/accounts/login/');
   } else {
-    fillNavbarLogoutLink();
-    console.log('to do: fill logged in navbar links');
+    fillNavbarLink('matches-nav-link', '/match/');
+    fillNavbarLink('logout-nav-link', '/accounts/logout/');
   };
 }
 
-function fillNavbarBrandLink() {
-  let navbarBrand = document.getElementById("navbar-brand");
-  navbarBrand.href = window.location.origin;
-}
-
-function fillNavbarLoginLink() {
-  let navbarLogin = document.getElementById('login-link');
-  navbarLogin.href = window.location.origin + '/accounts/login/';
-}
-
-function fillNavbarLogoutLink() {
-  let navbarLogout = document.getElementById('logout-nav-link');
-  navbarLogout.href = window.location.origin + '/accounts/logout/';
+function fillNavbarLink(elemName, urlExtension) {
+  let navbarElem = document.getElementById(elemName);
+  navbarElem.href = window.location.origin + urlExtension
 }

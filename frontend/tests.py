@@ -76,6 +76,26 @@ class TestSetUpTearDown(StaticLiveServerTestCase):
             }
         )
     
+class BaseTests(TestSetUpTearDown):
+
+    def test_authenticated_user_navbar_links(self):
+        """After logging in, the navbar features links for:
+        - Matches
+        - Stats
+        - Players
+        - Account
+        - Log Out
+        """
+        pass
+    
+    def test_matches_navbar_link(self):
+        """The `matches-nav-link` element links to the matches page."""
+        self.driver.refresh()
+        matches_link = self.driver.find_element(By.ID, 'matches-nav-link')
+
+        self.assertEqual(matches_link.get_attribute('href'),
+            self.live_server_url + '/match/')
+
 class CurrentMatchesTests(TestSetUpTearDown):
 
     fixtures = ['accounts']
@@ -266,3 +286,4 @@ class LoginTests(StaticLiveServerTestCase):
         self.assertTrue(
             wait.until(
                 EC.presence_of_element_located((By.ID, 'matches-nav-link'))))
+    
