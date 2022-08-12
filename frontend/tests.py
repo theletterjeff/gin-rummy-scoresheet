@@ -166,8 +166,13 @@ class CurrentMatchesTests(TestSetUpTearDown):
             ))
         )
         
-        # Make sure that the match doesn't appear after re-pinging API
+        # Make sure page loads--avoid errors re: table locking
         self.driver.refresh()
+        wait.until(EC.presence_of_element_located(
+            (By.TAG_NAME, 'body')
+        ))
+
+        # Make sure that the match doesn't appear after re-pinging API
         with self.assertRaises(selenium.common.exceptions.TimeoutException):
             wait.until(EC.presence_of_element_located(
                 (By.ID, f'delete-match-{match.pk}')
