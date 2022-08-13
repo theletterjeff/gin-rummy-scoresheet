@@ -1,5 +1,6 @@
 from datetime import datetime
 import pytz
+from time import sleep
 from unittest import mock
 
 from bs4 import BeautifulSoup
@@ -20,26 +21,17 @@ from accounts.models import Player
 from base.models import Match, Outcome, Score
 
 class TestSetUpTearDown(StaticLiveServerTestCase):
-
-    @classmethod
-    def setUpClass(cls) -> None:
-        """Create driver"""
-        super().setUpClass()
-
-        options = Options()
-        options.headless = True
-
-        cls.driver = WebDriver(options=options)
     
-    @classmethod
-    def tearDownClass(cls) -> None:
-        """Close driver"""
-        cls.driver.quit()
-        super().tearDownClass()
+    reset_sequences = True
     
     def setUp(self):
         """Create and log in user (aka player)"""
         super(TestSetUpTearDown, self).setUp()
+
+        options = Options()
+        options.headless = True
+
+        self.driver = WebDriver(options=options)
 
         # Create user (aka player)
         player = Player.objects.create(username='username')
@@ -53,8 +45,11 @@ class TestSetUpTearDown(StaticLiveServerTestCase):
         ))
 
         # Add session ID cookie to log in the browser
-        session_id_cookie = self.client.cookies['sessionid']
         self.driver.get(self.live_server_url)
+        WebDriverWait(self.driver, 2).until(EC.presence_of_element_located(
+            (By.TAG_NAME, 'body')
+        ))
+        session_id_cookie = self.client.cookies['sessionid']
         self.driver.add_cookie(
             {
                 'name': 'sessionid',
@@ -76,6 +71,10 @@ class TestSetUpTearDown(StaticLiveServerTestCase):
             }
         )
     
+    def tearDown(self):
+        self.driver.quit()
+        super().tearDown()
+    
 class BaseTests(TestSetUpTearDown):
 
     def test_authenticated_user_navbar_links(self):
@@ -91,14 +90,17 @@ class BaseTests(TestSetUpTearDown):
     def test_matches_navbar_link(self):
         """The `matches-nav-link` element links to the matches page."""
         self.driver.refresh()
-        matches_link = self.driver.find_element(By.ID, 'matches-nav-link')
+        wait = WebDriverWait(self.driver, 2)
+        matches_link = wait.until(EC.presence_of_element_located(
+            (By.ID, 'matches-nav-link')
+        ))
 
         self.assertEqual(matches_link.get_attribute('href'),
             self.live_server_url + '/match/')
 
 class CurrentMatchesTests(TestSetUpTearDown):
 
-    fixtures = ['accounts']
+    fixtures = ['accounts', 'base']
 
     def setUp(self):
         # Create and log in user
@@ -106,18 +108,22 @@ class CurrentMatchesTests(TestSetUpTearDown):
 
         # Load driver for the matches view
         self.driver.get('%s%s' % (self.live_server_url, reverse('matches-all')))
+        wait = WebDriverWait(self.driver, 2)
+        wait.until(EC.presence_of_element_located(
+            (By.TAG_NAME, 'body')
+        ))
 
     def test_current_matches_table_empty_before_match_creation(self):
         """Current matches table has no rows prior to the creation of
         a match.
         """
-        wait = WebDriverWait(self.driver, 1)
+        wait = WebDriverWait(self.driver, 2)
         with self.assertRaises(selenium.common.exceptions.TimeoutException):
             wait.until(EC.presence_of_all_elements_located(
                 (By.CLASS_NAME, 'row-current-match')))
 
     def test_current_matches_table_lists_match_after_match_creation(self):
-        """Current matches table has one row for a match after tha match
+        """Current matches table has one row for a match after that match
         is created.
         """
         # Create a new match
@@ -132,7 +138,7 @@ class CurrentMatchesTests(TestSetUpTearDown):
         self.driver.refresh()
         
         # Wait until table rows are present
-        wait = WebDriverWait(self.driver, 1)
+        wait = WebDriverWait(self.driver, 2)
         table_rows = wait.until(EC.presence_of_all_elements_located(
             (By.CLASS_NAME, 'row-current-match')))
 
@@ -152,7 +158,7 @@ class CurrentMatchesTests(TestSetUpTearDown):
         self.driver.refresh()
 
         # Wait until delete button is present
-        wait = WebDriverWait(self.driver, 3)
+        wait = WebDriverWait(self.driver, 2)
         delete_button = wait.until(EC.presence_of_element_located(
             (By.ID, f'delete-match-{match.pk}')
         ))
@@ -209,7 +215,7 @@ class PastMatchesTests(TestSetUpTearDown):
         score_self.save()
 
         self.driver.refresh()
-        wait = WebDriverWait(self.driver, 1)
+        wait = WebDriverWait(self.driver, 2)
         outcome = wait.until(EC.presence_of_element_located(
             (By.ID, f'past-match-outcome-{self.match.pk}')))
 
@@ -225,7 +231,7 @@ class PastMatchesTests(TestSetUpTearDown):
         score_opponent.save()
 
         self.driver.refresh()
-        wait = WebDriverWait(self.driver, 1)
+        wait = WebDriverWait(self.driver, 2)
         outcome = wait.until(EC.presence_of_element_located(
             (By.ID, f'past-match-outcome-{self.match.pk}')))
 
@@ -238,17 +244,22 @@ class PastMatchesTests(TestSetUpTearDown):
         target_start_date = datetime(year=2022,month=1,day=1, tzinfo=pytz.timezone('utc'))
         target_end_date = datetime(year=2022,month=3,day=31, tzinfo=pytz.timezone('utc'))
 
+        WebDriverWait(self.driver, 2).until(EC.presence_of_element_located(
+            (By.TAG_NAME, 'body')
+        ))
+
         with mock.patch('django.utils.timezone.now', return_value=target_end_date):
             score_self = Score.objects.get(player=self.player_self)
             score_self.player_score = 501
             score_self.save()
-            
+
             match = Match.objects.get(pk=1)
+
             match.datetime_started = target_start_date
             match.save()
 
         self.driver.refresh()
-        wait = WebDriverWait(self.driver, 1)
+        wait = WebDriverWait(self.driver, 2)
         date_range = wait.until(EC.presence_of_element_located(
             (By.ID, f'past-match-datetime-{self.match.pk}')
         ))
@@ -287,7 +298,7 @@ class LoginTests(StaticLiveServerTestCase):
         self.assertTrue(EC.url_changes(login_url))
 
         # Presence of matches-nav-link shows the user is authenticated
-        wait = WebDriverWait(self.driver, 1)
+        wait = WebDriverWait(self.driver, 2)
         self.assertTrue(
             wait.until(
                 EC.presence_of_element_located((By.ID, 'matches-nav-link'))))
