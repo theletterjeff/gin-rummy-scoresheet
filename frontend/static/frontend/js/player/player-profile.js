@@ -1,7 +1,8 @@
-import { fillTitle } from '../utils.js';
+import { fillTitle, getJsonResponse } from '../utils.js';
 import { getPlayerFullName, getPlayerJson } from './utils.js';
 
-let playerJson = await getPlayerJson();
+let playerJson = await getJsonResponse(
+  window.location.origin + '/api/logged-in-player/')
 fillPlayerPage();
 
 function fillPlayerPage() {

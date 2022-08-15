@@ -12,7 +12,7 @@ def game_edit(request, game_id):
 def home(request):
     return render(request, 'frontend/home.html')
 
-def player_profile(request, player_id):
+def player_profile(request, username):
     return render(request, 'frontend/player-profile.html')
 
 def player_edit(request, player_id):
