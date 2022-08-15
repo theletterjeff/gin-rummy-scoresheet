@@ -1,4 +1,3 @@
-import { getPlayerJson } from './utils.js';
 import { getCookie, getJsonResponse } from '../utils.js';
 import { getApiDetailEndpoint, getFrontendURL } from '../endpoints.js';
 

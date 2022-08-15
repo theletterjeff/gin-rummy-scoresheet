@@ -1,5 +1,5 @@
 import { fillTitle, getJsonResponse } from '../utils.js';
-import { getPlayerFullName, getPlayerJson } from './utils.js';
+import { getPlayerFullName } from './utils.js';
 
 let playerJson = await getJsonResponse(
   window.location.origin + '/api/logged-in-player/')
