@@ -15,5 +15,5 @@ def home(request):
 def player_profile(request, username):
     return render(request, 'frontend/player-profile.html')
 
-def player_edit(request, player_id):
+def player_edit(request, username):
     return render(request, 'frontend/player-edit.html')

@@ -1,8 +1,9 @@
 import { getPlayerJson } from './utils.js';
-import { getCookie } from '../utils.js';
+import { getCookie, getJsonResponse } from '../utils.js';
 import { getApiDetailEndpoint, getFrontendURL } from '../endpoints.js';
 
-let playerJson = await getPlayerJson();
+let playerJson = await getJsonResponse(
+  window.location.origin + '/api/logged-in-player/')
 fillPlayerEditPlaceholders();
 addPlayerEditButtonEvent();
 
