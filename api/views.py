@@ -24,9 +24,9 @@ def api_root(request, format=None):
         'player-matches': reverse('player-matches', request=request, format=format),
     })
 
-class MatchList(ListCreateAPIView):
-    """GET all Matches or POST a new Match. Creating a new Match automatically
-    assigns the current request.user to the `created_by` Match field.
+class MatchCreate(CreateAPIView):
+    """POST a new Match. Creating a new Match automatically assigns the current
+    request.user to the `created_by` Match field.
     """
     queryset = Match.objects.all()
     serializer_class = MatchSerializer
@@ -36,6 +36,17 @@ class MatchList(ListCreateAPIView):
     ]
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user)
+
+class MatchList(ListAPIView):
+    """GET a list of Match objects for the specified user."""
+    serializer_class = MatchSerializer
+    permission_classes = [
+        IsAuthenticatedOrReadOnly,
+        IsOwnerOrReadOnly,
+    ]
+    def get_queryset(self):
+        username = self.kwargs['username']
+        return Match.objects.filter(players__username=username)
 
 class GameList(ListCreateAPIView):
     """GET all Games or POST a new Game. Creating a new Game automatically
