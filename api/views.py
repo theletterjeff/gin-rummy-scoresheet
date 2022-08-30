@@ -93,13 +93,13 @@ class GameDetail(RetrieveUpdateDestroyAPIView):
         IsOwnerOrReadOnly,
     ]
 
-class PlayerDetail(RetrieveAPIView):
+class PlayerDetail(RetrieveUpdateDestroyAPIView):
     """GET a Player object."""
     queryset = Player.objects.all()
     serializer_class = PlayerSerializer
+    lookup_field='username'
     permission_classes = [
         IsAuthenticatedOrReadOnly,
-        IsOwnerOrReadOnly,
     ]
 
 class ScoreDetail(RetrieveAPIView):
@@ -109,16 +109,6 @@ class ScoreDetail(RetrieveAPIView):
     permission_classes = [
         IsAuthenticatedOrReadOnly,
         IsOwnerOrReadOnly,
-    ]
-
-class PlayerEdit(UpdateAPIView):
-    """PUT or PATCH a Player profile.
-    To do: figure out correct `permission_classes`.
-    """
-    queryset = Player.objects.all()
-    serializer_class = PlayerSerializer
-    permission_classes = [
-        IsRequestUser,
     ]
 
 class OutcomeDetail(RetrieveAPIView):
