@@ -7,6 +7,10 @@ class PlayerSerializer(serializers.HyperlinkedModelSerializer):
     """
     Serializer for the Player model (auth user model).
     """
+    url = serializers.HyperlinkedIdentityField(
+        lookup_field='username',
+        view_name='player-detail',
+    )
     match_set = serializers.HyperlinkedRelatedField(
         view_name='match-detail',
         many=True,
@@ -24,6 +28,12 @@ class GameSerializer(serializers.HyperlinkedModelSerializer):
 
 class MatchSerializer(serializers.HyperlinkedModelSerializer):
 
+    players = serializers.HyperlinkedRelatedField(
+        view_name='player-detail',
+        many=True,
+        read_only=True,
+        lookup_field='username',
+    )
     games = serializers.HyperlinkedRelatedField(
         view_name='game-detail',
         many=True,
@@ -38,6 +48,12 @@ class MatchSerializer(serializers.HyperlinkedModelSerializer):
         view_name='outcome-detail',
         many=True,
         read_only=True,
+    )
+    created_by = serializers.HyperlinkedRelatedField(
+        view_name='player-detail',
+        many=False,
+        read_only=True,
+        lookup_field='username',
     )
     class Meta:
         model = Match

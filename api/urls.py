@@ -8,7 +8,7 @@ urlpatterns = [
     path('', views.api_root, name='api-root'),
 
     # List and Create
-    path('match/', views.MatchList.as_view(), name='match-list-create'),
+    path('matches/<str:username>/', views.MatchList.as_view(), name='match-list'),
     path('game/', views.GameList.as_view(), name='game-list-create'),
     path('all-players/', views.PlayerList.as_view(), name='player-list'),
 
@@ -17,8 +17,7 @@ urlpatterns = [
 
     # Players
     path('player-create/', views.PlayerCreate.as_view(), name='player-create'),
-    path('player/<str:pk>/', views.PlayerDetail.as_view(), name='player-detail'),
-    path('player/<str:pk>/edit/', views.PlayerEdit.as_view(), name='player-edit'),
+    path('player/<str:username>/', views.PlayerDetail.as_view(), name='player-detail'),
     path('logged-in-player/', views.LoggedInPlayerDetail.as_view(), name='logged-in-player'),
 
     # Detail
