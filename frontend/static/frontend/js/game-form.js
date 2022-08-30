@@ -78,7 +78,6 @@ export async function submitGameForm(e, method) {
       'points': points,
       'gin': gin,
       'undercut': undercut,
-      'created_by': createdBy,
     }),
   })
 }

@@ -19,13 +19,6 @@ class Match(models.Model):
     )
     complete = models.BooleanField(default=False)
 
-    created_by = models.ForeignKey(
-        Player,
-        related_name='created_match_set',
-        null=True,
-        on_delete=models.SET_NULL,
-    )
-
     class Meta:
         ordering = ['-datetime_started']
 

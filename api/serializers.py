@@ -49,12 +49,6 @@ class MatchSerializer(serializers.HyperlinkedModelSerializer):
         many=True,
         read_only=True,
     )
-    created_by = serializers.HyperlinkedRelatedField(
-        view_name='player-detail',
-        many=False,
-        read_only=True,
-        lookup_field='username',
-    )
     class Meta:
         model = Match
         fields = '__all__'

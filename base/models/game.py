@@ -32,13 +32,6 @@ class Game(models.Model):
 
     datetime_played = models.DateTimeField(auto_now_add=True)
 
-    created_by = models.ForeignKey(
-        Player,
-        related_name='created_games',
-        null=True,
-        on_delete=models.SET_NULL,
-    )
-
     class Meta:
         ordering = ['-datetime_played']
 

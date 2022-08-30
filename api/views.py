@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from rest_framework.views import APIView
 
-from api.permissions import IsOwnerOrReadOnly, IsRequestUser
+from api.permissions import IsRequestUser
 from api.serializers import (GameSerializer, MatchSerializer, OutcomeSerializer,
                              PlayerSerializer, ScoreSerializer)
 
@@ -25,41 +25,30 @@ def api_root(request, format=None):
     })
 
 class MatchCreate(CreateAPIView):
-    """POST a new Match. Creating a new Match automatically assigns the current
-    request.user to the `created_by` Match field.
-    """
+    """POST a new Match."""
     queryset = Match.objects.all()
     serializer_class = MatchSerializer
     permission_classes = [
         IsAuthenticatedOrReadOnly,
-        IsOwnerOrReadOnly,
     ]
-    def perform_create(self, serializer):
-        serializer.save(created_by=self.request.user)
 
 class MatchList(ListAPIView):
     """GET a list of Match objects for the specified user."""
     serializer_class = MatchSerializer
     permission_classes = [
         IsAuthenticatedOrReadOnly,
-        IsOwnerOrReadOnly,
     ]
     def get_queryset(self):
         username = self.kwargs['username']
         return Match.objects.filter(players__username=username)
 
 class GameList(ListCreateAPIView):
-    """GET all Games or POST a new Game. Creating a new Game automatically
-    assigns the current request.user to the `created_by` Game field.
-    """
+    """GET all Games or POST a new Game."""
     queryset = Game.objects.all()
     serializer_class = GameSerializer
     permission_classes = [
         IsAuthenticatedOrReadOnly,
-        IsOwnerOrReadOnly,
     ]
-    def perform_create(self, serializer):
-        serializer.save(created_by=self.request.user)
 
 class PlayerList(ListAPIView):
     """GET all Player instances."""
@@ -67,7 +56,6 @@ class PlayerList(ListAPIView):
     serializer_class = PlayerSerializer
     permission_classes = [
         IsAuthenticatedOrReadOnly,
-        IsOwnerOrReadOnly,
     ]
 
 class PlayerCreate(CreateAPIView):
@@ -81,7 +69,6 @@ class MatchDetail(RetrieveUpdateDestroyAPIView):
     serializer_class = MatchSerializer
     permission_classes = [
         IsAuthenticatedOrReadOnly,
-        IsOwnerOrReadOnly,
     ]
 
 class GameDetail(RetrieveUpdateDestroyAPIView):
@@ -90,7 +77,6 @@ class GameDetail(RetrieveUpdateDestroyAPIView):
     serializer_class = GameSerializer
     permission_classes = [
         IsAuthenticatedOrReadOnly,
-        IsOwnerOrReadOnly,
     ]
 
 class PlayerDetail(RetrieveUpdateDestroyAPIView):
@@ -108,7 +94,6 @@ class ScoreDetail(RetrieveAPIView):
     serializer_class = ScoreSerializer
     permission_classes = [
         IsAuthenticatedOrReadOnly,
-        IsOwnerOrReadOnly,
     ]
 
 class OutcomeDetail(RetrieveAPIView):
@@ -117,7 +102,6 @@ class OutcomeDetail(RetrieveAPIView):
     serializer_class = OutcomeSerializer
     permission_classes = [
         IsAuthenticatedOrReadOnly,
-        IsOwnerOrReadOnly,
     ]
 
 class PlayerMatches(APIView):
