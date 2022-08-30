@@ -6,9 +6,9 @@ function fillNavbarLinks() {
   if (document.getElementById('login-link')) {
     fillNavbarLink('login-link', '/accounts/login/');
   } else {
-    getPlayerUsername().then(function(id) {
+    getPlayerUsername().then(function(username) {
       fillNavbarLink('matches-nav-link', '/match/');
-      fillNavbarLink('account-nav-link', `/player/${id}`);
+      fillNavbarLink('account-nav-link', `/player/${username}`);
       fillNavbarLink('logout-nav-link', '/accounts/logout/');
     });
   };
