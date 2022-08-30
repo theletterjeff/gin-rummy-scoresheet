@@ -1,5 +1,5 @@
 import { getCookie, getJsonResponse } from '../utils.js';
-import { getApiDetailEndpoint, getFrontendURL } from '../endpoints.js';
+import { getPlayerDetailEndpoint, getFrontendURL } from '../endpoints.js';
 
 let playerJson = await getJsonResponse(
   window.location.origin + '/api/logged-in-player/')
@@ -20,7 +20,7 @@ function fillDefaultInputText(elemName, defaultInputText) {
 }
 
 async function addPlayerEditButtonEvent() {
-  const playerEditApiEndpoint = getApiDetailEndpoint();
+  const playerDetailEndpoint = getPlayerDetailEndpoint();
   const submitBtn = document.getElementById('player-edit-submit');
   submitBtn.addEventListener('click', function(e) {
     e.preventDefault();
@@ -32,7 +32,7 @@ async function addPlayerEditButtonEvent() {
     let lastName = document.getElementById('player-last-name-input').value;
     let email = document.getElementById('player-email-input').value;
 
-    return fetch(playerEditApiEndpoint, {
+    return fetch(playerDetailEndpoint, {
       method: 'PATCH',
       headers: {
         'Content-type': 'application/json',
@@ -44,6 +44,8 @@ async function addPlayerEditButtonEvent() {
         'last_name': lastName,
         'email': email,
       }),
-    }).then(() => {window.location = getFrontendURL(playerJson.url)})
+    })
+    .then((resp) => console.log(resp))
+    .then(() => {window.location = getFrontendURL(playerJson.url)})
   })
 }

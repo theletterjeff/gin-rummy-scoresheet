@@ -9,6 +9,11 @@ import { getJsonResponse } from "./utils.js";
   return `${pageOrigin}/api${pagePath}`;
 }
 
+export function getPlayerDetailEndpoint() {
+  let username = window.location.pathname.split('/')[2]
+  return window.location.origin + `/api/player/${username}/`
+}
+
 /** Return the endoint for the GameListCreate API view */
 export function getGameListCreateEndpoint() {
   const pageURL = new URL(window.location.href);
