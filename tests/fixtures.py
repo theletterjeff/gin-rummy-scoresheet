@@ -1,6 +1,7 @@
-from typing import List
+from typing import Callable, List
 
 from django.middleware.csrf import get_token
+from django.test.client import Client
 from django.urls import reverse
 
 import pytest
@@ -13,84 +14,115 @@ from accounts.models import Player
 from base.models import Match
 
 
-@pytest.fixture
-def logged_in_client(client, player0):
-    client.force_login(player0)
-    return client
+"""Players"""
 
 @pytest.fixture
-def base_api_client():
-    return APIClient()
-
-@pytest.fixture
-def api_client(base_api_client, player0):
-    """Logged in APIClient"""
-    base_api_client.force_authenticate(user=player0)
-    return base_api_client
-
-@pytest.fixture
-def base_driver():
-    options = Options()
-    options.headless = True
-    return WebDriver(options=options)
-
-@pytest.fixture
-def logged_in_driver(base_driver, live_server, logged_in_client, rf):
-    session_id_cookie = logged_in_client.cookies['sessionid']
-    base_driver.get(live_server.url)
-    base_driver.add_cookie(
-        {
-            'name': 'sessionid',
-            'value': session_id_cookie.value,
-            'secure': False,
-            'path': '/',
-        }
-    )
-    csrftoken = get_token(rf.get(live_server.url))
-    base_driver.add_cookie(
-        {
-            'name': 'csrftoken',
-            'value': csrftoken,
-            'secure': False,
-            'path': '/',
-        }
-    )
-    return base_driver
-
-@pytest.fixture
-def make_player(db):
+def make_player(db) -> Callable:
     """Factory as fixture for creating a new Player instance"""
-    def _make_player(username: str, password: str = 'test_password',
-                     *args, **kwargs):
+    def _make_player(username: str = 'player0', password: str = 'test_password',
+                     *args, **kwargs) -> Player:
         return Player.objects.create(username=username, password=password,
                                      *args, **kwargs)
     return _make_player
 
 @pytest.fixture
-def make_players(db, make_player):
-    """Factory as fixture for creating multiple Player instances.
-    Returns a dictionary whose keys are sequentially numbered usernames
-    (player0, player1, ...) and whose values are Player instances.
-    """
-    def _make_players(num):
-        player_dict = {}
-        for i in range(num):
-            username = f'player{i}'
-            player_dict[username] = make_player(username=username)
-        return player_dict
+def make_players(db, make_player) -> Callable:
+    """Factory as fixture to return a list of Player instances."""
+    def _make_players(num) -> List[Player]:
+        start_num = -1
+
+        # Make sure we aren't creating players that already exist
+        while True:
+            try:
+                start_num += 1
+                Player.objects.get(username=f'player{start_num}')
+            except Player.DoesNotExist:
+                break
+
+        return [make_player(username=f'player{i}') for i
+                in range(start_num, num + start_num)]
     return _make_players
 
+
+"""Matches"""
+
 @pytest.fixture
-def make_match(db):
-    """Factory as fixture for creating matches"""
-    def _make_match(players: List[Player], *args, **kwargs):
+def make_match(db) -> Callable:
+    """Factory as fixture for creating a single Match instance."""
+    def _make_match(players: List[Player], *args, **kwargs) -> Match:
         match = Match.objects.create(*args, **kwargs)
         [match.players.add(player) for player in players]
         return match
     return _make_match
 
 @pytest.fixture
-def simple_match(db, make_players, make_match):
-    """A Match instance with player0 and player1 as the `players` attr."""
-    players = make_players(2)
-    return make_match(players)
+def make_matches(db, make_match) -> Callable:
+    """Factory as fixture for creating multiple Match instances."""
+    def _make_matches(num: int, players: List[Player], *args, **kwargs) -> List[Match]:
+        return [make_match(players, *args, **kwargs) for i in range(num)]
+    return _make_matches
+
+
+"""Client/driver"""
+
+@pytest.fixture
+def log_in_client(client) -> Callable:
+    """Factory as fixture, returns a logged-in Django test Client instance."""
+    def _log_in_client(player: Player) -> Client:
+        client.force_login(player)
+        return client
+    return _log_in_client
+
+@pytest.fixture
+def log_in_api_client() -> Callable:
+    """Factory as fixture, returns a logged-in DRF API Client instance."""
+    def _log_in_api_client(player: Player) -> APIClient:
+        api_client = APIClient()
+        api_client.force_authenticate(user=player)
+        return api_client
+    return _log_in_api_client
+
+@pytest.fixture
+def logged_out_driver():
+    options = Options()
+    options.headless = True
+    return WebDriver(options=options)
+
+@pytest.fixture
+def log_in_driver(live_server, log_in_client, rf,   # Built-in
+                  make_player) -> Callable:         # Have to import
+    """Add sessionid and csrftoken cookies to a driver instance. The client
+    passed to the `client` arg should not already be logged in.
+    """
+    def _log_in_driver(player: Player, client: Client) -> WebDriver:
+
+        options = Options()
+        options.headless = True
+        driver = WebDriver(options=options)
+        
+        client = log_in_client(player)
+        driver.get(live_server.url)
+
+        session_id_cookie = client.cookies.get('sessionid')
+        if not session_id_cookie:
+            raise Exception('Client is not logged in.')
+
+        driver.add_cookie(
+            {
+                'name': 'sessionid',
+                'value': session_id_cookie.value,
+                'secure': False,
+                'path': '/',
+            }
+        )
+        csrftoken = get_token(rf.get(live_server.url))
+        driver.add_cookie(
+            {
+                'name': 'csrftoken',
+                'value': csrftoken,
+                'secure': False,
+                'path': '/',
+            }
+        )
+        return driver
+    return _log_in_driver
