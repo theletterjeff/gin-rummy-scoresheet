@@ -3,9 +3,10 @@ from . import views
 
 urlpatterns = [
     path('', views.home, name='home'),
-    path('match/', views.matches, name='matches-all'),
-    path('match/<int:match_id>/', views.match, name='match-detail'),
-    path('game/<int:game_id>/', views.game_edit, name='game-edit'),
-    path('player/<str:username>/', views.player_profile, name='player-profile'),
-    path('player/<str:username>/edit/', views.player_edit, name='player-edit'),
+    path('<str:username>/', views.player_detail, name='player-detail'),
+    path('<str:username>/edit/', views.player_edit, name='player-edit'),
+    path('<str:username>/matches/', views.match_list, name='match-list'),
+    path('<str:username>/matches/<int:match_pk>/', views.match_detail, name='match-detail'),
+    path('<str:username>/matches/<int:match_pk>/games/<int:game_pk>/', views.game_detail, name='game-detail'),
+    path('<str:username>/matches/<int:match_pk>/games/<int:game_pk>/edit/', views.game_detail, name='game-edit'),
 ]
