@@ -131,7 +131,7 @@ def log_in_driver(live_server, log_in_client, rf,   # Built-in
 def authenticate_api_request(make_player) -> Callable:
     """Return an API Request object to pass to a view function."""
     def _authenticate_api_request(view_func, url: str, http_method: str,
-                                  player: Player = None):
+                                  player: Player = None, *args, **kwargs):
         if not player:
             player = make_player()
         factory = APIRequestFactory()
@@ -142,7 +142,7 @@ def authenticate_api_request(make_player) -> Callable:
             'patch': factory.patch,
             'delete': factory.delete,
         }
-        request = method_handler[http_method](url)
+        request = method_handler[http_method](url, *args, **kwargs)
         force_authenticate(request, user=player)
         return request
     return _authenticate_api_request
