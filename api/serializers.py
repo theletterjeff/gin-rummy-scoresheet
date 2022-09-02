@@ -27,7 +27,11 @@ class GameSerializer(serializers.HyperlinkedModelSerializer):
         fields = '__all__'
 
 class MatchSerializer(serializers.HyperlinkedModelSerializer):
-
+    url = serializers.HyperlinkedIdentityField(
+        lookup_field='pk',
+        lookup_url_kwarg='match_pk',
+        view_name='match-detail',
+    )
     players = serializers.HyperlinkedRelatedField(
         view_name='player-detail',
         many=True,
