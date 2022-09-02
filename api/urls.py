@@ -9,12 +9,11 @@ urlpatterns = [
 
     path('player/<str:username>', views.PlayerDetail.as_view(), name='player-detail'),
 
-    path('matches/<str:username>/', views.MatchList.as_view(), name='match-list'),
+    path('matches/<str:username>/', views.MatchListCreate.as_view(), name='match-list-create'),
     path('matches/<int:match_pk>/', views.MatchDetail.as_view(), name='match-detail'),
 
 
 #     # List and Create
-#     path('matches/<str:username>/', views.MatchList.as_view(), name='match-list'),
 #     path('game/', views.GameList.as_view(), name='game-list-create'),
 #     path('all-players/', views.PlayerList.as_view(), name='player-list'),
 

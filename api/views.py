@@ -24,7 +24,7 @@ def api_root(request, format=None):
         'player-matches': reverse('player-matches', request=request, format=format),
     })
 
-class MatchList(ListAPIView):
+class MatchListCreate(ListCreateAPIView):
     """GET a list of Match objects for the specified user."""
     serializer_class = MatchSerializer
     permission_classes = [
