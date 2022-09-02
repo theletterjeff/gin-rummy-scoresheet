@@ -130,12 +130,19 @@ def log_in_driver(live_server, log_in_client, rf,   # Built-in
 @pytest.fixture
 def authenticate_api_request(make_player) -> Callable:
     """Return an API Request object to pass to a view function."""
-    def _authenticate_api_request(view_func, url: str,
+    def _authenticate_api_request(view_func, url: str, http_method: str,
                                   player: Player = None):
         if not player:
             player = make_player()
         factory = APIRequestFactory()
-        request = factory.get(url)
+        method_handler = {
+            'get': factory.get,
+            'post': factory.post,
+            'put': factory.put,
+            'patch': factory.patch,
+            'delete': factory.delete,
+        }
+        request = method_handler[http_method](url)
         force_authenticate(request, user=player)
         return request
     return _authenticate_api_request
