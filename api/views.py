@@ -3,7 +3,7 @@ from rest_framework.generics import (CreateAPIView, ListAPIView,
                                      ListCreateAPIView, RetrieveAPIView,
                                      RetrieveUpdateDestroyAPIView,
                                      UpdateAPIView)
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from rest_framework.views import APIView
@@ -43,6 +43,14 @@ class MatchDetail(RetrieveUpdateDestroyAPIView):
     ]
     lookup_url_kwarg = 'match_pk'
     lookup_field = 'pk'
+
+class MatchCreate(CreateAPIView):
+    """POST a Match."""
+    queryset = Match.objects.all()
+    serializer_class = MatchSerializer
+    permission_classes = [
+        IsAuthenticated
+    ]
 
 class MatchCreate(CreateAPIView):
     """POST a new Match."""
