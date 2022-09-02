@@ -5,7 +5,7 @@ from django.test.client import Client
 from django.urls import reverse
 
 import pytest
-from rest_framework.test import APIClient
+from rest_framework.test import APIClient, APIRequestFactory, force_authenticate
 
 from selenium.webdriver.firefox.webdriver import WebDriver
 from selenium.webdriver.firefox.options import Options
@@ -126,3 +126,16 @@ def log_in_driver(live_server, log_in_client, rf,   # Built-in
         )
         return driver
     return _log_in_driver
+
+@pytest.fixture
+def authenticate_api_request(make_player) -> Callable:
+    """Return an API Request object to pass to a view function."""
+    def _authenticate_api_request(view_func, url: str,
+                                  player: Player = None):
+        if not player:
+            player = make_player()
+        factory = APIRequestFactory()
+        request = factory.get(url)
+        force_authenticate(request, user=player)
+        return request
+    return _authenticate_api_request
