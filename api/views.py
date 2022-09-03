@@ -63,6 +63,18 @@ class GameCreate(CreateAPIView):
     queryset = Game.objects.all()
     serializer_class = GameSerializer
 
+class ScoreList(ListAPIView):
+    serializer_class = ScoreSerializer
+    def get_queryset(self):
+        username = self.kwargs['username']
+        player = Player.objects.get(username=username)
+        return Score.objects.filter(player=player)
+
+class ScoreDetail(RetrieveAPIView):
+    """GET a Player's Score for a Match."""
+    queryset = Score.objects.all()
+    serializer_class = ScoreSerializer
+
 class PlayerList(ListAPIView):
     """GET all Player instances."""
     queryset = Player.objects.all()
@@ -78,11 +90,6 @@ class PlayerDetail(RetrieveUpdateDestroyAPIView):
     queryset = Player.objects.all()
     serializer_class = PlayerSerializer
     lookup_field='username'
-
-class ScoreDetail(RetrieveAPIView):
-    """GET a Player's Score for a Match."""
-    queryset = Score.objects.all()
-    serializer_class = ScoreSerializer
 
 class OutcomeDetail(RetrieveAPIView):
     """GET an Outcome instance for a Match."""
