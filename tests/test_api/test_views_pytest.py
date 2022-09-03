@@ -71,9 +71,7 @@ def test_match_create_creates_new_match(make_players,
     url = reverse('match-create')
     kwargs = {'players': player_urls}
 
-    factory = APIRequestFactory()
-    request = factory.post(url, kwargs)
-    force_authenticate(request, players[0])
+    request = authenticate_api_request(view, url, 'post', players[0], kwargs)
 
     response = view(request, kwargs)
     
