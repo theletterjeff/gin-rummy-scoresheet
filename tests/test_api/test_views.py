@@ -78,10 +78,10 @@ class TestMatchViews(TestCase):
 
     def test_create_match(self):
         """
-        Sending valid JSON data to the `/match-list-create/` endpoint
+        Sending valid JSON data to the `/match-list/` endpoint
         creates a new Match.
         """
-        url = reverse('match-list-create')
+        url = reverse('match-list')
         data = {
             'target_score': 12345,
             'players': [
@@ -103,8 +103,8 @@ class TestMatchViews(TestCase):
         ending in .json returns a JSON object. Doing the same
         with a URL ending in HTML returns an HTML object.
         """
-        url_json = reverse('match-list-create')[:-1] + '.json'
-        url_browsable_api = reverse('match-list-create')[:-1] + '.api'
+        url_json = reverse('match-list')[:-1] + '.json'
+        url_browsable_api = reverse('match-list')[:-1] + '.api'
         
         response_json = self.apiclient.get(url_json)
         response_browsable_api = self.apiclient.get(url_browsable_api)
@@ -149,7 +149,7 @@ class TestMatchViews(TestCase):
         for i in range(9):
             Match.objects.create()
 
-        url = reverse('match-list-create')
+        url = reverse('match-list')
         response_p1 = self.apiclient.get(url)
         response_p2 = self.apiclient.get(url, data={'page': 2})
         

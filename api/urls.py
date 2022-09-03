@@ -9,7 +9,7 @@ urlpatterns = [
 
     path('player/<str:username>', views.PlayerDetail.as_view(), name='player-detail'),
 
-    path('matches/<str:username>/', views.MatchList.as_view(), name='match-list-create'),
+    path('matches/<str:username>/', views.MatchList.as_view(), name='match-list'),
     path('matches/<int:match_pk>/', views.MatchDetail.as_view(), name='match-detail'),
     path('matches/create/', views.MatchCreate.as_view(), name='match-create'),
 
