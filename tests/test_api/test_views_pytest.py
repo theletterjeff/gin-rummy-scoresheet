@@ -1,10 +1,12 @@
+import re
+
 from django.urls import reverse
 
 import pytest
 
 from rest_framework.test import APIRequestFactory, force_authenticate
 
-from api.views import MatchList
+from api.views import MatchCreate, MatchList
 from tests.fixtures import (make_match, make_matches, make_player, make_players,
                             authenticate_api_request)
 
@@ -16,7 +18,7 @@ def test_match_list_view_returns_no_records_when_no_records_present(
     kwargs = {'username': player.username}
     
     view = MatchList.as_view()
-    url = reverse('match-list-create', kwargs=kwargs)
+    url = reverse('match-list', kwargs=kwargs)
 
     request = authenticate_api_request(view, url, 'get', player)
     response = view(request, **kwargs)
@@ -33,7 +35,7 @@ def test_match_list_view_returns_no_records_when_matches_are_w_other_players(
     kwargs = {'username': players[0].username}
 
     view = MatchList.as_view()
-    url = reverse('match-list-create', kwargs=kwargs)
+    url = reverse('match-list', kwargs=kwargs)
 
     request = authenticate_api_request(view, url, 'get', players[0])
     response = view(request, **kwargs)
@@ -51,15 +53,35 @@ def test_match_list_view_returns_records_when_matches_are_with_player(
     kwargs = {'username': players[0].username}
 
     view = MatchList.as_view()
-    url = reverse('match-list-create', kwargs=kwargs)
+    url = reverse('match-list', kwargs=kwargs)
 
     request = authenticate_api_request(view, url, 'get', players[0])
     response = view(request, **kwargs)
 
     assert response.data['count'] == match_num
 
-def test_match_reate_creates_new_match(make_players,
+def test_match_create_creates_new_match(make_players,
         authenticate_api_request):
     """Sending a POST request to the MatchCreate view creates a new Match.
     """
-    pass
+    players = make_players(2)
+    player_urls = [player.get_absolute_url() for player in players]
+    
+    view = MatchCreate.as_view()
+    url = reverse('match-create')
+    kwargs = {'players': player_urls}
+
+    factory = APIRequestFactory()
+    request = factory.post(url, kwargs)
+    force_authenticate(request, players[0])
+
+    response = view(request, kwargs)
+    
+    assert response.status_code == 201
+
+    # Both of the players are in the `.players` set
+    for player_url in player_urls:
+        regex = re.compile(player_url)
+        assert any([regex.search(response_player_url)
+                    for response_player_url in response.data['players']])
+    
