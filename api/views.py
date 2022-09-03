@@ -46,6 +46,20 @@ class MatchCreate(CreateAPIView):
 
 class GameList(ListCreateAPIView):
     """GET all Games or POST a new Game."""
+    serializer_class = GameSerializer
+
+    def get_queryset(self):
+        match_pk = self.kwargs['match_pk']
+        match = Match.objects.get(pk=match_pk)
+        return Game.objects.filter(match=match.url)
+
+class GameDetail(RetrieveUpdateDestroyAPIView):
+    """GET, PUT/PATCH, or DELETE a Game."""
+    queryset = Game.objects.all()
+    serializer_class = GameSerializer
+
+class GameCreate(CreateAPIView):
+    """POST a Game."""
     queryset = Game.objects.all()
     serializer_class = GameSerializer
 
@@ -58,11 +72,6 @@ class PlayerCreate(CreateAPIView):
     """POST a new Player"""
     queryset = Player.objects.all()
     serializer_class = PlayerSerializer
-
-class GameDetail(RetrieveUpdateDestroyAPIView):
-    """GET, PUT/PATCH, or DELETE a Game."""
-    queryset = Game.objects.all()
-    serializer_class = GameSerializer
 
 class PlayerDetail(RetrieveUpdateDestroyAPIView):
     """GET a Player object."""
