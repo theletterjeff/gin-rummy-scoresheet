@@ -13,6 +13,12 @@ urlpatterns = [
     path('matches/<int:match_pk>/', views.MatchDetail.as_view(), name='match-detail'),
     path('matches/create/', views.MatchCreate.as_view(), name='match-create'),
 
+    path('scores/<str:username>/', views.ScoreList.as_view(), name='score-list'),
+    path('scores/<str:username>/matches/<int:match_pk>/', views.ScoreDetail.as_view(), name='score-detail'),
+
+    path('outcomes/<str:username>/', views.ScoreList.as_view(), name='outcome-list'),
+    path('outcomes/<str:username>/matches/<int:match_pk>/', views.ScoreDetail.as_view(), name='outcome-detail')
+
 #     # List and Create
 #     path('game/', views.GameList.as_view(), name='game-list-create'),
 #     path('all-players/', views.PlayerList.as_view(), name='player-list'),
