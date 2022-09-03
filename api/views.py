@@ -3,7 +3,7 @@ from rest_framework.generics import (CreateAPIView, ListAPIView,
                                      ListCreateAPIView, RetrieveAPIView,
                                      RetrieveUpdateDestroyAPIView,
                                      UpdateAPIView)
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticated, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from rest_framework.views import APIView
@@ -27,9 +27,7 @@ def api_root(request, format=None):
 class MatchList(ListAPIView):
     """GET a list of Match objects for the specified user."""
     serializer_class = MatchSerializer
-    permission_classes = [
-        IsAuthenticatedOrReadOnly,
-    ]
+
     def get_queryset(self):
         username = self.kwargs['username']
         return Match.objects.filter(players__username=username)
@@ -38,9 +36,6 @@ class MatchDetail(RetrieveUpdateDestroyAPIView):
     """GET, PUT/PATCH, or DELETE a Match."""
     queryset = Match.objects.all()
     serializer_class = MatchSerializer
-    permission_classes = [
-        IsAuthenticatedOrReadOnly,
-    ]
     lookup_url_kwarg = 'match_pk'
     lookup_field = 'pk'
 
@@ -48,26 +43,16 @@ class MatchCreate(CreateAPIView):
     """POST a Match."""
     queryset = Match.objects.all()
     serializer_class = MatchSerializer
-    permission_classes = [
-        IsAuthenticated
-    ]
-
 
 class GameList(ListCreateAPIView):
     """GET all Games or POST a new Game."""
     queryset = Game.objects.all()
     serializer_class = GameSerializer
-    permission_classes = [
-        IsAuthenticatedOrReadOnly,
-    ]
 
 class PlayerList(ListAPIView):
     """GET all Player instances."""
     queryset = Player.objects.all()
     serializer_class = PlayerSerializer
-    permission_classes = [
-        IsAuthenticatedOrReadOnly,
-    ]
 
 class PlayerCreate(CreateAPIView):
     """POST a new Player"""
@@ -78,34 +63,22 @@ class GameDetail(RetrieveUpdateDestroyAPIView):
     """GET, PUT/PATCH, or DELETE a Game."""
     queryset = Game.objects.all()
     serializer_class = GameSerializer
-    permission_classes = [
-        IsAuthenticatedOrReadOnly,
-    ]
 
 class PlayerDetail(RetrieveUpdateDestroyAPIView):
     """GET a Player object."""
     queryset = Player.objects.all()
     serializer_class = PlayerSerializer
     lookup_field='username'
-    permission_classes = [
-        IsAuthenticatedOrReadOnly,
-    ]
 
 class ScoreDetail(RetrieveAPIView):
     """GET a Player's Score for a Match."""
     queryset = Score.objects.all()
     serializer_class = ScoreSerializer
-    permission_classes = [
-        IsAuthenticatedOrReadOnly,
-    ]
 
 class OutcomeDetail(RetrieveAPIView):
     """GET an Outcome instance for a Match."""
     queryset = Outcome.objects.all()
     serializer_class = OutcomeSerializer
-    permission_classes = [
-        IsAuthenticatedOrReadOnly,
-    ]
 
 class PlayerMatches(APIView):
     """GET Match instances played by a Player."""
