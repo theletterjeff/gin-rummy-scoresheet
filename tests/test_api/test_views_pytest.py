@@ -6,7 +6,7 @@ import pytest
 
 from rest_framework.test import APIRequestFactory, force_authenticate
 
-from api.views import MatchCreate, MatchList
+from api.views import MatchCreate, MatchDetail, MatchList
 from tests.fixtures import (make_match, make_matches, make_player, make_players,
                             authenticate_api_request)
 
@@ -82,4 +82,38 @@ def test_match_create_creates_new_match(make_players,
         regex = re.compile(player_url)
         assert any([regex.search(response_player_url)
                     for response_player_url in response.data['players']])
+
+def test_match_detail_get_returns_match(make_players, make_match,
+        authenticate_api_request):
+    """GET requests to the MatchDetail view return Match instances."""
+    players = make_players(2)
+    match = make_match(players)
+    kwargs = {'match_pk': match.pk}
     
+    view = MatchDetail.as_view()
+    url = reverse('match-detail', kwargs=kwargs)
+
+    request = authenticate_api_request(view, url, 'get', players[0], kwargs)
+    response = view(request, **kwargs)
+
+    assert url in response.data['url']
+
+def test_match_detail_patch_updates_match(make_players, make_match,
+        authenticate_api_request):
+    """PATCH requests to the MatchDetail view update Match instances."""
+    players = make_players(2)
+    match = make_match(players)
+    url_kwargs = {'match_pk': match.pk}
+    
+    view = MatchDetail.as_view()
+    url = reverse('match-detail', kwargs=url_kwargs)
+
+    patch_kwargs = {'complete': True, 'target_score': 250}
+    patch_kwargs.update(url_kwargs)
+
+    request = authenticate_api_request(view, url, 'patch', players[0], patch_kwargs)
+    response = view(request, **patch_kwargs)
+
+    assert response.status_code == 200
+    assert response.data['complete'] == True
+    assert response.data['target_score'] == 250
