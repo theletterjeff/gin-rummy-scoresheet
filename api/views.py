@@ -44,7 +44,7 @@ class MatchCreate(CreateAPIView):
     queryset = Match.objects.all()
     serializer_class = MatchSerializer
 
-class GameList(ListCreateAPIView):
+class GameList(ListAPIView):
     """GET all Games or POST a new Game."""
     serializer_class = GameSerializer
 
