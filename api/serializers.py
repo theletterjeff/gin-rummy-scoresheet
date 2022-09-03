@@ -34,8 +34,8 @@ class MatchSerializer(serializers.HyperlinkedModelSerializer):
     )
     players = serializers.HyperlinkedRelatedField(
         view_name='player-detail',
+        queryset=Player.objects.all(),
         many=True,
-        read_only=True,
         lookup_field='username',
     )
     games = serializers.HyperlinkedRelatedField(
