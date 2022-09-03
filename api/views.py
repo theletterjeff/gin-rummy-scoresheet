@@ -52,14 +52,6 @@ class MatchCreate(CreateAPIView):
         IsAuthenticated
     ]
 
-class MatchCreate(CreateAPIView):
-    """POST a new Match."""
-    queryset = Match.objects.all()
-    serializer_class = MatchSerializer
-    permission_classes = [
-        IsAuthenticatedOrReadOnly,
-    ]
-
 
 class GameList(ListCreateAPIView):
     """GET all Games or POST a new Game."""
