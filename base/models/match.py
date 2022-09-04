@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 
 from accounts.models import Player
 from base.validators import validate_gt_zero
@@ -25,6 +26,9 @@ class Match(models.Model):
     def __str__(self):
         date_started_str = self.datetime_started.strftime('%D')
         return f'{date_started_str} ({self.pk})'
+    
+    def get_absolute_url(self):
+        return reverse('match-detail', kwargs={'match_pk': self.pk})
 
 class MatchPlayer(models.Model):
     """
@@ -32,6 +36,9 @@ class MatchPlayer(models.Model):
     """
     match = models.ForeignKey(Match, null=True, on_delete=models.CASCADE)
     player = models.ForeignKey(Player, null=True, on_delete=models.SET_NULL)
+
+    def get_url_kwargs(self):
+        return {'username': self.player.username, 'match_pk': self.match.pk}
 
     class Meta:
         abstract = True
@@ -47,6 +54,9 @@ class Score(MatchPlayer):
     def __str__(self):
         date_started_str = self.match.datetime_started.strftime('%D')
         return f'{self.player.username} {date_started_str} ({self.pk})'
+    
+    def get_absolute_url(self):
+        return reverse('score-detail', kwargs=self.get_url_kwargs())
 
 class Outcome(MatchPlayer):
     """
@@ -68,3 +78,6 @@ class Outcome(MatchPlayer):
     def __str__(self):
         date_started_str = self.match.datetime_started.strftime('%D')
         return f'{self.player.username} {date_started_str} ({self.pk})'
+
+    def get_absolute_url(self):
+        return reverse('outcome-detail', kwargs=self.get_url_kwargs())
