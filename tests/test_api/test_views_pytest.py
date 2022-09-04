@@ -6,7 +6,8 @@ import pytest
 
 from rest_framework.test import APIRequestFactory, force_authenticate
 
-from api.views import MatchCreate, MatchDetail, MatchList
+from api.views import MatchCreate, MatchDetail, MatchList, OutcomeDetail
+from base.models import Outcome
 from tests.fixtures import (make_match, make_matches, make_player, make_players,
                             authenticate_api_request)
 
@@ -117,3 +118,25 @@ def test_match_detail_patch_updates_match(make_players, make_match,
     assert response.status_code == 200
     assert response.data['complete'] == True
     assert response.data['target_score'] == 250
+
+def test_outcome_detail(make_players, make_match, authenticate_api_request):
+    """Sending a GET request to the OutcomeDetail view returns a response
+    containing data on the requests Outcome instance.
+    """
+    players = make_players(2)
+    match = make_match(players)
+    outcome = Outcome.objects.create(player=players[0], match=match,
+            player_outcome=1)
+    
+    kwargs = {'username': players[0].username, 'match_pk': match.pk}
+    view = OutcomeDetail.as_view()
+    url = reverse('outcome-detail', kwargs=kwargs)
+
+    request = authenticate_api_request(view, url, 'get', players[0])
+    response = view(request, **kwargs)
+    
+    assert response.status_code == 200
+    assert response.data['url'].endswith(url)
+    assert response.data['match'].endswith(match.get_absolute_url())
+    assert response.data['player'].endswith(players[0].get_absolute_url())
+    assert response.data['player_outcome'] == 1
