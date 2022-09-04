@@ -75,6 +75,14 @@ class ScoreDetail(RetrieveAPIView):
     queryset = Score.objects.all()
     serializer_class = ScoreSerializer
 
+    def get_object(self):
+        queryset = self.get_queryset()
+        obj = get_object_or_404(queryset,
+                                player__username=self.kwargs['username'],
+                                match__pk=self.kwargs['match_pk'])
+        self.check_object_permissions(self.request, obj)
+        return obj
+
 class OutcomeList(ListAPIView):
     """GET all Outcome instances for a Player."""
     serializer_class = OutcomeSerializer
