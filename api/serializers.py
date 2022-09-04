@@ -85,7 +85,7 @@ class OutcomeSerializer(serializers.HyperlinkedModelSerializer):
 class ScoreSerializer(serializers.HyperlinkedModelSerializer):
 
     url = ParameterizedHyperlinkedIdentityField(
-        view_name='outcome-detail',
+        view_name='score-detail',
         lookup_field_data = (
             ('player', 'username', 'username'),
             ('match', 'pk', 'match_pk'),
