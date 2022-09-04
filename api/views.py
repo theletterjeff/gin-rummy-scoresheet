@@ -1,3 +1,5 @@
+from django.shortcuts import get_object_or_404
+
 from rest_framework.decorators import api_view
 from rest_framework.generics import (CreateAPIView, ListAPIView,
                                      ListCreateAPIView, RetrieveAPIView,
@@ -27,7 +29,6 @@ def api_root(request, format=None):
 class MatchList(ListAPIView):
     """GET a list of Match objects for the specified user."""
     serializer_class = MatchSerializer
-
     def get_queryset(self):
         username = self.kwargs['username']
         return Match.objects.filter(players__username=username)
@@ -47,7 +48,6 @@ class MatchCreate(CreateAPIView):
 class GameList(ListAPIView):
     """GET all Games or POST a new Game."""
     serializer_class = GameSerializer
-
     def get_queryset(self):
         match_pk = self.kwargs['match_pk']
         match = Match.objects.get(pk=match_pk)
@@ -75,6 +75,29 @@ class ScoreDetail(RetrieveAPIView):
     queryset = Score.objects.all()
     serializer_class = ScoreSerializer
 
+class OutcomeList(ListAPIView):
+    """GET all Outcome instances for a Player."""
+    serializer_class = OutcomeSerializer
+    def get_queryset(self):
+        username = self.kwargs['username']
+        player = Player.objects.get(username=username)
+        return Outcome.objects.filter(player=player)
+
+class OutcomeDetail(RetrieveAPIView):
+    """GET an Outcome instance for a Match."""
+    queryset = Outcome.objects.all()
+    serializer_class = OutcomeSerializer
+
+    def get_object(self):
+        queryset = self.get_queryset()
+        obj = get_object_or_404(queryset,
+                                player__username=self.kwargs['username'],
+                                match__pk=self.kwargs['match_pk'])
+        self.check_object_permissions(self.request, obj)
+        return obj
+        
+
+
 class PlayerList(ListAPIView):
     """GET all Player instances."""
     queryset = Player.objects.all()
@@ -90,11 +113,6 @@ class PlayerDetail(RetrieveUpdateDestroyAPIView):
     queryset = Player.objects.all()
     serializer_class = PlayerSerializer
     lookup_field='username'
-
-class OutcomeDetail(RetrieveAPIView):
-    """GET an Outcome instance for a Match."""
-    queryset = Outcome.objects.all()
-    serializer_class = OutcomeSerializer
 
 class PlayerMatches(APIView):
     """GET Match instances played by a Player."""
