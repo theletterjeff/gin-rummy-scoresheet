@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from accounts.models import Player
+from api.fields import ParameterizedHyperlinkedIdentityField
 from base.models import Game, Match, Outcome, Score
 
 class PlayerSerializer(serializers.HyperlinkedModelSerializer):
@@ -58,13 +59,49 @@ class MatchSerializer(serializers.HyperlinkedModelSerializer):
         fields = '__all__'
 
 class OutcomeSerializer(serializers.HyperlinkedModelSerializer):
-    
+
+    url = ParameterizedHyperlinkedIdentityField(
+        view_name='outcome-detail',
+        lookup_field_data = (
+            ('player', 'username', 'username'),
+            ('match', 'pk', 'match_pk'),
+        )
+    )
+    match = serializers.HyperlinkedRelatedField(
+        view_name='match-detail',
+        queryset=Match.objects.all(),
+        lookup_field='pk',
+        lookup_url_kwarg='match_pk',
+    )
+    player = serializers.HyperlinkedRelatedField(
+        view_name='player-detail',
+        queryset=Player.objects.all(),
+        lookup_field='username',
+    )
     class Meta:
         model = Outcome
         fields = '__all__'
 
 class ScoreSerializer(serializers.HyperlinkedModelSerializer):
-    
+
+    url = ParameterizedHyperlinkedIdentityField(
+        view_name='outcome-detail',
+        lookup_field_data = (
+            ('player', 'username', 'username'),
+            ('match', 'pk', 'match_pk'),
+        )
+    )
+    match = serializers.HyperlinkedRelatedField(
+        view_name='match-detail',
+        queryset=Match.objects.all(),
+        lookup_field='pk',
+        lookup_url_kwarg='match_pk',
+    )
+    player = serializers.HyperlinkedRelatedField(
+        view_name='player-detail',
+        queryset=Player.objects.all(),
+        lookup_field='username',
+    )
     class Meta:
         model = Score
         fields = '__all__'
