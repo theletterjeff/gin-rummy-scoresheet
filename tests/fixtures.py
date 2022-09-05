@@ -1,8 +1,10 @@
+from datetime import datetime
 from typing import Callable, List
 
 from django.middleware.csrf import get_token
 from django.test.client import Client
 from django.urls import reverse
+from django.utils import timezone
 
 import pytest
 from rest_framework.test import APIClient, APIRequestFactory, force_authenticate
@@ -11,7 +13,7 @@ from selenium.webdriver.firefox.webdriver import WebDriver
 from selenium.webdriver.firefox.options import Options
 
 from accounts.models import Player
-from base.models import Match
+from base.models import Game, Match
 
 
 """Players"""
@@ -61,6 +63,26 @@ def make_matches(db, make_match) -> Callable:
     def _make_matches(num: int, players: List[Player], *args, **kwargs) -> List[Match]:
         return [make_match(players, *args, **kwargs) for i in range(num)]
     return _make_matches
+
+
+"""Games"""
+
+@pytest.fixture
+def make_game(db) -> Callable:
+    """Factory as fixture for creating a single Game instance."""
+    def _make_game(match: Match, winner: Player, loser: Player, points: int,
+                   *args, **kwargs) -> Game:
+        return Game.objects.create(match, winner, loser, points, *args, **kwargs)
+    return _make_game
+
+@pytest.fixture
+def make_games(db, make_game) -> Callable:
+    """Factory as fixture for creating multiple Game instances."""
+    def _make_matches(num: int, match: Match, winner_loser: Tuple[Player, Player],
+                      points: Tuple, *args, **kwargs) -> Tuple[Match]:
+        return (_make_game(match, winner_loser[0], winner_loser[1], points,
+                           *args, **kwargs) for i in range(num))
+    return _make_games
 
 
 """Client/driver"""
@@ -146,3 +168,10 @@ def authenticate_api_request(make_player) -> Callable:
         force_authenticate(request, user=player)
         return request
     return _authenticate_api_request
+
+@pytest.fixture
+def mock_now(monkeypatch):
+    def _mock_now():
+        return timezone.datetime(2022, 1, 1, 0, 0, tzinfo=timezone.utc)
+    monkeypatch.setattr(timezone, 'now', _mock_now)
+    return monkeypatch

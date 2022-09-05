@@ -1,10 +1,14 @@
 from django.test.client import Client
+from django.utils import timezone
+
 from rest_framework.test import APIClient
+
 from selenium.webdriver.firefox.webdriver import WebDriver
 
 from accounts.models import Player
-from base.models import Match
+from base.models import Game, Match
 from tests.fixtures import (make_player, make_players, make_match, make_matches,
+                            make_game, make_games, mock_now,
                             log_in_client, log_in_api_client, logged_out_driver,
                             log_in_driver)
 
@@ -166,3 +170,10 @@ def test_logged_out_driver(logged_out_driver):
     """
     assert isinstance(logged_out_driver, WebDriver)
     assert logged_out_driver.get_cookie('sessionid') is None
+
+def test_mock_timezone_now(mock_now):
+    """The mock_now fixture returns a timezone-aware datetime object
+    for (2022, 1, 1, 0, 0, tzinfo=datetime.timezone.utc)
+    """
+    assert timezone.now() == timezone.datetime(2022, 1, 1, 0, 0,
+                                               tzinfo=timezone.utc)
