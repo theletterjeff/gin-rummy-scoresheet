@@ -220,6 +220,27 @@ def test_game_detail_patch(make_players, make_match, make_game,
     assert response.data['gin'] == True
     assert response.data['undercut'] == True
 
+def test_game_detail_delete(make_players, make_match, make_game,
+                            authenticate_api_request):
+    """DELETE request to the GameDetail view deletes Game instance."""
+    players = make_players(2)
+    match = make_match(players)
+    winner = players[0]
+    loser = players[1]
+    points = 50
+
+    game = make_game(match, winner, loser, points)
+
+    view = GameDetail.as_view()
+    kwargs = {'match_pk': match.pk, 'game_pk': game.pk}
+    url = reverse('game-detail', kwargs=kwargs)
+
+    request = authenticate_api_request(view, url, 'delete', players[0], kwargs)
+    response = view(request, **kwargs)
+    
+    assert response.status_code == 204
+    assert not response.data
+
 def test_score_detail(make_players, make_match, authenticate_api_request):
     """Sending a GET request to the ScoreDetail view returns a response
     containing data on the requested Score instance.
