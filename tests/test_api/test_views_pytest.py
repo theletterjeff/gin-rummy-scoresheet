@@ -135,16 +135,17 @@ def test_match_detail_delete(make_players, make_match, authenticate_api_request)
     assert response.status_code == 204
     assert not response.data
 
-def test_game_list(make_players, make_match, make_games, 
+@pytest.mark.parametrize('game_count', [2, 4, 6])
+def test_game_list(game_count, make_players, make_match, make_games, 
                    authenticate_api_request):
     """GameList view returns list of Game instances for a Match instance."""
     players = make_players(2)
     match = make_match(players)
 
-    winners = (players[0], players[1], players[0])
-    losers = (players[1], players[0], players[1])
-    points = (5, 10, 15)
-    games = make_games(num=3, match=match, winners=winners,
+    winners = [players[0], players[1]] * int(game_count / 2)
+    losers = [players[1], players[0]] * int(game_count / 2)
+    points = [5, 10] * int(game_count / 2)
+    games = make_games(num=game_count, match=match, winners=winners,
                        losers=losers, points=points)
     
     view = GameList.as_view()
@@ -155,8 +156,8 @@ def test_game_list(make_players, make_match, make_games,
     response = view(request, **kwargs)
 
     assert response.status_code == 200
-    assert response.data['count'] == 3
-    assert len(response.data['results']) == 3
+    assert response.data['count'] == game_count
+    assert len(response.data['results']) == game_count
 
 def test_score_detail(make_players, make_match, authenticate_api_request):
     """Sending a GET request to the ScoreDetail view returns a response
