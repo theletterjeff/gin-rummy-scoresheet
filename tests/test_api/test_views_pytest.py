@@ -1,6 +1,8 @@
+from datetime import datetime
 import re
 
 from django.urls import reverse
+from django.utils import timezone
 
 import pytest
 
@@ -10,7 +12,8 @@ from api.views import (MatchCreate, MatchDetail, MatchList, OutcomeDetail,
                        ScoreDetail, GameDetail, GameList)
 from base.models import Outcome, Score
 from tests.fixtures import (make_match, make_matches, make_player, make_players,
-                            make_game, make_games, authenticate_api_request)
+                            make_game, make_games, authenticate_api_request,
+                            mock_now)
 
 def test_match_list_view_returns_no_records_when_no_records_present(
         make_player, authenticate_api_request):
@@ -141,10 +144,10 @@ def test_game_list(game_count, make_players, make_match, make_games,
     """GameList view returns list of Game instances for a Match instance."""
     players = make_players(2)
     match = make_match(players)
-
     winners = [players[0], players[1]] * int(game_count / 2)
     losers = [players[1], players[0]] * int(game_count / 2)
     points = [5, 10] * int(game_count / 2)
+
     games = make_games(num=game_count, match=match, winners=winners,
                        losers=losers, points=points)
     
@@ -158,6 +161,39 @@ def test_game_list(game_count, make_players, make_match, make_games,
     assert response.status_code == 200
     assert response.data['count'] == game_count
     assert len(response.data['results']) == game_count
+
+def test_game_detail_get(make_players, make_match, make_game,
+                         authenticate_api_request, mock_now):
+    """A GET request to the GameDetail view returns a Game instance."""
+    players = make_players(2)
+    match = make_match(players)
+    winner = players[0]
+    loser = players[1]
+    points = 50
+
+    game = make_game(match, winner, loser, points)
+
+    view = GameDetail.as_view()
+    kwargs = {'match_pk': match.pk, 'game_pk': game.pk}
+    url = reverse('game-detail', kwargs=kwargs)
+
+    request = authenticate_api_request(view, url, 'get', players[0], kwargs)
+    response = view(request, **kwargs)
+
+    assert response.status_code == 200
+    assert response.data['url'].endswith(url)
+    assert response.data['match'].endswith(match.get_absolute_url())
+    assert response.data['winner'].endswith(winner.get_absolute_url())
+    assert response.data['loser'].endswith(loser.get_absolute_url())
+    assert response.data['points'] == 50
+    assert response.data['gin'] == False
+    assert response.data['undercut'] == False
+
+    datetime_played_str = response.data['datetime_played']
+    datetime_played = datetime.strptime(
+        datetime_played_str, '%Y-%m-%dT%H:%M:%S%z')
+    assert datetime_played == timezone.datetime(
+            2022, 1, 1, 0, 0, tzinfo=timezone.utc)
 
 def test_score_detail(make_players, make_match, authenticate_api_request):
     """Sending a GET request to the ScoreDetail view returns a response
