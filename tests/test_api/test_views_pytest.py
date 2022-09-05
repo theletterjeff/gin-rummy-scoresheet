@@ -237,19 +237,17 @@ def test_game_detail_delete(make_players, make_match, make_game,
 
     request = authenticate_api_request(view, url, 'delete', players[0], kwargs)
     response = view(request, **kwargs)
-    
+
     assert response.status_code == 204
     assert not response.data
 
-def test_score_detail(make_players, make_match, authenticate_api_request):
+def test_score_detail_get(make_players, make_match, authenticate_api_request):
     """Sending a GET request to the ScoreDetail view returns a response
     containing data on the requested Score instance.
     """
     players = make_players(2)
-    match = make_match(players)
-    score = Score.objects.create(player=players[0], match=match,
-            player_score=250)
-    
+    match = make_match(players)     # Signal creates Score for each Player
+
     kwargs = {'username': players[0].username, 'match_pk': match.pk}
     view = ScoreDetail.as_view()
     url = reverse('score-detail', kwargs=kwargs)
@@ -261,7 +259,7 @@ def test_score_detail(make_players, make_match, authenticate_api_request):
     assert response.data['url'].endswith(url)
     assert response.data['match'].endswith(match.get_absolute_url())
     assert response.data['player'].endswith(players[0].get_absolute_url())
-    assert response.data['player_score'] == 250
+    assert response.data['player_score'] == 0
 
 def test_outcome_detail(make_players, make_match, authenticate_api_request):
     """Sending a GET request to the OutcomeDetail view returns a response
