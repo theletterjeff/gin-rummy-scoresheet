@@ -73,7 +73,8 @@ def make_game(db) -> Callable:
     """Factory as fixture for creating a single Game instance."""
     def _make_game(match: Match, winner: Player, loser: Player, points: int,
                    *args, **kwargs) -> Game:
-        return Game.objects.create(match, winner, loser, points, *args, **kwargs)
+        return Game.objects.create(match=match, winner=winner, loser=loser, points=points,
+                    *args, **kwargs)
     return _make_game
 
 @pytest.fixture

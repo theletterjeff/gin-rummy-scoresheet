@@ -126,6 +126,43 @@ def test_make_matches_called_after_make_matches_makes_matches(
 
     assert len(Match.objects.all()) == 4
 
+def test_make_game_creates_game(make_game, make_match, make_players, mock_now):
+    """The fixture `make_game` returns a Game instance."""
+    players = make_players(2)
+    match = make_match(players)
+    game = make_game(match, players[0], players[1], 25)
+    
+    assert isinstance(game, Game)
+    assert game.winner == players[0]
+    assert game.loser == players[1]
+    assert game.points == 25
+    assert game.gin == False
+    assert game.undercut == False
+    assert game.datetime_played == timezone.datetime(
+            2022, 1, 1, 0, 0, tzinfo=timezone.utc)
+
+def test_make_game_called_twice_returns_two_games(make_game, make_match,
+                                                  make_players):
+    """The fixture `make_game` when called twice returns two Game instances."""
+    players = make_players(2)
+    match = make_match(players)
+    game1 = make_game(match, players[0], players[1], 25)
+    game2 = make_game(match, players[1], players[0], 50)
+    
+    assert game1 != game2
+
+    game_winner_loser = (
+        (game1, players[0], players[1]),
+        (game2, players[1], players[0]),
+    )
+
+    for game, winner, loser in game_winner_loser:
+        assert isinstance(game, Game)
+        assert game.winner == winner
+        assert game.loser == loser
+    
+    assert set(match.games.all()) == set([game1, game2])
+
 def test_log_in_client_returns_logged_in_client(log_in_client, make_player):
     """The `log_in_client` fixture returns a logged-in Client instance."""
     player = make_player()
