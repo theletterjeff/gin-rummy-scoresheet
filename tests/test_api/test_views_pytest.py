@@ -62,7 +62,7 @@ def test_match_list_view_returns_records_when_matches_are_with_player(
 
     assert response.data['count'] == match_num
 
-def test_match_create_creates_new_match(make_players,
+def test_match_create(make_players,
         authenticate_api_request):
     """Sending a POST request to the MatchCreate view creates a new Match.
     """
