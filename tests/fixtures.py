@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Callable, List
+from typing import Callable, List, Tuple
 
 from django.middleware.csrf import get_token
 from django.test.client import Client
@@ -80,10 +80,27 @@ def make_game(db) -> Callable:
 @pytest.fixture
 def make_games(db, make_game) -> Callable:
     """Factory as fixture for creating multiple Game instances."""
-    def _make_matches(num: int, match: Match, winner_loser: Tuple[Player, Player],
-                      points: Tuple, *args, **kwargs) -> Tuple[Match]:
-        return (_make_game(match, winner_loser[0], winner_loser[1], points,
-                           *args, **kwargs) for i in range(num))
+    def _make_games(num: int, match: Match, winners: Tuple[Player],
+                    losers: Tuple[Player], points: Tuple[int],
+                    **kwargs) -> List[Game]:
+
+        for key, value in kwargs.items():
+            if not isinstance(value, list):
+                value = [value]
+            if len(value) != num and len(value) != 1:
+                raise Exception('kwarg error')
+            elif len(value) != num and len(value) == 1:
+                kwargs[key] = value * num
+        
+        games = []
+        for i in range(num):
+            game = make_game(match, winners[i], losers[i], points[i])
+            if kwargs:
+                for kwarg in kwargs:
+                    setattr(game, kwarg, kwargs[kwarg][i])
+                    game.save()
+            games.append(game)
+        return games
     return _make_games
 
 

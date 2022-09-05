@@ -126,7 +126,7 @@ def test_make_matches_called_after_make_matches_makes_matches(
 
     assert len(Match.objects.all()) == 4
 
-def test_make_game_creates_game(make_game, make_match, make_players, mock_now):
+def test_make_game_creates_game(make_game, make_players, make_match, mock_now):
     """The fixture `make_game` returns a Game instance."""
     players = make_players(2)
     match = make_match(players)
@@ -162,6 +162,98 @@ def test_make_game_called_twice_returns_two_games(make_game, make_match,
         assert game.loser == loser
     
     assert set(match.games.all()) == set([game1, game2])
+
+def test_make_games(make_games, make_match, make_players):
+    players = make_players(2)
+    match = make_match(players)
+
+    winners = (players[0], players[1], players[0])
+    losers = (players[1], players[0], players[1])
+    points = (1, 5, 25)
+
+    games = make_games(3, match, winners=winners, losers=losers, points=points)
+
+    assert len(games) == 3
+    assert all([isinstance(game, Game) for game in games])
+    assert list(winners) == [game.winner for game in games]
+    assert list(losers) == [game.loser for game in games]
+    assert list(points) == [game.points for game in games]
+
+def test_make_games_with_extra_kwargs(make_games, make_match, make_players):
+    players = make_players(2)
+    match = make_match(players)
+
+    game_count = 3
+    winners = (players[0], players[1], players[0])
+    losers = (players[1], players[0], players[1])
+    points = (1, 5, 25)
+    gin = [True, False, True]
+    undercut = [False, True, False]
+    datetime_played = [
+        timezone.datetime(2022, 1, 1),
+        timezone.datetime(2022, 2, 1),
+        timezone.datetime(2022, 3, 1)
+    ]
+
+    games = make_games(num=game_count, match=match, winners=winners,
+                       losers=losers, points=points, gin=gin,
+                       undercut=undercut, datetime_played=datetime_played)
+
+    for i in range(game_count):
+        assert games[i].winner == winners[i]
+        assert games[i].loser == losers[i]
+        assert games[i].points == points[i]
+        assert games[i].gin == gin[i]
+        assert games[i].undercut == undercut[i]
+        assert games[i].datetime_played == datetime_played[i]
+
+def test_make_games(make_games, make_match, make_players):
+    """The `make_games` fixture returns a list of games when passed extra
+    kwargs (gin, undercut, datetime_played).
+    """
+    players = make_players(2)
+    match = make_match(players)
+
+    winners = (players[0], players[1], players[0])
+    losers = (players[1], players[0], players[1])
+    points = (1, 5, 25)
+
+    games = make_games(3, match, winners=winners, losers=losers, points=points)
+
+    assert len(games) == 3
+    assert all([isinstance(game, Game) for game in games])
+    assert list(winners) == [game.winner for game in games]
+    assert list(losers) == [game.loser for game in games]
+    assert list(points) == [game.points for game in games]
+
+def test_make_games_with_incorrect_len_extra_kwargs(make_games, make_match,
+        make_players):
+    """The `make_games` fixture returns a list of games when the extra kwargs
+    it is only passed on value per extra kwarg (instead of the same number as
+    the `num` arg).
+    """
+    players = make_players(2)
+    match = make_match(players)
+
+    game_count = 3
+    winners = (players[0], players[1], players[0])
+    losers = (players[1], players[0], players[1])
+    points = (1, 5, 25)
+    gin = True
+    undercut = True
+    datetime_played = timezone.datetime(2022, 1, 1)
+
+    games = make_games(num=game_count, match=match, winners=winners,
+                       losers=losers, points=points, gin=gin,
+                       undercut=undercut, datetime_played=datetime_played)
+
+    for i in range(game_count):
+        assert games[i].winner == winners[i]
+        assert games[i].loser == losers[i]
+        assert games[i].points == points[i]
+        assert games[i].gin == gin
+        assert games[i].undercut == undercut
+        assert games[i].datetime_played == datetime_played
 
 def test_log_in_client_returns_logged_in_client(log_in_client, make_player):
     """The `log_in_client` fixture returns a logged-in Client instance."""
