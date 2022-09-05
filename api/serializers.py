@@ -34,23 +34,31 @@ class MatchSerializer(serializers.HyperlinkedModelSerializer):
         view_name='match-detail',
     )
     players = serializers.HyperlinkedRelatedField(
-        view_name='player-list',
+        view_name='player-detail',
         queryset=Player.objects.all(),
         many=True,
         lookup_field='username',
     )
     games = serializers.HyperlinkedRelatedField(
-        view_name='game-list',
+        view_name='game-detail',
         many=True,
         read_only=True,
     )
-    score_set = serializers.HyperlinkedRelatedField(
-        view_name='score-list',
+    score_set = ParameterizedHyperlinkedIdentityField(
+        view_name='score-detail',
+        lookup_field_data = (
+            ('player', 'username', 'username'),
+            ('match', 'pk', 'match_pk'),
+        ),
         many=True,
         read_only=True,
     )
-    outcome_set = serializers.HyperlinkedRelatedField(
-        view_name='outcome-list',
+    outcome_set = ParameterizedHyperlinkedIdentityField(
+        view_name='outcome-detail',
+        lookup_field_data = (
+            ('player', 'username', 'username'),
+            ('match', 'pk', 'match_pk'),
+        ),
         many=True,
         read_only=True,
     )
