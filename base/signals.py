@@ -14,7 +14,7 @@ def create_score(sender, instance, created, **kwargs):
     """
     for player in instance.players.all():
         if len(Score.objects.filter(match=instance, player=player)) == 0:
-            Score.objects.create(match=instance, player=player)
+            Score.objects.create(match=instance, player=player, player_score=0)
 
 @receiver(post_save, sender=Game)
 def update_score(sender, instance, created, **kwargs):
