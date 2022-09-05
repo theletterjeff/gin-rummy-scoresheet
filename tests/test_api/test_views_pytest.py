@@ -195,6 +195,31 @@ def test_game_detail_get(make_players, make_match, make_game,
     assert datetime_played == timezone.datetime(
             2022, 1, 1, 0, 0, tzinfo=timezone.utc)
 
+def test_game_detail_patch(make_players, make_match, make_game,
+                           authenticate_api_request):
+    """A PATCH request to the GameDetail view updates the Game instance."""
+    players = make_players(2)
+    match = make_match(players)
+    winner = players[0]
+    loser = players[1]
+    points = 50
+
+    game = make_game(match, winner, loser, points)
+
+    view = GameDetail.as_view()
+    url_kwargs = {'match_pk': match.pk, 'game_pk': game.pk}
+    url = reverse('game-detail', kwargs=url_kwargs)
+
+    patch_kwargs = {'gin': True, 'undercut': True}
+    patch_kwargs.update(url_kwargs)
+
+    request = authenticate_api_request(view, url, 'patch', players[0], patch_kwargs)
+    response = view(request, **patch_kwargs)
+
+    assert response.status_code == 200
+    assert response.data['gin'] == True
+    assert response.data['undercut'] == True
+
 def test_score_detail(make_players, make_match, authenticate_api_request):
     """Sending a GET request to the ScoreDetail view returns a response
     containing data on the requested Score instance.
