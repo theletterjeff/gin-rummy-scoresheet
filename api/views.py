@@ -51,12 +51,20 @@ class GameList(ListAPIView):
     def get_queryset(self):
         match_pk = self.kwargs['match_pk']
         match = Match.objects.get(pk=match_pk)
-        return Game.objects.filter(match=match.url)
+        return Game.objects.filter(match=match)
 
 class GameDetail(RetrieveUpdateDestroyAPIView):
     """GET, PUT/PATCH, or DELETE a Game."""
     queryset = Game.objects.all()
     serializer_class = GameSerializer
+
+    def get_object(self):
+        queryset = self.get_queryset()
+        obj = get_object_or_404(queryset,
+                                match__pk=self.kwargs['match_pk'],
+                                pk=self.kwargs['game_pk'])
+        self.check_object_permissions(self.request, obj)
+        return obj
 
 class GameCreate(CreateAPIView):
     """POST a Game."""

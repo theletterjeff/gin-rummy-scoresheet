@@ -21,12 +21,6 @@ class PlayerSerializer(serializers.HyperlinkedModelSerializer):
         model = Player
         fields = '__all__'
 
-class GameSerializer(serializers.HyperlinkedModelSerializer):
-    
-    class Meta:
-        model = Game
-        fields = '__all__'
-
 class MatchSerializer(serializers.HyperlinkedModelSerializer):
     url = serializers.HyperlinkedIdentityField(
         lookup_field='pk',
@@ -64,6 +58,35 @@ class MatchSerializer(serializers.HyperlinkedModelSerializer):
     )
     class Meta:
         model = Match
+        fields = '__all__'
+
+class GameSerializer(serializers.HyperlinkedModelSerializer):
+
+    url = ParameterizedHyperlinkedIdentityField(
+        view_name='game-detail',
+        lookup_field_data = (
+            ('match', 'pk', 'match_pk'),
+            (None, 'pk', 'game_pk'),
+        )
+    )
+    match = serializers.HyperlinkedRelatedField(
+        view_name='match-detail',
+        queryset=Match.objects.all(),
+        lookup_field='pk',
+        lookup_url_kwarg='match_pk',
+    )
+    winner = serializers.HyperlinkedRelatedField(
+        view_name='player-detail',
+        queryset=Player.objects.all(),
+        lookup_field='username',
+    )
+    loser = serializers.HyperlinkedRelatedField(
+        view_name='player-detail',
+        queryset=Player.objects.all(),
+        lookup_field='username',
+    )
+    class Meta:
+        model = Game
         fields = '__all__'
 
 class OutcomeSerializer(serializers.HyperlinkedModelSerializer):

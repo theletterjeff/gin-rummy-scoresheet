@@ -7,10 +7,10 @@ import pytest
 from rest_framework.test import APIRequestFactory, force_authenticate
 
 from api.views import (MatchCreate, MatchDetail, MatchList, OutcomeDetail,
-                       ScoreDetail)
+                       ScoreDetail, GameDetail, GameList)
 from base.models import Outcome, Score
 from tests.fixtures import (make_match, make_matches, make_player, make_players,
-                            authenticate_api_request)
+                            make_game, make_games, authenticate_api_request)
 
 def test_match_list_view_returns_no_records_when_no_records_present(
         make_player, authenticate_api_request):
@@ -134,6 +134,29 @@ def test_match_detail_delete(make_players, make_match, authenticate_api_request)
 
     assert response.status_code == 204
     assert not response.data
+
+def test_game_list(make_players, make_match, make_games, 
+                   authenticate_api_request):
+    """GameList view returns list of Game instances for a Match instance."""
+    players = make_players(2)
+    match = make_match(players)
+
+    winners = (players[0], players[1], players[0])
+    losers = (players[1], players[0], players[1])
+    points = (5, 10, 15)
+    games = make_games(num=3, match=match, winners=winners,
+                       losers=losers, points=points)
+    
+    view = GameList.as_view()
+    kwargs = {'match_pk': match.pk}
+    url = reverse('game-list', kwargs=kwargs)
+
+    request = authenticate_api_request(view, url, 'get', players[0], kwargs)
+    response = view(request, **kwargs)
+
+    assert response.status_code == 200
+    assert response.data['count'] == 3
+    assert len(response.data['results']) == 3
 
 def test_score_detail(make_players, make_match, authenticate_api_request):
     """Sending a GET request to the ScoreDetail view returns a response
