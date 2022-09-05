@@ -53,7 +53,8 @@ def make_match(db) -> Callable:
     """Factory as fixture for creating a single Match instance."""
     def _make_match(players: List[Player], *args, **kwargs) -> Match:
         match = Match.objects.create(*args, **kwargs)
-        [match.players.add(player) for player in players]
+        match.players.set(players)
+        match.save()
         return match
     return _make_match
 
