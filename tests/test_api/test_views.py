@@ -295,13 +295,13 @@ def test_game_detail_delete(make_players, make_match, make_game,
     assert response.status_code == 204
     assert not response.data
 
-def test_game_create(make_players, make_match, authenticate_api_request):
+def test_game_create(make_players, make_match, make_game, authenticate_api_request):
     """A POST request to the GameCreate view creates a new Game."""
     players = make_players(2)
     match = make_match(players)
     url_kwargs = {'match_pk': match.pk}
     url = reverse('game-create', kwargs=url_kwargs)
-
+    
     create_kwargs = {
         'match': match.get_absolute_url(),
         'winner': players[0].get_absolute_url(),
@@ -314,9 +314,9 @@ def test_game_create(make_players, make_match, authenticate_api_request):
     view = GameCreate.as_view()
     request = authenticate_api_request(view, url, 'post',
             players[0], create_kwargs)
-    response = view(request, create_kwargs)
+    response = view(request, **create_kwargs)
     
-    assert response.status_code == 201
+    assert response.status_code == 201, response.data
 
 def test_score_list(make_players, make_matches, authenticate_api_request):
     players = make_players(2)
