@@ -21,9 +21,6 @@ def match_detail(request):
 def match_edit(request):
     return render(request, 'frontend/match-edit.html')
 
-def game_list(request):
-    return render(request, 'frontend.game-list.html')
-
 def game_detail(request):
     return render(request, 'frontend.game-detail.html')
 
