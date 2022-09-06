@@ -3,6 +3,9 @@ from django.shortcuts import render
 def home(request):
     return render(request, 'frontend/home.html')
 
+def player_list(request):
+    raise NotImplementedError
+
 def player_detail(request):
     return render(request, 'frontend/player-profile.html')
 

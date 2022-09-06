@@ -2,11 +2,12 @@ from django.urls import include, path
 from . import views
 
 urlpatterns = [
-    path('', views.home, name='home'),
-    path('<str:username>/', views.player_detail, name='player-detail'),
-    path('<str:username>/edit/', views.player_edit, name='player-edit'),
-    path('<str:username>/matches/', views.match_list, name='match-list'),
-    path('<str:username>/matches/<int:match_pk>/', views.match_detail, name='match-detail'),
-    path('<str:username>/matches/<int:match_pk>/games/<int:game_pk>/', views.game_detail, name='game-detail'),
-    path('<str:username>/matches/<int:match_pk>/games/<int:game_pk>/edit/', views.game_detail, name='game-edit'),
+    path('players/', views.PlayerList.as_view(), name='player-list'),
+    path('players/<str:username>', views.PlayerDetail.as_view(), name='player-detail'),
+
+    path('matches/<str:username>/', views.MatchList.as_view(), name='match-list'),
+    path('matches/<int:match_pk>/', views.MatchDetail.as_view(), name='match-detail'),
+
+    path('matches/<int:match_pk>/games/', views.GameList.as_view(), name='game-list'),
+    path('matches/<int:match_pk>/games/<int:game_pk>', views.GameDetail.as_view(), name='game-detail'),
 ]
