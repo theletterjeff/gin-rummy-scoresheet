@@ -9,6 +9,17 @@ import { getJsonResponse } from "./utils.js";
   return `${pageOrigin}/api${pagePath}`;
 }
 
+/**
+ * Remove 'edit/' from the end of a URL. The resulting URL should
+ * represent the `detail` endpoint for the related model (which accepts
+ * PUT and PATCH requests).
+ */
+export function getDetailEndpointFromEditURL() {
+  const apiDetailEndpoint = getApiDetailEndpoint();
+  const urlWithoutEditRegex = new RegExp('.+(?=edit\/)');
+  return urlWithoutEditRegex.exec(apiDetailEndpoint);
+}
+
 export function getPlayerDetailEndpoint() {
   let username = window.location.pathname.split('/')[2]
   return window.location.origin + `/api/player/${username}/`
