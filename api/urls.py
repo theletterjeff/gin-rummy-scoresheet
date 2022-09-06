@@ -3,7 +3,9 @@ from rest_framework.urlpatterns import format_suffix_patterns
 from . import views
 
 urlpatterns = [
-    path('player/<str:username>', views.PlayerDetail.as_view(), name='player-detail'),
+    path('players/', views.PlayerList.as_view(), name='player-list'),
+    path('players/<str:username>', views.PlayerDetail.as_view(), name='player-detail'),
+    path('players/create/', views.PlayerCreate.as_view(), name='player-create'),
     path('logged-in-player/', views.LoggedInPlayerDetail.as_view(), name='logged-in-player'),
 
     path('matches/<str:username>/', views.MatchList.as_view(), name='match-list'),
