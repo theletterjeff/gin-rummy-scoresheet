@@ -9,7 +9,8 @@ import pytest
 from rest_framework.test import APIRequestFactory, force_authenticate
 
 from api.views import (MatchCreate, MatchDetail, MatchList, OutcomeDetail,
-                       ScoreDetail, GameDetail, GameList)
+                       ScoreDetail, GameDetail, GameList, OutcomeList,
+                       ScoreList)
 from base.models import Outcome, Score
 from tests.fixtures import (make_match, make_matches, make_player, make_players,
                             make_game, make_games, authenticate_api_request,
@@ -241,6 +242,19 @@ def test_game_detail_delete(make_players, make_match, make_game,
     assert response.status_code == 204
     assert not response.data
 
+def test_score_list(make_players, make_matches, authenticate_api_request):
+    players = make_players(2)
+    match = make_matches(3, players)
+    kwargs = {'username': players[0].username}
+    
+    view = ScoreList.as_view()
+    url = reverse('score-list', kwargs=kwargs)
+
+    request = authenticate_api_request(view, url, 'get', players[0], kwargs)
+    response = view(request, **kwargs)
+
+    assert response.data['count'] == 3
+
 def test_score_detail_get(make_players, make_match, authenticate_api_request):
     """Sending a GET request to the ScoreDetail view returns a response
     containing data on the requested Score instance.
@@ -260,6 +274,27 @@ def test_score_detail_get(make_players, make_match, authenticate_api_request):
     assert response.data['match'].endswith(match.get_absolute_url())
     assert response.data['player'].endswith(players[0].get_absolute_url())
     assert response.data['player_score'] == 0
+
+def test_outcome_list(make_players, make_matches, authenticate_api_request):
+    """A GET request to the OutcomeList view returns Outcome instances."""
+    players = make_players(2)
+    match_count = 3
+    matches = make_matches(match_count, players)
+    outcomes = [Outcome.objects.create(
+            match=matches[i],
+            player=players[0],
+            player_outcome=1,
+        ) for i in range(match_count)]
+
+    kwargs = {'username': players[0].username}
+    
+    view = OutcomeList.as_view()
+    url = reverse('outcome-list', kwargs=kwargs)
+
+    request = authenticate_api_request(view, url, 'get', players[0], kwargs)
+    response = view(request, **kwargs)
+
+    assert response.data['count'] == match_count
 
 def test_outcome_detail(make_players, make_match, authenticate_api_request):
     """Sending a GET request to the OutcomeDetail view returns a response
