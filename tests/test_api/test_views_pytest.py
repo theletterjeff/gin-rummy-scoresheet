@@ -9,8 +9,8 @@ import pytest
 from rest_framework.test import APIRequestFactory, force_authenticate
 
 from api.views import (MatchCreate, MatchDetail, MatchList, OutcomeDetail,
-                       ScoreDetail, GameDetail, GameList, OutcomeList,
-                       ScoreList)
+                       ScoreDetail, GameDetail, GameList, GameCreate, 
+                       OutcomeList, ScoreList)
 from base.models import Outcome, Score
 from tests.fixtures import (make_match, make_matches, make_player, make_players,
                             make_game, make_games, authenticate_api_request,
@@ -66,10 +66,8 @@ def test_match_list_view_returns_records_when_matches_are_with_player(
 
     assert response.data['count'] == match_num
 
-def test_match_create(make_players,
-        authenticate_api_request):
-    """Sending a POST request to the MatchCreate view creates a new Match.
-    """
+def test_match_create(make_players, authenticate_api_request):
+    """Sending a POST request to the MatchCreate view creates a new Match."""
     players = make_players(2)
     player_urls = [player.get_absolute_url() for player in players]
     
@@ -241,6 +239,29 @@ def test_game_detail_delete(make_players, make_match, make_game,
 
     assert response.status_code == 204
     assert not response.data
+
+def test_game_create(make_players, make_match, authenticate_api_request):
+    """A POST request to the GameCreate view creates a new Game."""
+    players = make_players(2)
+    match = make_match(players)
+    url_kwargs = {'match_pk': match.pk}
+    url = reverse('game-create', kwargs=url_kwargs)
+
+    create_kwargs = {
+        'match': match.get_absolute_url(),
+        'winner': players[0].get_absolute_url(),
+        'loser': players[1].get_absolute_url(),
+        'points': 55,
+        'gin': True,
+        'undercut': False,
+    }
+
+    view = GameCreate.as_view()
+    request = authenticate_api_request(view, url, 'post',
+            players[0], create_kwargs)
+    response = view(request, create_kwargs)
+    
+    assert response.status_code == 201
 
 def test_score_list(make_players, make_matches, authenticate_api_request):
     players = make_players(2)
