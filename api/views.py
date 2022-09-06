@@ -5,7 +5,7 @@ from rest_framework.generics import (CreateAPIView, ListAPIView,
                                      ListCreateAPIView, RetrieveAPIView,
                                      RetrieveUpdateDestroyAPIView,
                                      UpdateAPIView)
-from rest_framework.permissions import IsAuthenticated, IsAuthenticated
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from rest_framework.views import APIView
@@ -16,6 +16,34 @@ from api.serializers import (GameSerializer, MatchSerializer, OutcomeSerializer,
 
 from accounts.models import Player
 from base.models import Game, Match, Outcome, Score
+
+class PlayerDetail(RetrieveUpdateDestroyAPIView):
+    """GET a Player object."""
+    queryset = Player.objects.all()
+    serializer_class = PlayerSerializer
+    lookup_field='username'
+
+class PlayerList(ListAPIView):
+    """GET all Player instances."""
+    queryset = Player.objects.all()
+    serializer_class = PlayerSerializer
+
+class PlayerCreate(CreateAPIView):
+    """POST a new Player"""
+    queryset = Player.objects.all()
+    serializer_class = PlayerSerializer
+    permission_classes = [AllowAny]
+
+class LoggedInPlayerDetail(APIView):
+    """GET serialized data for the currently logged in Player.
+    This should solve some of my challenges around accessing the identity
+    of the currently logged in Player.
+    """
+    def get(self, request, format=None):
+        player = request.user
+        serializer = PlayerSerializer(player,
+                                      context={'request': request})
+        return Response(serializer.data)
 
 class MatchList(ListAPIView):
     """GET a list of Match objects for the specified user."""
@@ -102,41 +130,3 @@ class OutcomeDetail(RetrieveAPIView):
                                 match__pk=self.kwargs['match_pk'])
         self.check_object_permissions(self.request, obj)
         return obj
-        
-
-
-class PlayerList(ListAPIView):
-    """GET all Player instances."""
-    queryset = Player.objects.all()
-    serializer_class = PlayerSerializer
-
-class PlayerCreate(CreateAPIView):
-    """POST a new Player"""
-    queryset = Player.objects.all()
-    serializer_class = PlayerSerializer
-
-class PlayerDetail(RetrieveUpdateDestroyAPIView):
-    """GET a Player object."""
-    queryset = Player.objects.all()
-    serializer_class = PlayerSerializer
-    lookup_field='username'
-
-class PlayerMatches(APIView):
-    """GET Match instances played by a Player."""
-    def get(self, request, format=None):
-        player_matches = Match.objects.filter(players__in=str(request.user.pk))
-        serializer = MatchSerializer(player_matches,
-                                     context={'request': request},
-                                     many=True)
-        return Response(serializer.data)
-
-class LoggedInPlayerDetail(APIView):
-    """GET serialized data for the currently logged in Player.
-    This should solve some of my challenges around accessing the identity
-    of the currently logged in Player.
-    """
-    def get(self, request, format=None):
-        player = request.user
-        serializer = PlayerSerializer(player,
-                                      context={'request': request})
-        return Response(serializer.data)

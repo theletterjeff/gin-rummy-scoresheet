@@ -10,11 +10,66 @@ from rest_framework.test import APIRequestFactory, force_authenticate
 
 from api.views import (MatchCreate, MatchDetail, MatchList, OutcomeDetail,
                        ScoreDetail, GameDetail, GameList, GameCreate, 
-                       OutcomeList, ScoreList)
+                       OutcomeList, ScoreList, PlayerDetail, PlayerList,
+                       PlayerCreate, LoggedInPlayerDetail)
 from base.models import Outcome, Score
 from tests.fixtures import (make_match, make_matches, make_player, make_players,
                             make_game, make_games, authenticate_api_request,
                             mock_now)
+
+def test_player_list(make_players, authenticate_api_request):
+    """GET request to the PlayerList view returns multiple Player instances."""
+    player_num = 5
+    players = make_players(player_num)
+    view = PlayerList.as_view()
+    url = reverse('player-list')
+
+    request = authenticate_api_request(view, url, 'get', players[0])
+    response = view(request)
+
+    assert response.status_code == 200
+    assert response.data['count'] == player_num
+
+def test_player_detail(make_player, authenticate_api_request):
+    """GET request to the PlayerDetail view returns the Player instance."""
+    username = 'player0'
+    player = make_player(username=username)
+    kwargs = {'username': username}
+
+    view = PlayerDetail.as_view()
+    url = reverse('player-detail', kwargs=kwargs)
+
+    request = authenticate_api_request(view, url, 'get', player, kwargs)
+    response = view(request, **kwargs)
+
+    assert response.status_code == 200
+    assert response.data
+
+def test_player_create(db):
+    """POST request to PlayerCreate view creates a new player."""
+    factory = APIRequestFactory()
+    url = reverse('player-create')
+    view = PlayerCreate.as_view()
+    kwargs = {'username': 'player0', 'password': 'test_password'}
+
+    request = factory.post(url, kwargs)
+    response = view(request, kwargs)
+
+    assert response.status_code == 201
+    assert response.data
+
+def test_logged_in_player(make_player, authenticate_api_request):
+    """GET request to the LoggedInPlayer view returns the logged-in Player's
+    data.
+    """
+    player = make_player()
+    view = LoggedInPlayerDetail.as_view()
+    url = reverse('logged-in-player')
+    request = authenticate_api_request(view, url, 'get', player)
+    response = view(request)
+
+    assert response.status_code == 200
+    assert response.data['username'] == player.username
 
 def test_match_list_view_returns_no_records_when_no_records_present(
         make_player, authenticate_api_request):
