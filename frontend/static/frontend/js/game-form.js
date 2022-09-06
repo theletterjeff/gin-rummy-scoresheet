@@ -6,24 +6,6 @@ import {
 } from "./endpoints.js";
 import { getCookie, getJsonResponse } from './utils.js';
 
-export async function fillWinnerDropdown(matchDetailEndpoint, defaultWinner=null) {
-  let players = await getPlayersEndpointUsername(matchDetailEndpoint);
-  
-  let dropdownOptions = ""
-
-  Object.values(players).forEach(function(username) {
-    let dropdownOption = `<option value=${username}>${username}</option>`;
-    dropdownOptions += dropdownOption;
-    
-    if (defaultWinner == username) {
-      dropdownOption.replace('option', 'option select');
-    };
-  })
-
-  let winnerDropdown = document.getElementById('winner-dropdown');
-  winnerDropdown.innerHTML = dropdownOptions;
-}
-
 export async function submitGameForm(e, method) {
   e.preventDefault();
   
