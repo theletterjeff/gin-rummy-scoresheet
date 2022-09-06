@@ -21,8 +21,8 @@ urlpatterns = [
     path('scores/<str:username>/', views.ScoreList.as_view(), name='score-list'),
     path('scores/<str:username>/matches/<int:match_pk>/', views.ScoreDetail.as_view(), name='score-detail'),
 
-    path('outcomes/<str:username>/', views.ScoreList.as_view(), name='outcome-list'),
-    path('outcomes/<str:username>/matches/<int:match_pk>/', views.ScoreDetail.as_view(), name='outcome-detail')
+    path('outcomes/<str:username>/', views.OutcomeList.as_view(), name='outcome-list'),
+    path('outcomes/<str:username>/matches/<int:match_pk>/', views.OutcomeDetail.as_view(), name='outcome-detail')
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
