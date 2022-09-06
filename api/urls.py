@@ -4,7 +4,7 @@ from . import views
 
 urlpatterns = [
     path('players/', views.PlayerList.as_view(), name='player-list'),
-    path('players/<str:username>', views.PlayerDetail.as_view(), name='player-detail'),
+    path('players/<str:username>/', views.PlayerDetail.as_view(), name='player-detail'),
     path('players/create/', views.PlayerCreate.as_view(), name='player-create'),
     path('logged-in-player/', views.LoggedInPlayerDetail.as_view(), name='logged-in-player'),
 
@@ -13,7 +13,7 @@ urlpatterns = [
     path('matches/create/', views.MatchCreate.as_view(), name='match-create'),
 
     path('matches/<int:match_pk>/games/', views.GameList.as_view(), name='game-list'),
-    path('matches/<int:match_pk>/games/<int:game_pk>', views.GameDetail.as_view(), name='game-detail'),
+    path('matches/<int:match_pk>/games/<int:game_pk>/', views.GameDetail.as_view(), name='game-detail'),
     path('matches/<int:match_pk>/games/create/', views.GameCreate.as_view(), name='game-create'),
 
     path('scores/<str:username>/', views.ScoreList.as_view(), name='score-list'),
