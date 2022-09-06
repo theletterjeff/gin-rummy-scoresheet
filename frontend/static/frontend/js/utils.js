@@ -53,3 +53,12 @@ export function formatDateRange(dateObjStart, dateObjEnd) {
   let formattedEnd = formatDate(dateObjEnd);
   return `${formattedStart}-${formattedEnd}`;
 }
+
+/**
+ * Extract a username from a URL that is configured to put the username at
+ * the end of the URL. This applies to match-list and player-detail URLs.
+ */
+export function getUsernameFromEndOfURL(urlStr) {
+  urlArray = urlStr.split('/')
+  return urlArray[urlArray.length - 1]
+}
