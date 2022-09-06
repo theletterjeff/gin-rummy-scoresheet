@@ -17,15 +17,6 @@ from api.serializers import (GameSerializer, MatchSerializer, OutcomeSerializer,
 from accounts.models import Player
 from base.models import Game, Match, Outcome, Score
 
-@api_view(['GET'])
-def api_root(request, format=None):
-    return Response({
-        'matches': reverse('match-list', request=request, format=format),
-        'games': reverse('game-list-create', request=request, format=format),
-        'players': reverse('player-list', request=request, format=format),
-        'player-matches': reverse('player-matches', request=request, format=format),
-    })
-
 class MatchList(ListAPIView):
     """GET a list of Match objects for the specified user."""
     serializer_class = MatchSerializer
