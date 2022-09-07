@@ -2,8 +2,6 @@ import {
   formatDate,
   formatDateRange,
   getJsonResponse,
-  getJsonResponseArray,
-  fillTitle,
   getCookie,
 } from "./utils.js";
 
