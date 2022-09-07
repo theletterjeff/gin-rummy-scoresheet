@@ -1,26 +1,39 @@
-import { getCookie, getJsonResponse } from '../utils.js';
+import { getCookie, getJsonResponse, getValFromUrl } from '../utils.js';
 import { getPlayerDetailEndpoint, getFrontendURL } from '../endpoints.js';
 
-let playerJson = await getJsonResponse(
-  window.location.origin + '/api/logged-in-player/')
-fillPlayerEditPlaceholders();
-addPlayerEditButtonEvent();
+fillPlayerEditPage();
 
-function fillPlayerEditPlaceholders() {
+/**
+ * Main function for filling the player-edit page.
+ */
+async function fillPlayerEditPage() {
+  const username = getValFromUrl(window.location.href, 'players');
+  const playerDetailEndpoint = window.location.origin + `/api/players/${username}/`
+  let playerJson = await getJsonResponse(playerDetailEndpoint);
+  fillPlayerEditPlaceholders(playerJson);
+  addPlayerEditButtonEvent(playerJson);
+}
+/**
+ * Populate form fields with current player information.
+ */
+function fillPlayerEditPlaceholders(playerJson) {
 
   fillDefaultInputText('player-username-input', playerJson.username);
   fillDefaultInputText('player-first-name-input', playerJson.first_name);
   fillDefaultInputText('player-last-name-input', playerJson.last_name);
   fillDefaultInputText('player-email-input', playerJson.email);
 }
-
+/**
+ * Helper function for filling in form fields with curren player information.
+ */
 function fillDefaultInputText(elemName, defaultInputText) {
   let elem = document.getElementById(elemName);
   elem.value = defaultInputText;
 }
-
-async function addPlayerEditButtonEvent() {
-  const playerDetailEndpoint = getPlayerDetailEndpoint();
+/**
+ * Add a PATCH event to the submit button.
+ */
+async function addPlayerEditButtonEvent(playerJson) {
   const submitBtn = document.getElementById('player-edit-submit');
   submitBtn.addEventListener('click', function(e) {
     e.preventDefault();
@@ -32,7 +45,7 @@ async function addPlayerEditButtonEvent() {
     let lastName = document.getElementById('player-last-name-input').value;
     let email = document.getElementById('player-email-input').value;
 
-    return fetch(playerDetailEndpoint, {
+    return fetch(playerJson.url, {
       method: 'PATCH',
       headers: {
         'Content-type': 'application/json',
@@ -45,7 +58,6 @@ async function addPlayerEditButtonEvent() {
         'email': email,
       }),
     })
-    .then((resp) => console.log(resp))
     .then(() => {window.location = getFrontendURL(playerJson.url)})
   })
 }
