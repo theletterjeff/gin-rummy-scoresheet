@@ -16,11 +16,11 @@ urlpatterns = [
     re_path('matches/(?P<match_pk>[0-9]+)/games/(?P<game_pk>[0-9]+)/$', views.GameDetail.as_view(), name='game-detail'),
     re_path('matches/(?P<match_pk>[0-9]+)/games/create/$', views.GameCreate.as_view(), name='game-create'),
 
-    re_path('scores/(?P<username>[a-zA-z]+.*)/$', views.ScoreList.as_view(), name='score-list'),
-    re_path('scores/(?P<username>[a-zA-z]+.*)/matches/(?P<match_pk>[0-9]+)/$', views.ScoreDetail.as_view(), name='score-detail'),
+    re_path('players/(?P<username>[a-zA-z]+.*)/scores/$', views.ScoreList.as_view(), name='score-list'),
+    re_path('matches/(?P<match_pk>[0-9]+)/players/(?P<username>[a-zA-z]+.*)/scores/$', views.ScoreDetail.as_view(), name='score-detail'),
 
-    re_path('outcomes/(?P<username>[a-zA-z]+.*)/$', views.OutcomeList.as_view(), name='outcome-list'),
-    re_path('outcomes/(?P<username>[a-zA-z]+.*)/matches/(?P<match_pk>[0-9]+)/$', views.OutcomeDetail.as_view(), name='outcome-detail')
+    re_path('players/(?P<username>[a-zA-z]+.*)/outcomes/$', views.OutcomeList.as_view(), name='outcome-list'),
+    re_path('matches/(?P<match_pk>[0-9]+)/players/(?P<username>[a-zA-z]+.*)/outcomes/$', views.OutcomeDetail.as_view(), name='outcome-detail')
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
