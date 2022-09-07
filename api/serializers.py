@@ -14,6 +14,8 @@ class PlayerSerializer(serializers.HyperlinkedModelSerializer):
     )
     match_set = serializers.HyperlinkedRelatedField(
         view_name='match-detail',
+        lookup_field='pk',
+        lookup_url_kwarg='match_pk',
         many=True,
         read_only=True,
     )
