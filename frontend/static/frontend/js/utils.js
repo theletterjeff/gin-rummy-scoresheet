@@ -55,10 +55,12 @@ export function formatDateRange(dateObjStart, dateObjEnd) {
 }
 
 /**
- * Extract a username from a URL that is configured to put the username at
- * the end of the URL. This applies to match-list and player-detail URLs.
+ * Given a key name ('matches', 'games', 'players'), return the value that
+ * is in the next position in the URL (e.g., 'players/some_username' with
+ * 'players' passed in as `key` would return 'some_username').
  */
-export function getUsernameFromEndOfURL(urlStr) {
-  urlArray = urlStr.split('/')
-  return urlArray[urlArray.length - 1]
+export function getValFromUrl(urlStr, key) {
+  let urlArray = urlStr.split('/');
+  let val_idx = urlArray.indexOf(key) + 1;
+  return urlArray[val_idx];
 }

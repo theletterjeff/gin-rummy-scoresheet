@@ -25,11 +25,13 @@ export function getPlayerDetailEndpoint() {
   return window.location.origin + `/api/player/${username}/`
 }
 
-/** Return the endoint for the GameListCreate API view */
-export function getGameListCreateEndpoint() {
+/**
+ * Return the endoint for the GameCreate API view.
+ */
+export function getGameCreateEndpoint(matchPk) {
   const pageURL = new URL(window.location.href);
   const pageOrigin = pageURL.origin;
-  return `${pageOrigin}/api/game/`
+  return `${pageOrigin}/api/matches/${matchPk}/games/create/`
 }
 
 /* Return a players object {username: endpoint} */
