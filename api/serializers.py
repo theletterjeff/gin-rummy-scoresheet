@@ -35,8 +35,12 @@ class MatchSerializer(serializers.HyperlinkedModelSerializer):
         many=True,
         lookup_field='username',
     )
-    games = serializers.HyperlinkedRelatedField(
+    games = ParameterizedHyperlinkedIdentityField(
         view_name='game-detail',
+        lookup_field_data=(
+            (None, 'pk', 'match_pk'),
+            ('game', 'pk', 'game_pk'),
+        ),
         many=True,
         read_only=True,
     )

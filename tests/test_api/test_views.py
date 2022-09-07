@@ -142,11 +142,12 @@ def test_match_create(make_players, authenticate_api_request):
         assert any([regex.search(response_player_url)
                     for response_player_url in response.data['players']])
 
-def test_match_detail_get(make_players, make_match,
+def test_match_detail_get(make_players, make_match, make_game,
         authenticate_api_request):
     """GET requests to the MatchDetail view return Match instance."""
     players = make_players(2)
     match = make_match(players)
+    game = make_game(match=match, winner=players[0], loser=players[1], points=25)
     kwargs = {'match_pk': match.pk}
     
     view = MatchDetail.as_view()
