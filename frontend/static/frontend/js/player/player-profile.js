@@ -72,7 +72,7 @@ function linkPlayerEmail(emailElemName, emailValue) {
  * Add link to the "Edit" button that redirects to the player-edit page.
  */
 function addEditButtonRedirect() {
-  const editPlayerEndpoint = window.location.href + 'edit/'
+  const editPlayerEndpoint = window.location.href + 'edit-profile/'
   const editBtn = document.getElementById('edit-button');
   editBtn.addEventListener('click', function() {
     window.location = editPlayerEndpoint;
