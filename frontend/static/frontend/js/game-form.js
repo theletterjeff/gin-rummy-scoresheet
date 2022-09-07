@@ -1,17 +1,17 @@
-import { getApiDetailEndpoint,
+import { getDetailEndpointFromEditURL,
          getPlayersUsernameEndpoint,
          getGameCreateEndpoint
        } from "./endpoints.js";
-import { getCookie, getJsonResponse, getValFromUrl } from './utils.js';
+import { getCookie } from './utils.js';
 
 /**
  * Fill the 'winner' dropdown with players' usernames.
  */
 export function fillWinnerDropdown(winnerUsername, loserUsername) {
-  let dropdownOptions = ```
+  let dropdownOptions = `
     <option select value=${winnerUsername}>${winnerUsername}</option>
     <option values=${loserUsername}>${loserUsername}</option>
-  ```
+  `
   let winnerDropdown = document.getElementById('winner-dropdown');
   winnerDropdown.innerHTML = dropdownOptions;
 }
@@ -44,12 +44,10 @@ export async function submitGameForm(e, method, matchPk) {
   if (method == 'POST') {
     gameEndpoint = getGameCreateEndpoint(matchPk);
   } else {
-    gameEndpoint = getApiDetailEndpoint();
+    gameEndpoint = getDetailEndpointFromEditURL();
   }
-
-  
   // Form fields
-  let matchDetailEndpoint = window.location.origin + `/api/${matchPk}/`  
+  let matchDetailEndpoint = window.location.origin + `/api/matches/${matchPk}/`  
   
   let playersUserEnd = await getPlayersUsernameEndpoint(matchDetailEndpoint);
 

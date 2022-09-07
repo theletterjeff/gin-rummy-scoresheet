@@ -1,8 +1,9 @@
 import { fillTitle, getJsonResponse, getValFromUrl } from './utils.js';
 import { getDetailEndpointFromEditURL, getFrontendURL } from './endpoints.js';
-import { fillPoints, fillCheckbox, submitGameForm } from './game-form.js';
+import { fillPoints, fillCheckbox, 
+         fillWinnerDropdown, submitGameForm } from './game-form.js';
 
-const matchPk = getValFromUrl(window.location.href, 'match');
+const matchPk = getValFromUrl(window.location.href, 'matches');
 fillGameEditPage();
 
 /**
@@ -22,8 +23,8 @@ async function fillGameEditForm() {
   const matchDetailEndpoint = gameJson.match;
 
   // Values to use in form
-  const winnerUsername = getValFromEndOfUrl(gameJson.winner);
-  const loserUsername = getValFromEndOfUrl(gameJson.loser);
+  const winnerUsername = getValFromUrl(gameJson.winner, 'players');
+  const loserUsername = getValFromUrl(gameJson.loser, 'players');
   const points = gameJson.points;
   const gin = gameJson.gin;
   const undercut = gameJson.undercut;
