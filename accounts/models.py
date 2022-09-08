@@ -10,7 +10,7 @@ class Player(AbstractUser):
         ordering = ['pk']
     
     def get_absolute_url(self):
-        return reverse('player-detail', kwargs={'username': self.username})
+        return reverse('api:player-detail', kwargs={'username': self.username})
     
     def __str__(self):
         return self.username

@@ -22,7 +22,7 @@ def test_player_list(make_players, authenticate_api_request):
     player_num = 5
     players = make_players(player_num)
     view = PlayerList.as_view()
-    url = reverse('player-list')
+    url = reverse('api:player-list')
 
     request = authenticate_api_request(view, url, 'get', players[0])
     response = view(request)
@@ -37,7 +37,7 @@ def test_player_detail(make_player, authenticate_api_request):
     kwargs = {'username': username}
 
     view = PlayerDetail.as_view()
-    url = reverse('player-detail', kwargs=kwargs)
+    url = reverse('api:player-detail', kwargs=kwargs)
 
     request = authenticate_api_request(view, url, 'get', player, kwargs)
     response = view(request, **kwargs)
@@ -48,7 +48,7 @@ def test_player_detail(make_player, authenticate_api_request):
 def test_player_create(db):
     """POST request to PlayerCreate view creates a new player."""
     factory = APIRequestFactory()
-    url = reverse('player-create')
+    url = reverse('api:player-create')
     view = PlayerCreate.as_view()
     kwargs = {'username': 'player0', 'password': 'test_password'}
 
@@ -64,7 +64,7 @@ def test_logged_in_player(make_player, authenticate_api_request):
     """
     player = make_player()
     view = LoggedInPlayerDetail.as_view()
-    url = reverse('logged-in-player')
+    url = reverse('api:logged-in-player')
     request = authenticate_api_request(view, url, 'get', player)
     response = view(request)
 
@@ -79,7 +79,7 @@ def test_match_list_view_returns_no_records_when_no_records_present(
     kwargs = {'username': player.username}
     
     view = MatchList.as_view()
-    url = reverse('match-list', kwargs=kwargs)
+    url = reverse('api:match-list', kwargs=kwargs)
 
     request = authenticate_api_request(view, url, 'get', player)
     response = view(request, **kwargs)
@@ -96,7 +96,7 @@ def test_match_list_view_returns_no_records_when_matches_are_w_other_players(
     kwargs = {'username': players[0].username}
 
     view = MatchList.as_view()
-    url = reverse('match-list', kwargs=kwargs)
+    url = reverse('api:match-list', kwargs=kwargs)
 
     request = authenticate_api_request(view, url, 'get', players[0])
     response = view(request, **kwargs)
@@ -114,7 +114,7 @@ def test_match_list_view_returns_records_when_matches_are_with_player(
     kwargs = {'username': players[0].username}
 
     view = MatchList.as_view()
-    url = reverse('match-list', kwargs=kwargs)
+    url = reverse('api:match-list', kwargs=kwargs)
 
     request = authenticate_api_request(view, url, 'get', players[0])
     response = view(request, **kwargs)
@@ -127,7 +127,7 @@ def test_match_create(make_players, authenticate_api_request):
     player_urls = [player.get_absolute_url() for player in players]
     
     view = MatchCreate.as_view()
-    url = reverse('match-create')
+    url = reverse('api:match-create')
     kwargs = {'players': player_urls}
 
     request = authenticate_api_request(view, url, 'post', players[0], kwargs)
@@ -151,7 +151,7 @@ def test_match_detail_get(make_players, make_match, make_game,
     kwargs = {'match_pk': match.pk}
     
     view = MatchDetail.as_view()
-    url = reverse('match-detail', kwargs=kwargs)
+    url = reverse('api:match-detail', kwargs=kwargs)
 
     request = authenticate_api_request(view, url, 'get', players[0], kwargs)
     response = view(request, **kwargs)
@@ -166,7 +166,7 @@ def test_match_detail_patch(make_players, make_match,
     url_kwargs = {'match_pk': match.pk}
     
     view = MatchDetail.as_view()
-    url = reverse('match-detail', kwargs=url_kwargs)
+    url = reverse('api:match-detail', kwargs=url_kwargs)
 
     patch_kwargs = {'complete': True, 'target_score': 250}
     patch_kwargs.update(url_kwargs)
@@ -185,7 +185,7 @@ def test_match_detail_delete(make_players, make_match, authenticate_api_request)
     kwargs = {'match_pk': match.pk}
     
     view = MatchDetail.as_view()
-    url = reverse('match-detail', kwargs=kwargs)
+    url = reverse('api:match-detail', kwargs=kwargs)
 
     request = authenticate_api_request(view, url, 'delete', players[0], kwargs)
     response = view(request, **kwargs)
@@ -208,7 +208,7 @@ def test_game_list(game_count, make_players, make_match, make_games,
     
     view = GameList.as_view()
     kwargs = {'match_pk': match.pk}
-    url = reverse('game-list', kwargs=kwargs)
+    url = reverse('api:game-list', kwargs=kwargs)
 
     request = authenticate_api_request(view, url, 'get', players[0], kwargs)
     response = view(request, **kwargs)
@@ -230,7 +230,7 @@ def test_game_detail_get(make_players, make_match, make_game,
 
     view = GameDetail.as_view()
     kwargs = {'match_pk': match.pk, 'game_pk': game.pk}
-    url = reverse('game-detail', kwargs=kwargs)
+    url = reverse('api:game-detail', kwargs=kwargs)
 
     request = authenticate_api_request(view, url, 'get', players[0], kwargs)
     response = view(request, **kwargs)
@@ -263,7 +263,7 @@ def test_game_detail_patch(make_players, make_match, make_game,
 
     view = GameDetail.as_view()
     url_kwargs = {'match_pk': match.pk, 'game_pk': game.pk}
-    url = reverse('game-detail', kwargs=url_kwargs)
+    url = reverse('api:game-detail', kwargs=url_kwargs)
 
     patch_kwargs = {'gin': True, 'undercut': True}
     patch_kwargs.update(url_kwargs)
@@ -288,7 +288,7 @@ def test_game_detail_delete(make_players, make_match, make_game,
 
     view = GameDetail.as_view()
     kwargs = {'match_pk': match.pk, 'game_pk': game.pk}
-    url = reverse('game-detail', kwargs=kwargs)
+    url = reverse('api:game-detail', kwargs=kwargs)
 
     request = authenticate_api_request(view, url, 'delete', players[0], kwargs)
     response = view(request, **kwargs)
@@ -301,7 +301,7 @@ def test_game_create(make_players, make_match, make_game, authenticate_api_reque
     players = make_players(2)
     match = make_match(players)
     url_kwargs = {'match_pk': match.pk}
-    url = reverse('game-create', kwargs=url_kwargs)
+    url = reverse('api:game-create', kwargs=url_kwargs)
     
     create_kwargs = {
         'match': match.get_absolute_url(),
@@ -325,7 +325,7 @@ def test_score_list(make_players, make_matches, authenticate_api_request):
     kwargs = {'username': players[0].username}
     
     view = ScoreList.as_view()
-    url = reverse('score-list', kwargs=kwargs)
+    url = reverse('api:score-list', kwargs=kwargs)
 
     request = authenticate_api_request(view, url, 'get', players[0], kwargs)
     response = view(request, **kwargs)
@@ -341,7 +341,7 @@ def test_score_detail_get(make_players, make_match, authenticate_api_request):
 
     kwargs = {'username': players[0].username, 'match_pk': match.pk}
     view = ScoreDetail.as_view()
-    url = reverse('score-detail', kwargs=kwargs)
+    url = reverse('api:score-detail', kwargs=kwargs)
 
     request = authenticate_api_request(view, url, 'get', players[0])
     response = view(request, **kwargs)
@@ -366,7 +366,7 @@ def test_outcome_list(make_players, make_matches, authenticate_api_request):
     kwargs = {'username': players[0].username}
     
     view = OutcomeList.as_view()
-    url = reverse('outcome-list', kwargs=kwargs)
+    url = reverse('api:outcome-list', kwargs=kwargs)
 
     request = authenticate_api_request(view, url, 'get', players[0], kwargs)
     response = view(request, **kwargs)
@@ -384,7 +384,7 @@ def test_outcome_detail(make_players, make_match, authenticate_api_request):
     
     kwargs = {'username': players[0].username, 'match_pk': match.pk}
     view = OutcomeDetail.as_view()
-    url = reverse('outcome-detail', kwargs=kwargs)
+    url = reverse('api:outcome-detail', kwargs=kwargs)
 
     request = authenticate_api_request(view, url, 'get', players[0])
     response = view(request, **kwargs)

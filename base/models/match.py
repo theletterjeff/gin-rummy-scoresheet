@@ -28,7 +28,7 @@ class Match(models.Model):
         return f'{date_started_str} ({self.pk})'
     
     def get_absolute_url(self):
-        return reverse('match-detail', kwargs={'match_pk': self.pk})
+        return reverse('api:match-detail', kwargs={'match_pk': self.pk})
 
 class MatchPlayer(models.Model):
     """
@@ -56,7 +56,7 @@ class Score(MatchPlayer):
         return f'{self.player.username} {date_started_str} ({self.pk})'
     
     def get_absolute_url(self):
-        return reverse('score-detail', kwargs=self.get_url_kwargs())
+        return reverse('api:score-detail', kwargs=self.get_url_kwargs())
 
 class Outcome(MatchPlayer):
     """
@@ -80,4 +80,4 @@ class Outcome(MatchPlayer):
         return f'{self.player.username} {date_started_str} ({self.pk})'
 
     def get_absolute_url(self):
-        return reverse('outcome-detail', kwargs=self.get_url_kwargs())
+        return reverse('api:outcome-detail', kwargs=self.get_url_kwargs())

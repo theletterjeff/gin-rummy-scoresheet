@@ -107,7 +107,7 @@ class CurrentMatchesTests(TestSetUpTearDown):
         super().setUp()
 
         # Load driver for the matches view
-        self.driver.get('%s%s' % (self.live_server_url, reverse('matches-all')))
+        self.driver.get('%s%s' % (self.live_server_url, reverse('frontend:matches-all')))
         wait = WebDriverWait(self.driver, 2)
         wait.until(EC.presence_of_element_located(
             (By.TAG_NAME, 'body')
@@ -203,7 +203,7 @@ class PastMatchesTests(TestSetUpTearDown):
         self.match.save()
 
         # Load driver for the matches view
-        self.driver.get('%s%s' % (self.live_server_url, reverse('matches-all')))
+        self.driver.get('%s%s' % (self.live_server_url, reverse('frontend:matches-all')))
     
     def test_win_outcome(self):
         """A completed/past match that the logged in player won will
@@ -284,7 +284,7 @@ class LoginTests(StaticLiveServerTestCase):
     
     def test_login_redirects_and_authenticates(self):
         """Logging in from the login page authenticates the user."""
-        login_url = '%s%s' % (self.live_server_url, reverse('login'))
+        login_url = '%s%s' % (self.live_server_url, reverse('frontend:login'))
         self.driver.get(login_url)
 
         username_field = self.driver.find_element(By.ID, 'username')
