@@ -1,5 +1,6 @@
 import { fillTitle, getJsonResponse } from '../utils.js';
 import { getPlayerFullName } from './utils.js';
+import { getPlayerDetailEndpoint } from '../endpoints.js';
 
 fillPlayerPage();
 
@@ -18,18 +19,11 @@ async function fillPlayerPage() {
  * Get the username from the player detail URL.
  * 
  * URLs for the `player-detail` page should be formatted as
- * '^players/(?P<username>[a-zA-z]+.*)/$'
+ * '^players/(?P<username>[a-zA-Z]+\w*)/$'
  */
  function getUsername() {
   let urlPath = window.location.pathname;
   return urlPath.split('/')[2];
-}
-/**
- * Given a player's username, return the API endpoint for that player's
- * player-detail view.
- */
- function getPlayerDetailEndpoint(username) {
-  return window.location.origin + `/api/players/${username}/`
 }
 /**
  * Fill the page title for the player detail page.

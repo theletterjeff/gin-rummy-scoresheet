@@ -19,10 +19,12 @@ export function getDetailEndpointFromEditURL() {
   const urlWithoutEditRegex = new RegExp('.+(?=edit\/)');
   return urlWithoutEditRegex.exec(apiDetailEndpoint);
 }
-
-export function getPlayerDetailEndpoint() {
-  let username = window.location.pathname.split('/')[2]
-  return window.location.origin + `/api/player/${username}/`
+/**
+ * Given a player's username, return the API endpoint for that player's
+ * player-detail view.
+ */
+export function getPlayerDetailEndpoint(username) {
+ return window.location.origin + `/api/player/${username}/`
 }
 
 /**
