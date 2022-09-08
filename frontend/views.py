@@ -1,7 +1,12 @@
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django.urls import reverse
 
 def home(request):
-    return render(request, 'frontend/home.html')
+    player = request.user
+    username = player.username
+    redirect_url = reverse('frontend:match-list', kwargs={'username': username})
+    return HttpResponseRedirect(redirect_url)
 
 def player_list(request):
     raise NotImplementedError
