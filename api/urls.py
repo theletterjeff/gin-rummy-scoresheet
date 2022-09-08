@@ -2,6 +2,7 @@ from django.urls import path, re_path
 from rest_framework.urlpatterns import format_suffix_patterns
 from . import views
 
+app_name = 'api'
 urlpatterns = [
     re_path(r'^players/$', views.PlayerList.as_view(), name='player-list'),
     re_path(r'^players/(?P<username>[a-zA-Z]+\w*)/$', views.PlayerDetail.as_view(), name='player-detail'),

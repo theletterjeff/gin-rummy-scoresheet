@@ -1,6 +1,7 @@
 from django.urls import include, path, re_path
 from . import views
 
+app_name = 'frontend'
 urlpatterns = [
     re_path(r'^players/(?P<username>[a-zA-Z]+\w*)/$', views.player_detail, name='player-detail'),
     re_path(r'^players/(?P<username>[a-zA-Z]+\w*)/edit-profile/$', views.player_edit, name='player-edit'),
