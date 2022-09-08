@@ -1,5 +1,5 @@
 import { getCookie, getJsonResponse, getValFromUrl } from '../utils.js';
-import { getPlayerDetailEndpoint, getFrontendURL } from '../endpoints.js';
+import { getFrontendURL } from '../endpoints.js';
 
 fillPlayerEditPage();
 
