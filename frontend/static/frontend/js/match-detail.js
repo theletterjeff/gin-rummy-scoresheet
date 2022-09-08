@@ -5,11 +5,11 @@ import {
   getCookie,
   setFormElemAsDisabled,
 } from "./utils.js";
-import { getApiDetailEndpoint, getFrontendURL } from './endpoints.js';
+import { getApiEndpointFromUrl, getFrontendURL } from './endpoints.js';
 import { fillWinnerDropdown, submitGameForm } from "./game-form.js";
 
 // Page constants
-const matchDetailEndpoint = getApiDetailEndpoint();
+const matchDetailEndpoint = getApiEndpointFromUrl();
 const csrfToken = getCookie('csrftoken');
 
 // Data

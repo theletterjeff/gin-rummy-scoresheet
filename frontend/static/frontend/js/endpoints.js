@@ -2,7 +2,7 @@ import { getJsonResponse } from "./utils.js";
 
 /** Return the endpoint for the API detail view corresponding to
  * the current frontend view */
- export function getApiDetailEndpoint() {
+ export function getApiEndpointFromUrl() {
   const pageURL = new URL(window.location.href);
   const pageOrigin = pageURL.origin;
   const pagePath = pageURL.pathname;
@@ -15,7 +15,7 @@ import { getJsonResponse } from "./utils.js";
  * PUT and PATCH requests).
  */
 export function getDetailEndpointFromEditURL() {
-  const apiDetailEndpoint = getApiDetailEndpoint();
+  const apiDetailEndpoint = getApiEndpointFromUrl();
   const urlWithoutEditRegex = new RegExp('.+(?=edit\/)');
   return urlWithoutEditRegex.exec(apiDetailEndpoint);
 }
