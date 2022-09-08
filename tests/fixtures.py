@@ -185,6 +185,7 @@ def authenticate_api_request(make_player) -> Callable:
         }
         request = method_handler[http_method](url, *args, **kwargs)
         force_authenticate(request, user=player)
+        request.user = player
         return request
     return _authenticate_api_request
 
