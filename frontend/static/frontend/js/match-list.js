@@ -176,6 +176,8 @@ async function addFormattedOutcomeToMatch(match) {
   }
   if (match.complete) {
     for (let playerOutcomeEndpoint of match.outcome_set) {
+      const playerOutcome = await getJsonResponse(playerOutcomeEndpoint);
+      // See if it's the request user
       let playerUsername = getValFromUrl(playerOutcomeEndpoint, 'players');
       if (playerUsername == match.viewPlayer.username) {
         match.formattedOutcome = outcomeTable[playerOutcome.player_outcome];
