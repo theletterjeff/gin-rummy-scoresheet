@@ -24,7 +24,7 @@ export function getDetailEndpointFromEditURL() {
  * player-detail view.
  */
 export function getPlayerDetailEndpoint(username) {
- return window.location.origin + `/api/player/${username}/`
+ return window.location.origin + `/api/players/${username}/`
 }
 
 /**
