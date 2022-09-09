@@ -10,10 +10,10 @@ class PlayerSerializer(serializers.HyperlinkedModelSerializer):
     """
     url = serializers.HyperlinkedIdentityField(
         lookup_field='username',
-        view_name='player-detail',
+        view_name='api:player-detail',
     )
     match_set = serializers.HyperlinkedRelatedField(
-        view_name='match-detail',
+        view_name='api:match-detail',
         lookup_field='pk',
         lookup_url_kwarg='match_pk',
         many=True,
@@ -27,16 +27,16 @@ class MatchSerializer(serializers.HyperlinkedModelSerializer):
     url = serializers.HyperlinkedIdentityField(
         lookup_field='pk',
         lookup_url_kwarg='match_pk',
-        view_name='match-detail',
+        view_name='api:match-detail',
     )
     players = serializers.HyperlinkedRelatedField(
-        view_name='player-detail',
+        view_name='api:player-detail',
         queryset=Player.objects.all(),
         many=True,
         lookup_field='username',
     )
     games = ParameterizedHyperlinkedIdentityField(
-        view_name='game-detail',
+        view_name='api:game-detail',
         lookup_field_data=(
             (None, 'pk', 'match_pk'),
             ('game', 'pk', 'game_pk'),
@@ -45,7 +45,7 @@ class MatchSerializer(serializers.HyperlinkedModelSerializer):
         read_only=True,
     )
     score_set = ParameterizedHyperlinkedIdentityField(
-        view_name='score-detail',
+        view_name='api:score-detail',
         lookup_field_data = (
             ('player', 'username', 'username'),
             ('match', 'pk', 'match_pk'),
@@ -54,7 +54,7 @@ class MatchSerializer(serializers.HyperlinkedModelSerializer):
         read_only=True,
     )
     outcome_set = ParameterizedHyperlinkedIdentityField(
-        view_name='outcome-detail',
+        view_name='api:outcome-detail',
         lookup_field_data = (
             ('player', 'username', 'username'),
             ('match', 'pk', 'match_pk'),
@@ -69,25 +69,25 @@ class MatchSerializer(serializers.HyperlinkedModelSerializer):
 class GameSerializer(serializers.HyperlinkedModelSerializer):
 
     url = ParameterizedHyperlinkedIdentityField(
-        view_name='game-detail',
+        view_name='api:game-detail',
         lookup_field_data = (
             ('match', 'pk', 'match_pk'),
             (None, 'pk', 'game_pk'),
         )
     )
     match = serializers.HyperlinkedRelatedField(
-        view_name='match-detail',
+        view_name='api:match-detail',
         queryset=Match.objects.all(),
         lookup_field='pk',
         lookup_url_kwarg='match_pk',
     )
     winner = serializers.HyperlinkedRelatedField(
-        view_name='player-detail',
+        view_name='api:player-detail',
         queryset=Player.objects.all(),
         lookup_field='username',
     )
     loser = serializers.HyperlinkedRelatedField(
-        view_name='player-detail',
+        view_name='api:player-detail',
         queryset=Player.objects.all(),
         lookup_field='username',
     )
@@ -98,20 +98,20 @@ class GameSerializer(serializers.HyperlinkedModelSerializer):
 class OutcomeSerializer(serializers.HyperlinkedModelSerializer):
 
     url = ParameterizedHyperlinkedIdentityField(
-        view_name='outcome-detail',
+        view_name='api:outcome-detail',
         lookup_field_data = (
             ('player', 'username', 'username'),
             ('match', 'pk', 'match_pk'),
         )
     )
     match = serializers.HyperlinkedRelatedField(
-        view_name='match-detail',
+        view_name='api:match-detail',
         queryset=Match.objects.all(),
         lookup_field='pk',
         lookup_url_kwarg='match_pk',
     )
     player = serializers.HyperlinkedRelatedField(
-        view_name='player-detail',
+        view_name='api:player-detail',
         queryset=Player.objects.all(),
         lookup_field='username',
     )
@@ -122,20 +122,20 @@ class OutcomeSerializer(serializers.HyperlinkedModelSerializer):
 class ScoreSerializer(serializers.HyperlinkedModelSerializer):
 
     url = ParameterizedHyperlinkedIdentityField(
-        view_name='score-detail',
+        view_name='api:score-detail',
         lookup_field_data = (
             ('player', 'username', 'username'),
             ('match', 'pk', 'match_pk'),
         )
     )
     match = serializers.HyperlinkedRelatedField(
-        view_name='match-detail',
+        view_name='api:match-detail',
         queryset=Match.objects.all(),
         lookup_field='pk',
         lookup_url_kwarg='match_pk',
     )
     player = serializers.HyperlinkedRelatedField(
-        view_name='player-detail',
+        view_name='api:player-detail',
         queryset=Player.objects.all(),
         lookup_field='username',
     )
