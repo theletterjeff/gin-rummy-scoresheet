@@ -64,3 +64,33 @@ export function getValFromUrl(urlStr, key) {
   let val_idx = urlArray.indexOf(key) + 1;
   return urlArray[val_idx];
 }
+
+/**
+ * Return a Promise of an element loading.
+ */
+export function waitForElem(elemId) {
+  return new Promise(resolve => {
+    if (document.getElementById(elemId)) {
+      return resolve(document.getElementById(elemId));
+    }
+    const observer = new MutationObserver(mutations => {
+      if (document.getElementById(elemId)) {
+        resolve(document.getElementById(elemId));
+        observer.disconnect();
+      }
+    });
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+  });
+}
+
+/**
+ * Get JSON response object of the request player (user).
+ */
+export async function getRequestPlayerUsername() {
+  const requestPlayerEndpoint = window.location.origin + '/api/request-player/';
+  const requestPlayerObj = await getJsonResponse(requestPlayerEndpoint);
+  return requestPlayerObj.username;
+}
