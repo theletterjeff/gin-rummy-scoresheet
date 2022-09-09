@@ -7,7 +7,7 @@ urlpatterns = [
     re_path(r'^players/$', views.PlayerList.as_view(), name='player-list'),
     re_path(r'^players/(?P<username>[a-zA-Z]+\w*)/$', views.PlayerDetail.as_view(), name='player-detail'),
     re_path(r'^players/create/$', views.PlayerCreate.as_view(), name='player-create'),
-    re_path(r'^logged-in-player/$', views.LoggedInPlayerDetail.as_view(), name='logged-in-player'),
+    re_path(r'^request-player/$', views.RequestPlayer.as_view(), name='request-player'),
 
     re_path(r'^matches/(?P<username>[a-zA-Z]+\w*)/$', views.MatchList.as_view(), name='match-list'),
     re_path(r'^matches/(?P<match_pk>[0-9]+)/$', views.MatchDetail.as_view(), name='match-detail'),

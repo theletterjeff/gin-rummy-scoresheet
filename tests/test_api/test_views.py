@@ -11,7 +11,7 @@ from rest_framework.test import APIRequestFactory, force_authenticate
 from api.views import (MatchCreate, MatchDetail, MatchList, OutcomeDetail,
                        ScoreDetail, GameDetail, GameList, GameCreate, 
                        OutcomeList, ScoreList, PlayerDetail, PlayerList,
-                       PlayerCreate, LoggedInPlayerDetail)
+                       PlayerCreate, RequestPlayer)
 from base.models import Outcome, Score
 from tests.fixtures import (make_match, make_matches, make_player, make_players,
                             make_game, make_games, authenticate_api_request,
@@ -58,13 +58,12 @@ def test_player_create(db):
     assert response.status_code == 201
     assert response.data
 
-def test_logged_in_player(make_player, authenticate_api_request):
-    """GET request to the LoggedInPlayer view returns the logged-in Player's
-    data.
+def test_request_player(make_player, authenticate_api_request):
+    """GET request to the RequestPlayer view returns the `request.user` object.
     """
     player = make_player()
-    view = LoggedInPlayerDetail.as_view()
-    url = reverse('api:logged-in-player')
+    view = RequestPlayer.as_view()
+    url = reverse('api:request-player')
     request = authenticate_api_request(view, url, 'get', player)
     response = view(request)
 

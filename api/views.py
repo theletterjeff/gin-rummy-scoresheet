@@ -34,7 +34,7 @@ class PlayerCreate(CreateAPIView):
     serializer_class = PlayerSerializer
     permission_classes = [AllowAny]
 
-class LoggedInPlayerDetail(APIView):
+class RequestPlayer(APIView):
     """GET serialized data for the currently logged in Player.
     This should solve some of my challenges around accessing the identity
     of the currently logged in Player.
