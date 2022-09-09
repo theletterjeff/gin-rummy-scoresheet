@@ -1,3 +1,5 @@
+import { getRequestPlayerUsername } from './utils.js';
+
 fillNavbarLinks();
 
 // Base template functions
@@ -6,9 +8,9 @@ function fillNavbarLinks() {
   if (document.getElementById('login-link')) {
     fillNavbarLink('login-link', '/accounts/login/');
   } else {
-    getPlayerUsername().then(function(username) {
-      fillNavbarLink('matches-nav-link', '/match/');
-      fillNavbarLink('account-nav-link', `/player/${username}`);
+    getRequestPlayerUsername().then(function(username) {
+      fillNavbarLink('matches-nav-link', `/matches/${username}`);
+      fillNavbarLink('account-nav-link', `/players/${username}`);
       fillNavbarLink('logout-nav-link', '/accounts/logout/');
     });
   };
@@ -17,10 +19,4 @@ function fillNavbarLinks() {
 function fillNavbarLink(elemName, urlExtension) {
   let navbarElem = document.getElementById(elemName);
   navbarElem.href = window.location.origin + urlExtension
-}
-
-function getPlayerUsername() {
-  return fetch(window.location.origin + '/api/logged-in-player/')
-    .then((resp) => resp.json())
-    .then((data) => data.username)
 }
