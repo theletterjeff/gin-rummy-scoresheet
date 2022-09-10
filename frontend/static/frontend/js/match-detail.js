@@ -4,29 +4,32 @@ import {
   fillTitle,
   getCookie,
   setFormElemAsDisabled,
+  getValFromUrl,
 } from "./utils.js";
 import { getApiEndpointFromUrl, getFrontendURL } from './endpoints.js';
 import { fillWinnerDropdown, submitGameForm } from "./game-form.js";
 
-// Page constants
-const matchDetailEndpoint = getApiEndpointFromUrl();
-const csrfToken = getCookie('csrftoken');
-
-// Data
-let matchJson = await getJsonResponse(matchDetailEndpoint);
-let gamesJson = await getJsonResponseArray(matchJson.games);
-let playersJson = await getJsonResponseArray(matchJson.players);
-let scoresJson = await getJsonResponseArray(matchJson.score_set);
-
 fillMatchDetailPage();
 
-/** Main execution function */
+/**
+ * Main function for filling the match detail page.
+ */
 async function fillMatchDetailPage() {
+  // Page constants
+  const matchDetailEndpoint = getApiEndpointFromUrl();
+  const gameListDetailEndpoint = matchDetailEndpoint + 'games/'
+
+  // Data
+  let matchJson = await getJsonResponse(matchDetailEndpoint);
+  let gamesJson = await getJsonResponse(gameListDetailEndpoint);
+  let playersJson = await getJsonResponseArray(matchJson.players);
+  let scoresJson = await getJsonResponseArray(matchJson.score_set);
+
   fillTitle(`Match - ${playersJson[0].username} v. ${playersJson[1].username}`);
   
-  fillWinnerDropdown(matchDetailEndpoint);
+  fillWinnerDropdown(playersJson[0].username, playersJson[1].username);
   listGames();
-  fillScoreboard();
+  fillScoreboard(playersJson, gamesJson);
   
   let matchOutcome = checkMatchOutcome();
   if (matchOutcome) {
@@ -39,7 +42,10 @@ async function fillMatchDetailPage() {
     .then(() => document.getElementById('new-game-form').reset())
     .then(() => updateMatchJsons())
     .then(() => listGames())
-    .then(() => fillScoreboard())
+    .then(function() {
+      let gamesJson = await getJsonResponse(gameListDetailEndpoint);
+      let playersJson = await getJsonResponseArray(matchJson.players);
+      fillScoreboard(playersJson, gamesJson))
   });
 }
 
@@ -61,18 +67,12 @@ async function updateMatchJsons() {
 }
 
 /* Return an array of game table row HTML elements */
-async function getGamesHTML() {
+async function getGamesHTML(gamesJson) {
   let gamesHTML = [];
   for (let gameJson of gamesJson) {
-    // Get winner
-    let winnerJson = playersJson.filter(function(playerJson) {
-      return playerJson.url == gameJson.winner;
-    });
-    let winnerUsername = winnerJson[0].username
-    
-    // Make HTML
     let gameHTML = makeGameTableRow(gameJson);
-    gameHTML = gameHTML.replace("#", winnerUsername)
+    let winnerUsername = getValFromUrl(gameJson.winner, 'players');
+    gameHTML = gameHTML.replace("#", winnerUsername);
     gamesHTML.push(gameHTML);
   }
   return gamesHTML;
@@ -145,12 +145,12 @@ async function addDeleteButton(deleteButtonElem, gameEndpoint) {
   })
 }
 
-function fillScoreboard() {
+function fillScoreboard(playersJson, gamesJson) {
   let scoreboardUsernameElems = document.getElementsByClassName('scoreboard-username');
   let scoreboardPointsElems = document.getElementsByClassName('scoreboard-points');
   let scoreboardWinsLossesElems = document.getElementsByClassName('scoreboard-wins-losses')
   
-  countWinsAndLosses();
+  countWinsAndLosses(playersJson, gamesJson);
 
   for (let i in playersJson) {
     
@@ -185,7 +185,7 @@ function fillScoreboardWinsLosses(scoreboardWinsLossesElem, wins, losses) {
   scoreboardWinsLossesElem.innerHTML = `(${wins} Wins, ${losses} losses)`
 }
 
-function countWinsAndLosses() {
+function countWinsAndLosses(playersJson, gamesJson) {
   for (let playerJson of playersJson) {
     playerJson.wins = 0;
     playerJson.losses = 0;
