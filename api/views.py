@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.shortcuts import get_object_or_404
 
 from rest_framework.decorators import api_view
@@ -17,13 +18,15 @@ from api.serializers import (GameSerializer, MatchSerializer, OutcomeSerializer,
 from accounts.models import Player
 from base.models import Game, Match, Outcome, Score
 
+# Player
+
 class PlayerDetail(RetrieveUpdateDestroyAPIView):
     """GET a Player object."""
     queryset = Player.objects.all()
     serializer_class = PlayerSerializer
-    lookup_field='username'
+    lookup_field = 'username'
 
-class PlayerList(ListAPIView):
+class PlayerListAll(ListAPIView):
     """GET all Player instances."""
     queryset = Player.objects.all()
     serializer_class = PlayerSerializer
@@ -45,12 +48,40 @@ class RequestPlayer(APIView):
                                       context={'request': request})
         return Response(serializer.data)
 
-class MatchList(ListAPIView):
+
+# Lists by Player
+
+class MatchListPlayer(ListAPIView):
     """GET a list of Match objects for the specified user."""
     serializer_class = MatchSerializer
     def get_queryset(self):
         username = self.kwargs['username']
         return Match.objects.filter(players__username=username)
+
+class GameListPlayer(ListAPIView):
+    """GET a list of Game objects for the specified user."""
+    serializer_class = GameSerializer
+    def get_queryset(self):
+        username = self.kwargs['username']
+        return Game.objects.filter(Q(winner__username=username) |
+                                    Q(loser__username=username))
+
+class ScoreListPlayer(ListAPIView):
+    """GET a list of Score objects for the specified user."""
+    serializer_class = ScoreSerializer
+    def get_queryset(self):
+        username = self.kwargs['username']
+        return Score.objects.filter(player__username=username)
+
+class OutcomeListPlayer(ListAPIView):
+    """GET a list of Outcome objects for the specified user."""
+    serializer_class = OutcomeSerializer
+    def get_queryset(self):
+        username = self.kwargs['username']
+        return Outcome.objects.filter(player__username=username)
+
+
+# Match
 
 class MatchDetail(RetrieveUpdateDestroyAPIView):
     """GET, PUT/PATCH, or DELETE a Match."""
@@ -64,13 +95,43 @@ class MatchCreate(CreateAPIView):
     queryset = Match.objects.all()
     serializer_class = MatchSerializer
 
-class GameList(ListAPIView):
-    """GET all Games or POST a new Game."""
+
+# Lists by Match
+
+class PlayerListMatch(ListAPIView):
+    """GET a Match's list of Players."""
+    serializer_class = PlayerSerializer
+    def get_queryset(self):
+        match_pk = self.kwargs['match_pk']
+        match = Match.objects.get(pk=match_pk)
+        return Player.objects.filter(match_set=match)
+
+class GameListMatch(ListAPIView):
+    """GET a Match's list of Games."""
     serializer_class = GameSerializer
     def get_queryset(self):
         match_pk = self.kwargs['match_pk']
         match = Match.objects.get(pk=match_pk)
         return Game.objects.filter(match=match)
+
+class ScoreListMatch(ListAPIView):
+    """GET a Match's list of Scores."""
+    serializer_class = ScoreSerializer
+    def get_queryset(self):
+        match_pk = self.kwargs['match_pk']
+        match = Match.objects.get(pk=match_pk)
+        return Score.objects.filter(match=match)
+
+class OutcomeListMatch(ListAPIView):
+    """GET a Match's list of Outcomes."""
+    serializer_class = OutcomeSerializer
+    def get_queryset(self):
+        match_pk = self.kwargs['match_pk']
+        match = Match.objects.get(pk=match_pk)
+        return Outcome.objects.filter(match=match)
+
+
+# Game
 
 class GameDetail(RetrieveUpdateDestroyAPIView):
     """GET, PUT/PATCH, or DELETE a Game."""
@@ -90,12 +151,8 @@ class GameCreate(CreateAPIView):
     queryset = Game.objects.all()
     serializer_class = GameSerializer
 
-class ScoreList(ListAPIView):
-    serializer_class = ScoreSerializer
-    def get_queryset(self):
-        username = self.kwargs['username']
-        player = Player.objects.get(username=username)
-        return Score.objects.filter(player=player)
+
+# Score and Outcome
 
 class ScoreDetail(RetrieveAPIView):
     """GET a Player's Score for a Match."""
@@ -109,14 +166,6 @@ class ScoreDetail(RetrieveAPIView):
                                 match__pk=self.kwargs['match_pk'])
         self.check_object_permissions(self.request, obj)
         return obj
-
-class OutcomeList(ListAPIView):
-    """GET all Outcome instances for a Player."""
-    serializer_class = OutcomeSerializer
-    def get_queryset(self):
-        username = self.kwargs['username']
-        player = Player.objects.get(username=username)
-        return Outcome.objects.filter(player=player)
 
 class OutcomeDetail(RetrieveAPIView):
     """GET an Outcome instance for a Match."""
