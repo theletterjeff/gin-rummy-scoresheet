@@ -7,7 +7,7 @@ import {
   getValFromUrl,
   waitForElem,
 } from "./utils.js";
-import { getApiEndpointFromUrl, getPlayerDetailEndpoint } from "./endpoints.js";
+import { getApiEndpointFromUrl, getMatchListPlayerEndpoint, getPlayerDetailEndpoint } from "./endpoints.js";
 
 fillPlayerMatchesPage();
 
@@ -17,7 +17,7 @@ async function fillPlayerMatchesPage() {
   const username = getValFromUrl(window.location.pathname, 'players');
 
   // Endpoints
-  const matchListEndpoint = window.location.origin + `/api/matches/${username}/`;
+  const matchListEndpoint = getMatchListPlayerEndpoint(username);
 
   // JSON data
   let matchesData = await getJsonResponse(matchListEndpoint);
