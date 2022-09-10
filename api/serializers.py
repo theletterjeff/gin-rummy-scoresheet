@@ -21,7 +21,17 @@ class PlayerSerializer(serializers.HyperlinkedModelSerializer):
     )
     class Meta:
         model = Player
-        fields = '__all__'
+        fields = [
+            'url',
+            'username',
+            'first_name',
+            'last_name',
+            'email',
+            'is_staff',
+            'is_active',
+            'date_joined',
+            'match_set',
+        ]
 
 class MatchSerializer(serializers.HyperlinkedModelSerializer):
     url = serializers.HyperlinkedIdentityField(
