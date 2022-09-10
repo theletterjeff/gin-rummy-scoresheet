@@ -8,10 +8,10 @@ import pytest
 
 from rest_framework.test import APIRequestFactory, force_authenticate
 
-from api.views import (MatchCreate, MatchDetail, MatchList, OutcomeDetail,
-                       ScoreDetail, GameDetail, GameList, GameCreate, 
-                       OutcomeList, ScoreList, PlayerDetail, PlayerList,
-                       PlayerCreate, RequestPlayer)
+from api.views import (MatchCreate, MatchDetail, MatchListPlayer, OutcomeDetail,
+                       ScoreDetail, GameDetail, GameListMatch, GameCreate, 
+                       OutcomeListPlayer, ScoreListPlayer, PlayerDetail,
+                       PlayerListAll, PlayerCreate, RequestPlayer)
 from base.models import Outcome, Score
 from tests.fixtures import (make_match, make_matches, make_player, make_players,
                             make_game, make_games, authenticate_api_request,
@@ -21,8 +21,8 @@ def test_player_list(make_players, authenticate_api_request):
     """GET request to the PlayerList view returns multiple Player instances."""
     player_num = 5
     players = make_players(player_num)
-    view = PlayerList.as_view()
-    url = reverse('api:player-list')
+    view = PlayerListAll.as_view()
+    url = reverse('api:player-list-all')
 
     request = authenticate_api_request(view, url, 'get', players[0])
     response = view(request)
@@ -77,8 +77,8 @@ def test_match_list_view_returns_no_records_when_no_records_present(
     player = make_player()
     kwargs = {'username': player.username}
     
-    view = MatchList.as_view()
-    url = reverse('api:match-list', kwargs=kwargs)
+    view = MatchListPlayer.as_view()
+    url = reverse('api:match-list-player', kwargs=kwargs)
 
     request = authenticate_api_request(view, url, 'get', player)
     response = view(request, **kwargs)
@@ -94,8 +94,8 @@ def test_match_list_view_returns_no_records_when_matches_are_w_other_players(
     make_match(players=[players[1], players[2]])
     kwargs = {'username': players[0].username}
 
-    view = MatchList.as_view()
-    url = reverse('api:match-list', kwargs=kwargs)
+    view = MatchListPlayer.as_view()
+    url = reverse('api:match-list-player', kwargs=kwargs)
 
     request = authenticate_api_request(view, url, 'get', players[0])
     response = view(request, **kwargs)
@@ -112,8 +112,8 @@ def test_match_list_view_returns_records_when_matches_are_with_player(
     make_matches(match_num, players=players)
     kwargs = {'username': players[0].username}
 
-    view = MatchList.as_view()
-    url = reverse('api:match-list', kwargs=kwargs)
+    view = MatchListPlayer.as_view()
+    url = reverse('api:match-list-player', kwargs=kwargs)
 
     request = authenticate_api_request(view, url, 'get', players[0])
     response = view(request, **kwargs)
@@ -205,9 +205,9 @@ def test_game_list(game_count, make_players, make_match, make_games,
     games = make_games(num=game_count, match=match, winners=winners,
                        losers=losers, points=points)
     
-    view = GameList.as_view()
+    view = GameListMatch.as_view()
     kwargs = {'match_pk': match.pk}
-    url = reverse('api:game-list', kwargs=kwargs)
+    url = reverse('api:game-list-match', kwargs=kwargs)
 
     request = authenticate_api_request(view, url, 'get', players[0], kwargs)
     response = view(request, **kwargs)
@@ -319,12 +319,13 @@ def test_game_create(make_players, make_match, make_game, authenticate_api_reque
     assert response.status_code == 201, response.data
 
 def test_score_list(make_players, make_matches, authenticate_api_request):
+    """The ScoreListPlayer view returns a list of Scores for a Player."""
     players = make_players(2)
     match = make_matches(3, players)
     kwargs = {'username': players[0].username}
     
-    view = ScoreList.as_view()
-    url = reverse('api:score-list', kwargs=kwargs)
+    view = ScoreListPlayer.as_view()
+    url = reverse('api:score-list-player', kwargs=kwargs)
 
     request = authenticate_api_request(view, url, 'get', players[0], kwargs)
     response = view(request, **kwargs)
@@ -352,7 +353,9 @@ def test_score_detail_get(make_players, make_match, authenticate_api_request):
     assert response.data['player_score'] == 0
 
 def test_outcome_list(make_players, make_matches, authenticate_api_request):
-    """A GET request to the OutcomeList view returns Outcome instances."""
+    """A GET request to the OutcomeList view returns Outcome instances
+    for a Player.
+    """
     players = make_players(2)
     match_count = 3
     matches = make_matches(match_count, players)
@@ -364,8 +367,8 @@ def test_outcome_list(make_players, make_matches, authenticate_api_request):
 
     kwargs = {'username': players[0].username}
     
-    view = OutcomeList.as_view()
-    url = reverse('api:outcome-list', kwargs=kwargs)
+    view = OutcomeListPlayer.as_view()
+    url = reverse('api:outcome-list-player', kwargs=kwargs)
 
     request = authenticate_api_request(view, url, 'get', players[0], kwargs)
     response = view(request, **kwargs)
