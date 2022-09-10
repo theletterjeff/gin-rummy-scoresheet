@@ -61,7 +61,7 @@ export function getMatchListPlayerEndpoint(username) {
 /**
  * Get API endpoint for match-create.
  */
- export function getMatchDetailEndpoint(match_pk) {
+ export function getMatchCreateEndpoint() {
   return baseMatchUrl + 'create/';
 }
 /**
