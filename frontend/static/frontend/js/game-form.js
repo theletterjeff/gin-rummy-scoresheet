@@ -1,6 +1,8 @@
 import { getDetailEndpointFromEditURL,
          getPlayersUsernameEndpoint,
-         getGameCreateEndpoint
+         getGameCreateEndpoint,
+         getMatchDetailEndpoint,
+         getPlayerDetailEndpoint,
        } from "./endpoints.js";
 import { getCookie } from './utils.js';
 
@@ -47,12 +49,12 @@ export async function submitGameForm(e, method, matchPk) {
     gameEndpoint = getDetailEndpointFromEditURL();
   }
   // Form fields
-  let matchDetailEndpoint = window.location.origin + `/api/matches/${matchPk}/`  
+  let matchDetailEndpoint = getMatchDetailEndpoint(matchPk);
   
   let playersUserEnd = await getPlayersUsernameEndpoint(matchDetailEndpoint);
 
   let winnerUsername = document.getElementById('winner-dropdown').value;
-  let winnerEndpoint = window.location.origin + `/api/players/${winnerUsername}/`
+  let winnerEndpoint = getPlayerDetailEndpoint(winnerUsername);
   
   // Delete winner from `players`, leaving only the loser
   delete playersUserEnd[winnerUsername]
