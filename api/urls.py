@@ -6,7 +6,7 @@ app_name = 'api'
 urlpatterns = [
     # Player
     re_path(r'^players/(?P<username>[a-zA-Z]+\w*)/$', views.PlayerDetail.as_view(), name='player-detail'),
-    re_path(r'^players/$', views.PlayerListAll.as_view(), name='player-list'),
+    re_path(r'^players/$', views.PlayerListAll.as_view(), name='player-list-all'),
     re_path(r'^players/create/$', views.PlayerCreate.as_view(), name='player-create'),
     re_path(r'^request-player/$', views.RequestPlayer.as_view(), name='request-player'),
 
