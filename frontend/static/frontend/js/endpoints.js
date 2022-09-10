@@ -1,5 +1,120 @@
 import { getJsonResponse } from "./utils.js";
 
+const baseUrl = window.location.origin;
+const basePlayerUrl = baseUrl + '/players/'
+const baseMatchUrl = baseUrl + '/matches/'
+
+/**
+ * Get API endpoint for player-detail.
+ */
+export function getPlayerDetailEndpoint(username) {
+  return basePlayerUrl + username + '/';
+}
+/**
+ * Get API endpoint for player-list-all.
+ */
+export function getPlayersListAllEndpoint() {
+  return basePlayerUrl;
+}
+/**
+ * Get API endpoint for player-create.
+ */
+export function getPlayerCreateEndpoint() {
+  return basePlayerUrl + 'create/';
+}
+/**
+ * Get API endpoint for request-player.
+ */
+export function getRequestPlayerEndpoint() {
+  return baseUrl + '/request-player/';
+}
+/**
+ * Get API endpoint for match-list-player.
+ */
+export function getMatchListPlayerEndpoint(username) {
+  return basePlayerUrl + 'matches/';
+}
+/**
+ * Get API endpoint for game-list-player.
+ */
+ export function getGameListPlayerEndpoint(username) {
+  return basePlayerUrl + 'games/';
+}
+/**
+ * Get API endpoint for score-list-player.
+ */
+ export function getScoreListPlayerEndpoint(username) {
+  return basePlayerUrl + 'scores/';
+}
+/**
+ * Get API endpoint for outcome-list-player.
+ */
+ export function getOutcomeListPlayerEndpoint(username) {
+  return basePlayerUrl + 'outcomes/';
+}
+/**
+ * Get API endpoint for match-detail.
+ */
+ export function getMatchDetailEndpoint(match_pk) {
+  return baseMatchUrl + match_pk + '/';
+}
+/**
+ * Get API endpoint for match-create.
+ */
+ export function getMatchDetailEndpoint(match_pk) {
+  return baseMatchUrl + 'create/';
+}
+/**
+ * Get API endpoint for player-list-match.
+ */
+ export function getPlayerListMatchEndpoint(match_pk) {
+  return baseMatchUrl + match_pk + 'players/';
+}
+/**
+ * Get API endpoint for game-list-match.
+ */
+ export function getGameListMatchEndpoint(match_pk) {
+  return baseMatchUrl + match_pk + 'games/';
+}
+/**
+ * Get API endpoint for score-list-match.
+ */
+ export function getScoreListMatchEndpoint(match_pk) {
+  return baseMatchUrl + match_pk + 'scores/';
+}
+/**
+ * Get API endpoint for outcome-list-match.
+ */
+ export function getOutcomeListMatchEndpoint(match_pk) {
+  return baseMatchUrl + match_pk + 'outcomes/';
+}
+/**
+ * Get API endpoint for game-detail.
+ */
+ export function getGameDetailEndpoint(match_pk, game_pk) {
+  return baseMatchUrl + match_pk + '/games/' + game_pk + '/';
+}
+/**
+ * Get API endpoint for game-create.
+ */
+ export function getGameCreateView(match_pk) {
+  return baseMatchUrl + match_pk + 'games/create/';
+}
+/**
+ * Get API endpoint for score-detail.
+ */
+ export function getScoreDetailEndpoint(match_pk, username) {
+  return baseMatchUrl + match_pk + '/players/' + username + '/scores/';
+}
+/**
+ * Get API endpoint for outcome-detail.
+ */
+ export function getOutcomeDetailEndpoint(match_pk, username) {
+  return baseMatchUrl + match_pk + '/players/' + username + '/outcomes/';
+}
+
+
+
 /** Return the endpoint for the API detail view corresponding to
  * the current frontend view */
  export function getApiEndpointFromUrl() {
