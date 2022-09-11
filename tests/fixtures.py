@@ -19,7 +19,7 @@ from base.models import Game, Match
 """Players"""
 
 @pytest.fixture
-def make_player(db) -> Callable:
+def make_player(transactional_db) -> Callable:
     """Factory as fixture for creating a new Player instance"""
     def _make_player(username: str = 'player0', password: str = 'test_password',
                      *args, **kwargs) -> Player:
@@ -28,7 +28,7 @@ def make_player(db) -> Callable:
     return _make_player
 
 @pytest.fixture
-def make_players(db, make_player) -> Callable:
+def make_players(transactional_db, make_player) -> Callable:
     """Factory as fixture to return a list of Player instances."""
     def _make_players(num) -> List[Player]:
         start_num = -1
@@ -49,7 +49,7 @@ def make_players(db, make_player) -> Callable:
 """Matches"""
 
 @pytest.fixture
-def make_match(db) -> Callable:
+def make_match(transactional_db) -> Callable:
     """Factory as fixture for creating a single Match instance."""
     def _make_match(players: List[Player], *args, **kwargs) -> Match:
         match = Match.objects.create(*args, **kwargs)
@@ -59,7 +59,7 @@ def make_match(db) -> Callable:
     return _make_match
 
 @pytest.fixture
-def make_matches(db, make_match) -> Callable:
+def make_matches(transactional_db, make_match) -> Callable:
     """Factory as fixture for creating multiple Match instances."""
     def _make_matches(num: int, players: List[Player], *args, **kwargs) -> List[Match]:
         return [make_match(players, *args, **kwargs) for i in range(num)]
@@ -69,7 +69,7 @@ def make_matches(db, make_match) -> Callable:
 """Games"""
 
 @pytest.fixture
-def make_game(db) -> Callable:
+def make_game(transactional_db) -> Callable:
     """Factory as fixture for creating a single Game instance."""
     def _make_game(match: Match, winner: Player, loser: Player, points: int,
                    *args, **kwargs) -> Game:
@@ -78,7 +78,7 @@ def make_game(db) -> Callable:
     return _make_game
 
 @pytest.fixture
-def make_games(db, make_game) -> Callable:
+def make_games(transactional_db, make_game) -> Callable:
     """Factory as fixture for creating multiple Game instances."""
     def _make_games(num: int, match: Match, winners: Tuple[Player],
                     losers: Tuple[Player], points: Tuple[int],
