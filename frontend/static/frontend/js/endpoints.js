@@ -20,7 +20,7 @@ export function getPlayersListAllEndpoint() {
  * Get API endpoint for player-create.
  */
 export function getPlayerCreateEndpoint() {
-  return basePlayerUrl + 'create/';
+  return baseUrl + 'player-create/';
 }
 /**
  * Get API endpoint for request-player.
