@@ -11,6 +11,7 @@ from rest_framework.test import APIClient, APIRequestFactory, force_authenticate
 
 from selenium.webdriver.firefox.webdriver import WebDriver
 from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.support.ui import WebDriverWait
 
 from accounts.models import Player
 from base.models import Game, Match
@@ -57,7 +58,7 @@ def complete_match_with_one_game(make_match, make_game, player0, player1):
 def driver(player0, log_in_driver, log_in_client, live_server, csrftoken):
     """Logged in Selenium Firefox driver."""
     options = Options()
-    options.headless = False
+    options.headless = True
     driver = WebDriver(options=options)
     
     client = log_in_client(player0)
@@ -103,6 +104,10 @@ def mock_now(monkeypatch):
 def csrftoken(rf, live_server):
     """A CSRF token generated from the live_server fixture."""
     return get_token(rf.get(live_server.url))
+
+@pytest.fixture
+def wait(driver):
+    return WebDriverWait(driver, 3)
 
 
 ### Factories
