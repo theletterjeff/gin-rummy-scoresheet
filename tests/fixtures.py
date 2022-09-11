@@ -16,7 +16,96 @@ from accounts.models import Player
 from base.models import Game, Match
 
 
-"""Players"""
+### Fixtures
+
+@pytest.fixture
+def player0(make_player) -> Player:
+    return make_player(username='player0')
+
+@pytest.fixture
+def player1(make_player) -> Player:
+    return make_player(username='player1')
+
+"""Matches"""
+@pytest.fixture
+def simple_match(make_match, player0, player1):
+    """A single Match object. Attributes:
+    - players: [player0, player1]
+    - complete: False
+    - target_score: 500
+    - games: []
+    - score_set: [Score, Score] <- both set to 0
+    - outcome_set: []
+    """
+    return make_match([player0, player1])
+
+@pytest.fixture
+def incomplete_match_with_one_game(make_match, make_game, player0, player1):
+    """A single incomplete Match with one Game."""
+    match = make_match([player0, player1])
+    make_game(match=match, winner=player0, loser=player1, points=25)
+    return Match.objects.get(pk=match.pk)
+
+@pytest.fixture
+def complete_match_with_one_game(make_match, make_game, player0, player1):
+    """A single Complete Match with one Game."""
+    match = make_match([player0, player1])
+    make_game(match=match, winner=player0, loser=player1, points=501)
+    return Match.objects.get(pk=match.pk)
+
+@pytest.fixture
+def driver(player0, log_in_driver, log_in_client, live_server, csrftoken):
+    """Logged in Selenium Firefox driver."""
+    options = Options()
+    options.headless = False
+    driver = WebDriver(options=options)
+    
+    client = log_in_client(player0)
+    driver.get(live_server.url)
+
+    session_id_cookie = client.cookies.get('sessionid')
+    if not session_id_cookie:
+        raise Exception('Client is not logged in.')
+
+    driver.add_cookie(
+        {
+            'name': 'sessionid',
+            'value': session_id_cookie.value,
+            'secure': False,
+            'path': '/',
+        }
+    )
+    driver.add_cookie(
+        {
+            'name': 'csrftoken',
+            'value': csrftoken,
+            'secure': False,
+            'path': '/',
+        }
+    )
+    yield driver
+    driver.close()
+
+@pytest.fixture
+def logged_out_driver():
+    options = Options()
+    options.headless = True
+    return WebDriver(options=options)
+
+@pytest.fixture
+def mock_now(monkeypatch):
+    def _mock_now():
+        return timezone.datetime(2022, 1, 1, 0, 0, tzinfo=timezone.utc)
+    monkeypatch.setattr(timezone, 'now', _mock_now)
+    return monkeypatch
+
+@pytest.fixture
+def csrftoken(rf, live_server):
+    """A CSRF token generated from the live_server fixture."""
+    return get_token(rf.get(live_server.url))
+
+
+### Factories
 
 @pytest.fixture
 def make_player(transactional_db) -> Callable:
@@ -45,9 +134,6 @@ def make_players(transactional_db, make_player) -> Callable:
                 in range(start_num, num + start_num)]
     return _make_players
 
-
-"""Matches"""
-
 @pytest.fixture
 def make_match(transactional_db) -> Callable:
     """Factory as fixture for creating a single Match instance."""
@@ -64,9 +150,6 @@ def make_matches(transactional_db, make_match) -> Callable:
     def _make_matches(num: int, players: List[Player], *args, **kwargs) -> List[Match]:
         return [make_match(players, *args, **kwargs) for i in range(num)]
     return _make_matches
-
-
-"""Games"""
 
 @pytest.fixture
 def make_game(transactional_db) -> Callable:
@@ -103,9 +186,6 @@ def make_games(transactional_db, make_game) -> Callable:
         return games
     return _make_games
 
-
-"""Client/driver"""
-
 @pytest.fixture
 def log_in_client(client) -> Callable:
     """Factory as fixture, returns a logged-in Django test Client instance."""
@@ -124,14 +204,7 @@ def log_in_api_client() -> Callable:
     return _log_in_api_client
 
 @pytest.fixture
-def logged_out_driver():
-    options = Options()
-    options.headless = True
-    return WebDriver(options=options)
-
-@pytest.fixture
-def log_in_driver(live_server, log_in_client, rf,   # Built-in
-                  make_player) -> Callable:         # Have to import
+def log_in_driver(live_server, log_in_client, rf) -> Callable:
     """Add sessionid and csrftoken cookies to a driver instance. The client
     passed to the `client` arg should not already be logged in.
     """
@@ -188,10 +261,3 @@ def authenticate_api_request(make_player) -> Callable:
         request.user = player
         return request
     return _authenticate_api_request
-
-@pytest.fixture
-def mock_now(monkeypatch):
-    def _mock_now():
-        return timezone.datetime(2022, 1, 1, 0, 0, tzinfo=timezone.utc)
-    monkeypatch.setattr(timezone, 'now', _mock_now)
-    return monkeypatch
