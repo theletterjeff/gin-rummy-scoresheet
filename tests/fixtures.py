@@ -135,10 +135,10 @@ def log_in_driver(live_server, log_in_client, rf,   # Built-in
     """Add sessionid and csrftoken cookies to a driver instance. The client
     passed to the `client` arg should not already be logged in.
     """
-    def _log_in_driver(player: Player, client: Client) -> WebDriver:
+    def _log_in_driver(player: Player, client: Client, headless: bool = True) -> WebDriver:
 
         options = Options()
-        options.headless = True
+        options.headless = headless
         driver = WebDriver(options=options)
         
         client = log_in_client(player)
