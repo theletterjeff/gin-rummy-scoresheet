@@ -3,6 +3,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
+
 @login_required
 def home(request):
     player = request.user
