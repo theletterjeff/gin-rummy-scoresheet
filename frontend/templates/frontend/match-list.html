@@ -5,6 +5,28 @@
 
 {% block content %}
 
+  <!--New Match-->
+  <div class="card mt-3">
+    <div class="card-body">
+      <h5 class="card-title mb-3">New Match</h5>
+      
+      <form class="row g-3" id="edit-game-form">
+        <div class="col-md-6">
+          <label class="form-label" for="opponent-dropdown">Opponent</label>
+          <select class="form-select" id="opponent-dropdown" name="opponent-dropdown"></select>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label" for="points-input">Points</label>
+          <input type="number" class="form-control" id="points-input" name="points-input">
+        </div>
+        <div class="col-md-3 d-flex align-items-end">
+          <button type="submit" id="new-match-submit" class="btn btn-small btn-outline-primary submit">Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!--Current Matches-->
   <div class="card mt-3">
     <div class="card-body">
       <h5 class="card-title mb-3">Current Matches</h5>
@@ -26,6 +48,7 @@
     </div>
   </div>
 
+  <!--Past Matches-->
   <div class="card mt-3">
     <div class="card-body">
       <h5 class="card-title mb-3">Past Matches</h5>
