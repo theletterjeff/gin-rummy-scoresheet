@@ -7,6 +7,7 @@ function fillNavbarLinks() {
   fillNavbarLink('navbar-brand', '');
   if (document.getElementById('login-link')) {
     fillNavbarLink('login-link', '/accounts/login/');
+    fillNavbarLink('signup-link', '/accounts/signup/');
   } else {
     getRequestPlayerUsername().then(function(username) {
       fillNavbarLink('matches-nav-link', `/players/${username}/matches/`);
