@@ -16,6 +16,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from accounts.models import Player
 from base.models import Game, Match
 
+headless = True
 
 ### Fixtures
 
@@ -58,7 +59,7 @@ def complete_match_with_one_game(make_match, make_game, player0, player1):
 def driver(player0, log_in_driver, log_in_client, live_server, csrftoken):
     """Logged in Selenium Firefox driver."""
     options = Options()
-    options.headless = True
+    options.headless = headless
     driver = WebDriver(options=options)
     
     client = log_in_client(player0)
