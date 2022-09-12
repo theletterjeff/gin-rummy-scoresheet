@@ -12,7 +12,7 @@ import { getCookie } from './utils.js';
 export function fillWinnerDropdown(winnerUsername, loserUsername) {
   let dropdownOptions = `
     <option select value=${winnerUsername}>${winnerUsername}</option>
-    <option values=${loserUsername}>${loserUsername}</option>
+    <option value=${loserUsername}>${loserUsername}</option>
   `
   let winnerDropdown = document.getElementById('winner-dropdown');
   winnerDropdown.innerHTML = dropdownOptions;
