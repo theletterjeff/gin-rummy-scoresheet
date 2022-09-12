@@ -103,7 +103,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-LOGIN_REDIRECT_URL = 'accounts/login/'
+LOGIN_URL = 'accounts/login'
+LOGIN_REDIRECT_URL = '/'
 
 # API
 REST_FRAMEWORK = {
