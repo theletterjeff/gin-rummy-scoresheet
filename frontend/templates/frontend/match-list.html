@@ -9,15 +9,14 @@
   <div class="card mt-3">
     <div class="card-body">
       <h5 class="card-title mb-3">New Match</h5>
-      
-      <form class="row g-3" id="edit-game-form">
+      <form class="row g-3" id="new-match-form">
         <div class="col-md-6">
           <label class="form-label" for="opponent-dropdown">Opponent</label>
           <select class="form-select" id="opponent-dropdown" name="opponent-dropdown"></select>
         </div>
         <div class="col-md-3">
-          <label class="form-label" for="points-input">Points</label>
-          <input type="number" class="form-control" id="points-input" name="points-input">
+          <label class="form-label" for="target-score-input">Target Score</label>
+          <input type="number" class="form-control" id="target-score-input" name="target-score-input">
         </div>
         <div class="col-md-3 d-flex align-items-end">
           <button type="submit" id="new-match-submit" class="btn btn-small btn-outline-primary submit">Submit</button>
@@ -38,6 +37,7 @@
                 <th scope="col">Date Started</th>
                 <th scope="col">Opponent</th>
                 <th scope="col">Current Score</th>
+                <th scope="col">Target Score</th>
                 <th scope="col" id="view-current-match-header"></th>
               </tr>
             </thead>
