@@ -7,7 +7,7 @@ To install on a new machine:
 1. Create a virtual environment (`python3 -m venv env`)
 2. Install required dependencies (`python3 -m pip install -r requirements.txt`)
 3. Migrate (`python3 manage.py migrate`)
-4. Create a `.env` file at the root level and add a `SECRET_KEY` to it (you can get one by entering into your terminal `-c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"`)
+4. Create a `.env` file at the root level and add a `SECRET_KEY` to it (you can get one by entering into your terminal `python3 -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"`)
 
 ## Running
 To run the project on your machine, enter `python3 manage.py runserver` in your terminal.
