@@ -69,7 +69,7 @@ export function getValFromUrl(urlStr, key) {
  * Return a Promise of an element loading.
  */
 export function waitForElem(elemId) {
-  return new Promise(resolve => {
+  return new Promise((resolve, reject) => {
     if (document.getElementById(elemId)) {
       return resolve(document.getElementById(elemId));
     }
