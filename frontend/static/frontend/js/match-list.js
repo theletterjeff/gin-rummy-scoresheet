@@ -10,6 +10,7 @@ import {
 import {
   getFrontendURL,
   getMatchCreateEndpoint,
+  getMatchDetailEndpoint,
   getMatchListPlayerEndpoint, 
   getPlayerDetailEndpoint,
   getPlayersListAllEndpoint,
@@ -85,12 +86,15 @@ async function fillMatchesTables(matchesData, csrfToken) {
     }
 
     // Add buttons if current match-list view is for request player (user)
+  }
+  const matchesPromise = matchesData.map(async function(matchData) {
     const requestPlayerUsername = await getRequestPlayerUsername();
     if (matchData.viewPlayer.username == requestPlayerUsername) {
-      addEditMatchButton(matchData.pk);
-      addDeleteMatchButton(matchData.pk, csrfToken);
-    }
-  }
+      await addEditMatchButton(matchData.pk);
+      await addDeleteMatchButton(matchData.pk, csrfToken);
+    };
+  });
+  Promise.all(matchesPromise);
 }
 /**
  * Add view player's username (player in URL) to match object.
@@ -224,14 +228,9 @@ function addHTMLRowToPastMatchesTable(matchData, pastMatchesTable) {
 async function addEditMatchButton(matchPk) {
   // Add HTML
   let matchRow = document.getElementById(`row-match-${matchPk}`)
-  const editButtonHTML = `<td class="button-cell"><button class="btn btn-small btn-outline-success edit-match" id="edit-match-${matchPk}">Edit</button></td>`
+  const matchDetailUrl = getFrontendURL(getMatchDetailEndpoint(matchPk));
+  const editButtonHTML = `<td class="button-cell"><a href="${matchDetailUrl}" class="btn btn-small btn-outline-success edit-match" id="edit-match-${matchPk}">Edit</a></td>`
   matchRow.innerHTML += editButtonHTML;
-
-  // Add click event
-  let editBtn = await waitForElem(`edit-match-${matchPk}`)
-  editBtn.addEventListener('click', function() {
-    window.location = window.location.origin + `/matches/${matchPk}/`
-  });
 } 
 /**
  * Add a 'Delete' button to a match row.
@@ -244,7 +243,9 @@ async function addDeleteMatchButton(matchPk, csrfToken) {
 
   // Add click event
   let deleteBtn = await waitForElem(`delete-match-${matchPk}`)
-  deleteBtn.addEventListener('click', function() {
+  console.log(deleteBtn);
+  deleteBtn.addEventListener('click', function(e) {
+    e.preventDefault();
     let deleteMatchEndpoint = window.location.origin + `/api/matches/${matchPk}/`;
     fetch(deleteMatchEndpoint, {
       method: 'DELETE',
@@ -253,14 +254,14 @@ async function addDeleteMatchButton(matchPk, csrfToken) {
         'X-CSRFToken': csrfToken,
       }
     })
-    .then(() => deleteElem(deleteBtn));
+    .then(() => deleteElem(matchRow));
   })
 }
 /**
  * Delete an element from the page.
  */
-function deleteElem(matchElem) {
-  matchElem.remove();
+function deleteElem(matchRow) {
+  matchRow.remove();
 }
 /**
  * Fill the New Match form's opponent box and add a submit event to the button.
