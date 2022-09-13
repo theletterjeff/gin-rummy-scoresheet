@@ -7,7 +7,13 @@ import {
   getValFromUrl,
   waitForElem,
 } from "./utils.js";
-import { getApiEndpointFromUrl, getMatchListPlayerEndpoint, getPlayerDetailEndpoint } from "./endpoints.js";
+import {
+  getMatchCreateEndpoint,
+  getMatchListPlayerEndpoint, 
+  getPlayerDetailEndpoint,
+  getPlayersListAllEndpoint,
+  getRequestPlayerEndpoint,
+} from "./endpoints.js";
 
 fillPlayerMatchesPage();
 
@@ -26,7 +32,9 @@ async function fillPlayerMatchesPage() {
   addDataToMatches(matchesData)
   .then(function(matchesData) {
     fillMatchesTables(matchesData, csrfToken)
-  });
+  })
+  
+  fillNewMatchForm();
 }
 /**
  * Loop through all matches, applying `addDataToMatch` function to each. Return 
@@ -193,6 +201,7 @@ function addHTMLRowToCurrentMatchesTable(matchData, currentMatchesTable) {
         <td>${matchData.datetime_started_formatted}</td>
         <td>${matchData.opponent.username}</td>
         <td>${matchData.formattedScores}</td>
+        <td>${matchData.target_score}</td>
       </tr>
     `
     currentMatchesTable.innerHTML += matchHTML;
@@ -251,4 +260,63 @@ async function addDeleteMatchButton(matchPk, csrfToken) {
  */
 function deleteElem(matchElem) {
   matchElem.remove();
+}
+/**
+ * Fill the New Match form's opponent box and add a submit event to the button.
+ */
+async function fillNewMatchForm() {
+  const requestPlayer = await getJsonResponse(getRequestPlayerEndpoint());
+  fillOpponentDropdown(requestPlayer);
+  addSubmitEventListener(requestPlayer);
+}
+/**
+ * Fill the opponent dropdown in the new match card with the names of all 
+ * the players except for the request user.
+ */
+async function fillOpponentDropdown(requestPlayer) {
+  const playersEndpoint = getPlayersListAllEndpoint();
+  const playersData = await getJsonResponse(playersEndpoint);
+
+  let playersDropdown = document.getElementById('opponent-dropdown');
+  for (let player of playersData.results) {
+    if (player.username != requestPlayer.username) {
+      let dropdownOption = `<option value=${player.url}>${player.username}</option>`;
+      playersDropdown.innerHTML += dropdownOption;
+    };
+  };
+}
+
+/**
+ * Add a click event on the `submit` button that posts a new Match.
+ */
+function addSubmitEventListener(requestPlayer) {
+  let newMatchForm = document.getElementById('new-match-form');
+  newMatchForm.addEventListener('submit', function(e) {
+    submitNewMatch(e, requestPlayer)
+    .then(() => {window.location.replace(window.location.origin + '/matches/')})
+  })
+}
+
+async function submitNewMatch(e, requestPlayer) {
+  const matchCreateEndpoint = getMatchCreateEndpoint()
+  const csrfToken = getCookie('csrftoken');
+
+  const requestPlayerEndpoint = requestPlayer.url;
+  const opponentEndpoint = document.getElementById('opponent-dropdown').value;
+  const targetScore = document.getElementById('target-score-input').value;
+
+  const body = JSON.stringify({
+    'players': [requestPlayerEndpoint, opponentEndpoint],
+    'target_score': targetScore,
+  });
+
+  let response = await fetch(matchCreateEndpoint, {
+    method: 'POST',
+    headers: {
+      'Content-type': 'application/json',
+      'X-CSRFToken': csrfToken,
+    },
+    body: body,
+  });
+  console.log(response);
 }
