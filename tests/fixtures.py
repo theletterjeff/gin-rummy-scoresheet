@@ -95,6 +95,12 @@ def logged_out_driver():
     return WebDriver(options=options)
 
 @pytest.fixture
+def auth_client(client, player0):
+    """An authenticated client"""
+    client.force_login(player0)
+    return client
+
+@pytest.fixture
 def mock_now(monkeypatch):
     def _mock_now():
         return timezone.datetime(2022, 1, 1, 0, 0, tzinfo=timezone.utc)
