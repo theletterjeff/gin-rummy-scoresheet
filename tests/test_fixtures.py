@@ -1,3 +1,5 @@
+import datetime
+
 from django.test.client import Client
 from django.utils import timezone
 
@@ -190,9 +192,9 @@ def test_make_games_with_extra_kwargs(make_games, make_match, make_players):
     gin = [True, False, True]
     undercut = [False, True, False]
     datetime_played = [
-        timezone.datetime(2022, 1, 1),
-        timezone.datetime(2022, 2, 1),
-        timezone.datetime(2022, 3, 1)
+        datetime.datetime(2022, 1, 1, tzinfo=datetime.timezone.utc),
+        datetime.datetime(2022, 2, 1, tzinfo=datetime.timezone.utc),
+        datetime.datetime(2022, 3, 1, tzinfo=datetime.timezone.utc),
     ]
 
     games = make_games(num=game_count, match=match, winners=winners,
@@ -241,7 +243,7 @@ def test_make_games_with_incorrect_len_extra_kwargs(make_games, make_match,
     points = (1, 5, 25)
     gin = True
     undercut = True
-    datetime_played = timezone.datetime(2022, 1, 1)
+    datetime_played = datetime.datetime(2022, 1, 1, tzinfo=datetime.timezone.utc)
 
     games = make_games(num=game_count, match=match, winners=winners,
                        losers=losers, points=points, gin=gin,
