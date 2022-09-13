@@ -8,6 +8,7 @@ import {
   waitForElem,
 } from "./utils.js";
 import {
+  getFrontendURL,
   getMatchCreateEndpoint,
   getMatchListPlayerEndpoint, 
   getPlayerDetailEndpoint,
@@ -292,12 +293,14 @@ async function fillOpponentDropdown(requestPlayer) {
 function addSubmitEventListener(requestPlayer) {
   let newMatchForm = document.getElementById('new-match-form');
   newMatchForm.addEventListener('submit', function(e) {
-    submitNewMatch(e, requestPlayer)
-    .then(() => {window.location.replace(window.location.origin + '/matches/')})
-  })
+    e.preventDefault();
+    submitNewMatch(requestPlayer)
+    .then((resp) => resp.json())
+    .then((data) => window.location.replace(getFrontendURL(data.url)));
+  });
 }
 
-async function submitNewMatch(e, requestPlayer) {
+function submitNewMatch(requestPlayer) {
   const matchCreateEndpoint = getMatchCreateEndpoint()
   const csrfToken = getCookie('csrftoken');
 
@@ -305,18 +308,17 @@ async function submitNewMatch(e, requestPlayer) {
   const opponentEndpoint = document.getElementById('opponent-dropdown').value;
   const targetScore = document.getElementById('target-score-input').value;
 
-  const body = JSON.stringify({
+  const body = {
     'players': [requestPlayerEndpoint, opponentEndpoint],
     'target_score': targetScore,
-  });
+  };
 
-  let response = await fetch(matchCreateEndpoint, {
+  return fetch(matchCreateEndpoint, {
     method: 'POST',
     headers: {
       'Content-type': 'application/json',
       'X-CSRFToken': csrfToken,
     },
-    body: body,
+    body: JSON.stringify(body),
   });
-  console.log(response);
 }
