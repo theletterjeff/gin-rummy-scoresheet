@@ -1,4 +1,5 @@
 from datetime import datetime
+import json
 import re
 
 from django.urls import reverse
@@ -15,7 +16,7 @@ from api.views import (MatchCreate, MatchDetail, MatchListPlayer, OutcomeDetail,
 from base.models import Outcome, Score
 from tests.fixtures import (make_match, make_matches, make_player, make_players,
                             make_game, make_games, authenticate_api_request,
-                            mock_now)
+                            mock_now, auth_client, csrftoken, player0, player1)
 
 def test_player_list(make_players, authenticate_api_request):
     """GET request to the PlayerList view returns multiple Player instances."""
@@ -140,6 +141,23 @@ def test_match_create(make_players, authenticate_api_request):
         regex = re.compile(player_url)
         assert any([regex.search(response_player_url)
                     for response_player_url in response.data['players']])
+
+def test_match_create_client(auth_client, live_server, player0, player1):
+    """Sending a POST request using an authenticated client creates a new Match."""
+    match_create_endpoint = reverse('api:match-create')
+    test_server_prefix = 'http://testserver'
+    body = {
+        'players': [
+            test_server_prefix + player0.get_absolute_url(),
+            test_server_prefix + player1.get_absolute_url(),
+        ],
+        'target_score': 400
+    }
+    response = auth_client.post(match_create_endpoint, body)
+    assert response.status_code == 201
+    content = json.loads(response.rendered_content)
+    assert content['players'] == body['players']
+    assert content['target_score'] == 400
 
 def test_match_detail_get(make_players, make_match, make_game,
         authenticate_api_request):
