@@ -141,6 +141,7 @@ async function getGamesHTML(gamesJson) {
 }
 
 function makeGameTableRow(gameJson) {
+  const gamePk = getValFromUrl(gameJson.url, 'games');
   let winnerEndpoint = gameJson.winner
 
   let datePlayed = new Date(gameJson.datetime_played).toDateString()
@@ -154,7 +155,7 @@ function makeGameTableRow(gameJson) {
   let undercutCheck = undercut ? check_circle_html : ""
 
   let innerHTML = `
-    <tr>
+    <tr class="game-row" id="game-row-${gamePk}">
       <td>${datePlayed}</td>
       <td><a href="${winnerEndpoint}">#</a></td>
       <td>${points}</td>
