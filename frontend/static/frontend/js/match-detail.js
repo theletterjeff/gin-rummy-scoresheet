@@ -32,7 +32,7 @@ async function fillMatchDetailPage() {
     data.playerList.results[0].username,
     data.playerList.results[1].username,
   );
-  listGames(data.gameList.results, data.matchDetail);
+  listGames(data.gameList.results);
   fillScoreboard(
     data.playerList.results,
     data.gameList.results,
@@ -118,7 +118,7 @@ function fillMatchDetailPageTitle(playerListData) {
   fillTitle(`Match - ${usernames[0]} v. ${usernames[1]}`);
 }
 /** Fill the `game-wrapper` element with a list of game details */
-async function listGames(gamesJson, matchJson) {
+async function listGames(gamesJson) {
   let gamesHTML = await getGamesHTML(gamesJson);
   
   let gameWrapper = document.getElementById("game-table-body");
