@@ -6,6 +6,8 @@ from selenium.webdriver.support import expected_conditions as EC
 from accounts.models import Player
 from base.models import Game, Match
 from tests.fixtures import *
+from tests.utils import (create_games_with_new_game_form,
+                         delete_games_from_match_detail_games_list)
 
 def test_current_matches_table_contains_incomplete_matches(
         player0, incomplete_match_with_one_game, driver, live_server, wait):
@@ -54,21 +56,27 @@ def test_add_game_multiple_times_creates_one_game_per_submit(
     url = live_server.url + reverse('frontend:match-detail',
                                     kwargs={'match_pk': simple_match.pk})
     driver.get(url)
-
-    # Submit 10 games through new-game-form
-    for i in range(1, 11):
-        points_input = wait.until(EC.presence_of_element_located(
-            (By.ID, 'points-input')))
-        submit_btn = wait.until(EC.presence_of_element_located(
-            (By.ID, 'new-game-submit')))
-        player0_username_option = wait.until(EC.presence_of_element_located(
-            (By.ID, 'player0-username-option')))
-        player1_username_option = wait.until(EC.presence_of_element_located(
-            (By.ID, 'player1-username-option')))
-
-        points_input.send_keys(str(i))
-        submit_btn.click()
+    create_games_with_new_game_form(10, wait)
 
     game_rows = driver.find_elements(By.CLASS_NAME, 'game-row')
     assert len(game_rows) == 10
     assert len(Game.objects.all()) == 10
+
+def test_delete_games_returns_score_to_zero(
+        driver, wait, incomplete_match_with_ten_games,
+        live_server, transactional_db):
+    """Deleting all the games in a match returns the scoreboard for both 
+    players to zero.
+    """
+    url = live_server.url + reverse('frontend:match-detail',
+            kwargs={'match_pk': incomplete_match_with_ten_games.pk})
+    driver.get(url)
+    wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, 'delete')))
+    assert len(driver.find_elements(By.CLASS_NAME, 'delete')) == 10
+    delete_games_from_match_detail_games_list(driver, wait)
+    
+    scoreboard_points = driver.find_elements(By.CLASS_NAME, 'scoreboard-points')
+    scoreboard_wins_losses = driver.find_elements(By.CLASS_NAME, 'scoreboard-wins-losses')
+    
+    assert all([points.text == '0' for points in scoreboard_points])
+    assert all([wins_losses.text == '(0 Wins, 0 Losses)' for wins_losses in scoreboard_wins_losses])
