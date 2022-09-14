@@ -56,6 +56,19 @@ def complete_match_with_one_game(make_match, make_game, player0, player1):
     return Match.objects.get(pk=match.pk)
 
 @pytest.fixture
+def incomplete_match_with_ten_games(make_match, make_games, player0, player1):
+    """A single match with ten games."""
+    game_num = 10
+    match = make_match([player0, player1])
+    winners = (player0, player1) * 5
+    losers = (player1, player0) * 5
+    points = (5, 5) * 5
+
+    make_games(game_num, match, winners, losers, points)
+
+    return Match.objects.get(pk=match.pk)
+
+@pytest.fixture
 def driver(player0, log_in_driver, log_in_client, live_server, csrftoken):
     """Logged in Selenium Firefox driver."""
     options = Options()
