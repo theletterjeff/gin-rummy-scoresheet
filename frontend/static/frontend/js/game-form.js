@@ -7,12 +7,12 @@ import { getDetailEndpointFromEditURL,
 import { getCookie } from './utils.js';
 
 /**
- * Fill the 'winner' dropdown with players' usernames.
+ * Fill the 'winner' dropdown with players' usernames. winnerUsername
  */
-export function fillWinnerDropdown(winnerUsername, loserUsername) {
+export function fillWinnerDropdown(player0Username, player1Username) {
   let dropdownOptions = `
-    <option select value=${winnerUsername}>${winnerUsername}</option>
-    <option value=${loserUsername}>${loserUsername}</option>
+    <option select id="player0-username-option" value=${player0Username}>${player0Username}</option>
+    <option id="player1-username-option" value=${player1Username}>${player1Username}</option>
   `
   let winnerDropdown = document.getElementById('winner-dropdown');
   winnerDropdown.innerHTML = dropdownOptions;
