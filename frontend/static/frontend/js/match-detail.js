@@ -161,8 +161,8 @@ function makeGameTableRow(gameJson) {
       <td>${points}</td>
       <td class="checkbox-cell">${ginCheck}</td>
       <td class="checkbox-cell">${undercutCheck}</td>
-      <td class="button-cell"><button class="btn btn-small btn-outline-success edit">Edit</button></td>
-      <td class="button-cell"><button class="btn btn-small btn-outline-secondary delete">Delete</button></td>
+      <td class="button-cell"><button id="edit-button-${gamePk}" class="btn btn-small btn-outline-success edit">Edit</button></td>
+      <td class="button-cell"><button id="delete-button-${gamePk}" class="btn btn-small btn-outline-secondary delete">Delete</button></td>
     </tr>
   `
   return innerHTML;
