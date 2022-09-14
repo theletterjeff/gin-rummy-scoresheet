@@ -45,3 +45,30 @@ def test_edit_buttons_on_match_list_page_redirect(
             (By.ID, f'edit-match-{match.pk}')))
         edit_button.click()
         wait.until(EC.url_changes(url))
+
+def test_add_game_multiple_times_creates_one_game_per_submit(
+        driver, wait, simple_match, live_server, transactional_db):
+    """Adding multiple games through the `new-game-form` element creates one 
+    Game instance per submission.
+    """
+    url = live_server.url + reverse('frontend:match-detail',
+                                    kwargs={'match_pk': simple_match.pk})
+    driver.get(url)
+
+    # Submit 10 games through new-game-form
+    for i in range(1, 11):
+        points_input = wait.until(EC.presence_of_element_located(
+            (By.ID, 'points-input')))
+        submit_btn = wait.until(EC.presence_of_element_located(
+            (By.ID, 'new-game-submit')))
+        player0_username_option = wait.until(EC.presence_of_element_located(
+            (By.ID, 'player0-username-option')))
+        player1_username_option = wait.until(EC.presence_of_element_located(
+            (By.ID, 'player1-username-option')))
+
+        points_input.send_keys(str(i))
+        submit_btn.click()
+
+    game_rows = driver.find_elements(By.CLASS_NAME, 'game-row')
+    assert len(game_rows) == 10
+    assert len(Game.objects.all()) == 10
