@@ -1,20 +1,29 @@
 """
 Signals to update Game and Match records.
 """
-from django.db.models.signals import pre_delete, post_save, pre_save
+from django.db.models import Q
+from django.db.models.signals import pre_delete, post_save, pre_save, m2m_changed
 from django.dispatch import receiver
 from django.utils import timezone
 
-from .models import Game, Match, Outcome, Score
+from accounts.models import Player
+from base.models import Game, Match, Outcome, Score
 
-@receiver(post_save, sender=Match)
-def create_score(sender, instance, created, **kwargs):
+
+@receiver(m2m_changed, sender=Match.players.through)
+def create_score(sender, **kwargs):
     """
     When a Match is created, create an associated Score.
     """
-    for player in instance.players.all():
-        if len(Score.objects.filter(match=instance, player=player)) == 0:
-            Score.objects.create(match=instance, player=player, player_score=0)
+    if kwargs['action'] == 'post_add':
+        for player_pk in kwargs['pk_set']:
+            try:
+                Score.objects.get(Q(player__pk=player_pk),
+                                  Q(match__pk=kwargs['instance'].pk))
+            except Score.DoesNotExist:
+                Score.objects.create(match=kwargs['instance'],
+                                     player=Player.objects.get(pk=player_pk),
+                                     player_score=0)
 
 @receiver(post_save, sender=Game)
 def update_score(sender, instance, created, **kwargs):
