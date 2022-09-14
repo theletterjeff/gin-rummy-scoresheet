@@ -1,35 +1,59 @@
 from datetime import datetime
+import json
 import pytz
 from unittest import mock
 
 from django.test import TestCase
+from django.urls import reverse
 
 from accounts.models import Player
 from base.models import Game, Match, Outcome, Score
+from tests.fixtures import make_player, player0, player1, auth_client
+
+def test_create_score_with_client(player0, player1, auth_client, transactional_db):
+    """When a Match is created through a POST request, an associated Score is 
+    created for each Player playing in the Match.
+    """
+    match_create_endpoint = reverse('api:match-create')
+    test_server_prefix = 'http://testserver'
+    player0_url = test_server_prefix + player0.get_absolute_url()
+    player1_url = test_server_prefix + player1.get_absolute_url()
+
+    body = {
+        'players': [
+            player0_url,
+            player1_url,
+        ],
+        'target_score': 400
+    }
+    response = auth_client.post(match_create_endpoint, body)
+    content = json.loads(response.content)
+
+    match_pk = content['url'].split('/')[-2]
+    match = Match.objects.get(pk=match_pk)
+
+    assert Score.objects.get(player=player0)
+    assert Score.objects.get(player=player1)
+    assert len(Score.objects.filter(match=match)) == 2
+
+def test_create_score_with_obj_manager(player0, player1, db):
+    """When a Match is created with the model manager, an associated Score is 
+    created for each Player playing in the Match.
+    """
+    match = Match.objects.create()
+    match.players.set([player0, player1])
+    match.save()
+
+    assert Score.objects.get(player=player0)
+    assert Score.objects.get(player=player1)
+    assert len(Score.objects.filter(match=match)) == 2
+
 
 class TestSignals(TestCase):
     """
     Test signals for Base models.
     """
     fixtures = ['accounts', 'base']
-
-    def test_create_score(self):
-        """
-        When a Match is created, an associated Score is created for each
-        Player playing in the Match.
-        """
-        player1 = Player.objects.get(username='player1')
-        player2 = Player.objects.get(username='player2')
-
-        match = Match()
-        match.save()
-
-        for player_count, player in enumerate([player1, player2]):
-            match.players.add(player)
-            match.save()
-            
-            score_count = Score.objects.filter(match=match)
-            self.assertEqual(len(score_count), player_count + 1)
 
     def test_update_score(self):
         """
