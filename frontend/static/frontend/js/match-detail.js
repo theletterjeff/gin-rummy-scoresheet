@@ -45,14 +45,20 @@ async function fillMatchDetailPage() {
     setMatchAsComplete(data.outcomeList.results, data.playerList.results);
   };
   addGameFormSubmitEvent(matchPk);
-
-  
 }
+
 async function addGameFormSubmitEvent(matchPk) {
   let newGameForm = document.getElementById("new-game-form");
-  newGameForm.addEventListener("submit", async function(e) {
+  newGameForm.addEventListener("submit", async function handler(e) {
     await submitGameForm(e, 'POST', matchPk);
+
+    // Reset form, including removing the event listener
+    let newGameForm = document.getElementById('new-game-form');
+    newGameForm.reset();
+    newGameForm.removeEventListener('submit', handler)
     document.getElementById('new-game-form').reset();
+
+    // Refill the page (adds event listener back)
     fillMatchDetailPage();
   });
 }
