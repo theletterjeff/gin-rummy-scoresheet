@@ -31,6 +31,7 @@ class PlayerSerializer(serializers.HyperlinkedModelSerializer):
             'is_active',
             'date_joined',
             'match_set',
+            'last_login',
         ]
 
 class MatchSerializer(serializers.HyperlinkedModelSerializer):
