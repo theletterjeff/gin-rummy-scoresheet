@@ -33,9 +33,13 @@ export function getCookie(name) {
   }
   return cookieValue;
 }
-
-export function setFormElemAsDisabled(elemName) {
-  document.getElementById(elemName).setAttribute('disabled', '');
+/**
+ * Loop over an array of form elements, setting each one as disabled.
+ */
+export function setFormElemsAsDisabled(elemNames) {
+  for (let elemName of elemNames) {
+    document.getElementById(elemName).setAttribute('disabled', '');
+  }
 }
 
 export function formatDate(dateObj) {
