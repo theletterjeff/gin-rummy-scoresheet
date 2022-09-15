@@ -290,7 +290,7 @@ async function fillOpponentDropdown(requestPlayer) {
   let playersDropdown = document.getElementById('opponent-dropdown');
   for (let player of playersData.results) {
     if (player.username != requestPlayer.username) {
-      let dropdownOption = `<option value=${player.url}>${player.username}</option>`;
+      let dropdownOption = `<option class="opponent-option" value=${player.url}>${player.username}</option>`;
       playersDropdown.innerHTML += dropdownOption;
     };
   };
