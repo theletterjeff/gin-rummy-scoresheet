@@ -17,6 +17,7 @@ import {
   getRequestPlayerEndpoint,
 } from "./endpoints.js";
 
+const defaultTargetScore = 500
 fillPlayerMatchesPage();
 
 async function fillPlayerMatchesPage() {
@@ -269,6 +270,7 @@ function deleteElem(matchRow) {
 async function fillNewMatchForm() {
   const requestPlayer = await getJsonResponse(getRequestPlayerEndpoint());
   fillOpponentDropdown(requestPlayer);
+  fillDefaultTargetScore();
   addSubmitEventListener(requestPlayer);
 }
 /**
@@ -287,7 +289,14 @@ async function fillOpponentDropdown(requestPlayer) {
     };
   };
 }
-
+/**
+ * Fill the target-score-input element with the default score for matches (500).
+ * TODO: move away from hard-coded default, ping server for what default is set to.
+ */
+function fillDefaultTargetScore() {
+  let targetScoreInput = document.getElementById('target-score-input');
+  targetScoreInput.value = defaultTargetScore
+}
 /**
  * Add a click event on the `submit` button that posts a new Match.
  */
