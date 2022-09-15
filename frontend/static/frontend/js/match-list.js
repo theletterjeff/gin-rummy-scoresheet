@@ -5,6 +5,7 @@ import {
   getCookie,
   getRequestPlayerUsername,
   getValFromUrl,
+  setFormElemsAsDisabled,
   waitForElem,
 } from "./utils.js";
 import {
@@ -24,6 +25,7 @@ async function fillPlayerMatchesPage() {
   
   const csrfToken = getCookie('csrftoken');
   const username = getValFromUrl(window.location.pathname, 'players');
+  const requestPlayer = await getJsonResponse(getRequestPlayerEndpoint());
 
   // Endpoints
   const matchListEndpoint = getMatchListPlayerEndpoint(username);
@@ -37,7 +39,11 @@ async function fillPlayerMatchesPage() {
     fillMatchesTables(matchesData, csrfToken)
   })
   
-  fillNewMatchForm();
+  if (requestPlayer.username != username) {
+    disableNewMatchFormFields();
+  } else {
+    fillNewMatchForm();
+  };
 }
 /**
  * Loop through all matches, applying `addDataToMatch` function to each. Return 
@@ -331,4 +337,13 @@ function submitNewMatch(requestPlayer) {
     },
     body: JSON.stringify(body),
   });
+}
+
+function disableNewMatchFormFields() {
+  const formElems = [
+    'opponent-dropdown',
+    'target-score-input',
+    'new-match-submit',
+  ];
+  setFormElemsAsDisabled(formElems);
 }
