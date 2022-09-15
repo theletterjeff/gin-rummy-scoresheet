@@ -3,6 +3,7 @@ import {
   fillTitle,
   getCookie,
   setFormElemsAsDisabled,
+  setFormElemsAsEnabled,
   getValFromUrl,
 } from "./utils.js";
 import { getMatchDetailEndpoint, 
@@ -15,6 +16,7 @@ import { getMatchDetailEndpoint,
 import { fillWinnerDropdown, submitGameForm } from "./game-form.js";
 
 const csrfToken = getCookie('csrftoken');
+const matchPk = getValFromUrl(window.location.pathname, 'matches');
 fillMatchDetailPage();
 
 /**
@@ -22,7 +24,6 @@ fillMatchDetailPage();
  */
 async function fillMatchDetailPage() {
   // Page constants
-  const matchPk = getValFromUrl(window.location.pathname, 'matches');
   const endpoints = getEndpoints(matchPk);
   let data = await getDataObj(endpoints);
   
@@ -42,24 +43,17 @@ async function fillMatchDetailPage() {
   let matchIsComplete = checkMatchOutcome(data.outcomeList);
   if (matchIsComplete) {
     setMatchAsComplete(data.outcomeList.results, data.playerList.results);
-  };
-  addGameFormSubmitEvent(matchPk);
+  } else {
+    enableNewGameFormFields();
+    setScoreboardCardTitleWithoutWinner();
+    addGameFormSubmitEvent(matchPk);
+  }
 }
 
 async function addGameFormSubmitEvent(matchPk) {
   let newGameForm = document.getElementById("new-game-form");
-  newGameForm.addEventListener("submit", async function handler(e) {
-    await submitGameForm(e, 'POST', matchPk);
-
-    // Reset form, including removing the event listener
-    let newGameForm = document.getElementById('new-game-form');
-    newGameForm.reset();
-    newGameForm.removeEventListener('submit', handler)
-    document.getElementById('new-game-form').reset();
-
-    // Refill the page (adds event listener back)
-    fillMatchDetailPage();
-  });
+  newGameForm.removeEventListener('submit', submitGameFormHandler);
+  newGameForm.addEventListener("submit", submitGameFormHandler);
 }
 /**
  * Return an object containing the API endpoints for match-detail, 
@@ -73,6 +67,21 @@ function getEndpoints(matchPk) {
     getScoreListMatchEndpoint(matchPk),
     getOutcomeListMatchEndpoint(matchPk),
   ];
+}
+/**
+ * Function to use in addEventListener. Named here so that we can remove 
+ * the event listener before adding a new one.
+ */
+async function submitGameFormHandler(e) {
+  await submitGameForm(e, 'POST', matchPk);
+
+  // Reset form, including removing the event listener
+  let newGameForm = document.getElementById('new-game-form');
+  newGameForm.reset();
+  document.getElementById('new-game-form').reset();
+
+  // Refill the page (adds event listener back)
+  fillMatchDetailPage();
 }
 /**
  * Return Promise object for the match, match's games, match's players,
@@ -290,6 +299,19 @@ function disableNewGameFormFields() {
   ];
   setFormElemsAsDisabled(formElemNames);
 }
+/**
+ * Enable all new game form fields.
+ */
+function enableNewGameFormFields() {
+  const formElemNames = [
+    'winner-dropdown',
+    'points-input',
+    'gin-input',
+    'undercut-input',
+    'new-game-submit',
+  ];
+  setFormElemsAsEnabled(formElemNames);
+}
 
 function setMatchAsComplete(outcomeList, playerList) {
   disableNewGameFormFields();
@@ -317,5 +339,11 @@ function getMatchWinnerUsername(outcomeList, playerList) {
 
 function addWinnerToScoreboardCardTitle(outcomeList, playerList) {
   let winnerUsername = getMatchWinnerUsername(outcomeList, playerList);
-  document.getElementById('scoreboard-card-title').innerHTML = `Scoreboard :: <span><b>${winnerUsername} Wins!</b></span>`
+  const scoreboardTitle = `Scoreboard :: <span><b>${winnerUsername} Wins!</b></span>`;
+  document.getElementById('scoreboard-card-title').innerHTML = scoreboardTitle;
+}
+
+function setScoreboardCardTitleWithoutWinner() {
+  const scoreboardTitle = 'Scoreboard';
+  document.getElementById('scoreboard-card-title').innerHTML = scoreboardTitle;
 }
