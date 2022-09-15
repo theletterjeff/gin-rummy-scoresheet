@@ -91,7 +91,6 @@ def test_game_creation_with_gin_and_undercut(
     url = live_server.url + reverse('frontend:match-detail',
                                     kwargs={'match_pk': simple_match.pk})
     driver.get(url)
-    driver.implicitly_wait(1)
 
     points_input = driver.find_element(By.ID, 'points-input')
     submit_btn = driver.find_element(By.ID, 'new-game-submit')

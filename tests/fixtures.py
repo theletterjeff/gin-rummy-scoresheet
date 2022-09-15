@@ -74,6 +74,8 @@ def driver(player0, log_in_driver, log_in_client, live_server, csrftoken):
     options = Options()
     options.headless = headless
     driver = WebDriver(options=options)
+
+    driver.implicitly_wait(1)
     
     client = log_in_client(player0)
     driver.get(live_server.url)
