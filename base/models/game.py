@@ -26,6 +26,7 @@ class Game(models.Model):
         related_name='game_losses',
     )
     points = models.IntegerField(validators=[validate_gt_zero])
+    _points_cache = models.IntegerField(default=0)
 
     gin = models.BooleanField(default=False)
     undercut = models.BooleanField(default=False)
