@@ -139,6 +139,73 @@ def test_delete_games_returns_score_to_zero(
     assert all([points.text == '0' for points in scoreboard_points])
     assert all([wins_losses.text == '(0 Wins, 0 Losses)' for wins_losses in scoreboard_wins_losses])
 
+def test_add_then_delete_then_add_match_creates_one_match(
+        player0, player1, driver, wait, live_server, transactional_db):
+    """Adding then deleting then adding a match results in one match in the 
+    match list.
+    """
+    url = live_server.url + reverse('frontend:match-list',
+                                    kwargs={'username': 'player0'})
+    driver.get(url)
+    wait.until(EC.presence_of_all_elements_located(
+        (By.CLASS_NAME, 'opponent-option')))
+    submit_btn = driver.find_element(By.ID, 'new-match-submit')
+    submit_btn.click()
+
+    # Reload match-list page after match-detail page loads
+    wait.until(EC.presence_of_element_located(
+        (By.ID, 'player0-username-option')))
+    driver.get(url)
+    
+    delete_btn = driver.find_elements(By.CLASS_NAME, 'delete-match')[0]
+    delete_btn.click()
+    wait.until(EC.staleness_of(delete_btn))
+
+    wait.until(EC.presence_of_all_elements_located(
+        (By.CLASS_NAME, 'opponent-option')))
+    submit_btn = driver.find_element(By.ID, 'new-match-submit')
+    submit_btn.click()
+
+    # Reload match-list page
+    wait.until(EC.presence_of_element_located(
+        (By.ID, 'player0-username-option')))
+    driver.get(url)
+
+    match_rows = driver.find_elements(By.CLASS_NAME, 'row-current-match')
+    assert len(match_rows) == 1
+
+def test_add_then_delete_then_add_game_creates_one_game(
+        player0, player1, simple_match, driver, wait,
+        live_server, transactional_db):
+    """Adding then deleting then adding a game results in one game in the 
+    game list. (Manual testing resulted in multiple matches.)
+    """
+    url = live_server.url + reverse('frontend:match-detail',
+                                    kwargs={'match_pk': simple_match.pk})
+    driver.get(url)
+    wait.until(EC.presence_of_element_located(
+        (By.ID, 'player0-username-option')))
+    
+    submit_btn = driver.find_element(By.ID, 'new-game-submit')
+    points_input = driver.find_element(By.ID, 'points-input')
+
+    points_input.send_keys('5')
+    submit_btn.click()
+    
+    game_rows = driver.find_elements(By.CLASS_NAME, 'game-row')
+    assert len(game_rows) == 1
+
+    delete_btn = driver.find_elements(By.CLASS_NAME, 'delete')[0]
+    delete_btn.click()
+    wait.until(EC.staleness_of(delete_btn))
+
+    points_input.send_keys('5')
+    submit_btn.click()
+
+    game_rows = driver.find_elements(By.CLASS_NAME, 'game-row')
+    assert len(game_rows) == 1
+
+
 def test_edit_game_correctly_changes_score(
         driver, wait, incomplete_match_with_ten_games,
         live_server, transactional_db, player0, player1):
