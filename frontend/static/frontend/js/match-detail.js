@@ -1,9 +1,8 @@
 import {
   getJsonResponse,
-  getJsonResponseArray,
   fillTitle,
   getCookie,
-  setFormElemAsDisabled,
+  setFormElemsAsDisabled,
   getValFromUrl,
 } from "./utils.js";
 import { getMatchDetailEndpoint, 
@@ -289,9 +288,7 @@ function disableNewGameFormFields() {
     'undercut-input',
     'new-game-submit',
   ];
-  for (let formElemName of formElemNames) {
-    setFormElemAsDisabled(formElemName);
-  }
+  setFormElemsAsDisabled(formElemNames);
 }
 
 function setMatchAsComplete(outcomeList, playerList) {
