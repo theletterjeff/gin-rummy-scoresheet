@@ -41,6 +41,15 @@ export function setFormElemsAsDisabled(elemNames) {
     document.getElementById(elemName).setAttribute('disabled', '');
   }
 }
+/**
+ * Loop over an array of form elements, setting each one as enabled if it is 
+ * not already enabled.
+ */
+export function setFormElemsAsEnabled(elemNames) {
+  for (let elemName of elemNames) {
+    document.getElementById(elemName).removeAttribute('disabled');
+  }
+}
 
 export function formatDate(dateObj) {
   if ((dateObj instanceof Date) == false) {
