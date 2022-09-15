@@ -2,7 +2,7 @@
 Signals to update Game and Match records.
 """
 from django.db.models import Q
-from django.db.models.signals import pre_delete, post_save, pre_save, m2m_changed
+from django.db.models.signals import pre_delete, post_save, pre_save, m2m_changed, post_init
 from django.dispatch import receiver
 from django.utils import timezone
 
@@ -25,18 +25,25 @@ def create_score(sender, **kwargs):
                                      player=Player.objects.get(pk=player_pk),
                                      player_score=0)
 
-@receiver(post_save, sender=Game)
-def update_score(sender, instance, created, **kwargs):
+@receiver(pre_save, sender=Game)
+def update_score(sender, instance, **kwargs):
+    """When a Game is entered, the winner's Score object has its `.player_score` 
+    attribute reduced by the Game instance's `._points_cache` value (default 0) 
+    and then increased by the Game instance's `.points` value. The Game 
+    instance's `._points_cache` value is then set to the `.points` value.
+
+    Used for both creating new games and editing old games.
     """
-    When a Game is entered, Score records are updated.
-    """
-    if created:
-        winner_score = Score.objects.get(
-            player=instance.winner,
-            match=instance.match
-        )
-        winner_score.player_score += instance.points
-        winner_score.save()
+    winner_score = Score.objects.get(
+        player=instance.winner,
+        match=instance.match
+    )
+    # Adjust down before adjusting up--for editing games
+    winner_score.player_score -= instance._points_cache
+    winner_score.player_score += instance.points
+    winner_score.save()
+
+    instance._points_cache = instance.points
 
 @receiver(pre_save, sender=Score)
 def finish_match(sender, instance, **kwargs):
