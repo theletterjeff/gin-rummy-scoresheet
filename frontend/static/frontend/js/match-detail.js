@@ -35,6 +35,7 @@ async function fillMatchDetailPage() {
   listGames(data.gameList.results);
   fillScoreboard(
     data.playerList.results,
+    data.matchDetail,
     data.gameList.results,
     data.scoreList.results,
   );
@@ -214,7 +215,8 @@ async function addDeleteButton(deleteButtonElem, gameEndpoint) {
   })
 }
 
-function fillScoreboard(playersJson, gamesJson, scoresJson) {
+function fillScoreboard(playersJson, matchJson, gamesJson, scoresJson) {
+  const targetScore = matchJson.target_score;
   let scoreboardUsernameElems = document.getElementsByClassName('scoreboard-username');
   let scoreboardPointsElems = document.getElementsByClassName('scoreboard-points');
   let scoreboardWinsLossesElems = document.getElementsByClassName('scoreboard-wins-losses')
@@ -231,7 +233,7 @@ function fillScoreboard(playersJson, gamesJson, scoresJson) {
     let losses = playersJson[i].losses;
     
     fillScoreboardUsernames(scoreboardUsernameElems[i], playersJson[i]);
-    fillScoreboardPoints(scoreboardPointsElems[i], points);
+    fillScoreboardPoints(scoreboardPointsElems[i], points, targetScore);
     fillScoreboardWinsLosses(scoreboardWinsLossesElems[i], wins, losses);
   }
 }
@@ -246,8 +248,8 @@ function getScoreJson(playerJson, scoresJson) {
   })[0]
 }
 
-function fillScoreboardPoints(scoreboardPointsElem, points) {
-  scoreboardPointsElem.innerHTML = points;
+function fillScoreboardPoints(scoreboardPointsElem, points, targetScore) {
+  scoreboardPointsElem.innerHTML = `${points}<span style="font-size:.6em">/${targetScore}</span>`;
 }
 
 function fillScoreboardWinsLosses(scoreboardWinsLossesElem, wins, losses) {
