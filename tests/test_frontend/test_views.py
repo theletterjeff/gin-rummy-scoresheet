@@ -22,14 +22,19 @@ def test_home_view(authenticate_api_request, make_player):
     assert response.url == reverse('frontend:match-list',
                                    kwargs={'username': player.username})
 
-@pytest.mark.parametrize('view_name', ['home', 'player-detail',
-                                       'player-edit', 'match-list',
-                                       'match-detail', 'game-detail',
-                                       'game-edit'])
-def test_views_redirect_if_not_logged_in(client, view_name):
+@pytest.mark.parametrize(
+        'view_name,kwargs',
+        [('player-detail', {'username': 'player0'}),
+         ('player-edit', {'username': 'player0'}),
+         ('match-list', {'username': 'player0'}),
+         ('match-detail', {'match_pk': 1}),
+         ('game-detail', {'match_pk': 1, 'game_pk': 1}),
+         ('game-edit', {'match_pk': 1, 'game_pk': 1})])
+def test_views_redirect_if_not_logged_in(client, view_name, kwargs):
     """The `home` view redirects to the `login` page if the user is not 
     authenticated."""
-    url = reverse(f'frontend:{view_name}')
+    url = reverse(f'frontend:{view_name}', kwargs=kwargs)
     response = client.get(url)
     assert isinstance(response, HttpResponseRedirect)
-    assert reverse('login') in response.url
+    target_path = '/' + response.url
+    assert reverse('login')[:-1] in target_path
