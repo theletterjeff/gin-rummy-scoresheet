@@ -288,3 +288,8 @@ def authenticate_api_request(make_player) -> Callable:
         request.user = player
         return request
     return _authenticate_api_request
+
+@pytest.fixture
+def unauth_api_rf() -> APIRequestFactory:
+    """Unauthenticated API request factory."""
+    return APIRequestFactory()

@@ -16,7 +16,8 @@ from api.views import (MatchCreate, MatchDetail, MatchListPlayer, OutcomeDetail,
 from base.models import Outcome, Score
 from tests.fixtures import (make_match, make_matches, make_player, make_players,
                             make_game, make_games, authenticate_api_request,
-                            mock_now, auth_client, csrftoken, player0, player1)
+                            mock_now, auth_client, csrftoken, player0, player1,
+                            unauth_api_rf, simple_match)
 
 def test_player_list(make_players, authenticate_api_request):
     """GET request to the PlayerList view returns multiple Player instances."""
@@ -47,7 +48,9 @@ def test_player_detail(make_player, authenticate_api_request):
     assert response.data
 
 def test_player_create(db):
-    """POST request to PlayerCreate view creates a new player."""
+    """POST request from unauthenticated user to PlayerCreate view 
+    creates a new player.
+    """
     factory = APIRequestFactory()
     url = reverse('api:player-create')
     view = PlayerCreate.as_view()
@@ -194,6 +197,44 @@ def test_match_detail_patch(make_players, make_match,
     assert response.status_code == 200
     assert response.data['complete'] == True
     assert response.data['target_score'] == 250
+
+def test_match_detail_patch_fails_for_player_not_in_match(
+        make_players, make_match, authenticate_api_request):
+    """PATCH request sent with request.user as a Player not in the Match.players 
+    attribute receives a 403 error.
+    """
+    players = make_players(3)
+    match = make_match(players[0:2])
+    url_kwargs = {'match_pk': match.pk}
+    
+    view = MatchDetail.as_view()
+    url = reverse('api:match-detail', kwargs=url_kwargs)
+
+    patch_kwargs = {'complete': True, 'target_score': 250}
+    patch_kwargs.update(url_kwargs)
+
+    request = authenticate_api_request(view, url, 'patch', players[2], patch_kwargs)
+    response = view(request, **patch_kwargs)
+
+    assert response.status_code == 403
+
+def test_match_detail_patch_fails_for_unauthenticated_user(
+        make_players, make_match, unauth_api_rf, simple_match):
+    """PATCH request on a Match from an unauthenticated user receives status 
+    code 403.
+    """
+    url_kwargs = {'match_pk': simple_match.pk}
+    
+    view = MatchDetail.as_view()
+    url = reverse('api:match-detail', kwargs=url_kwargs)
+
+    patch_kwargs = {'complete': True, 'target_score': 250}
+    patch_kwargs.update(url_kwargs)
+
+    request = unauth_api_rf.patch(url, patch_kwargs)
+    response = view(request, **patch_kwargs)
+
+    assert response.status_code == 403
 
 def test_match_detail_delete(make_players, make_match, authenticate_api_request):
     """DELETE request to the MatchDetail view deletes Match instance."""

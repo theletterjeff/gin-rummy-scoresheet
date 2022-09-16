@@ -11,7 +11,7 @@ from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from rest_framework.views import APIView
 
-from api.permissions import IsRequestUser
+from api.permissions import IsAuthenticatedOrObjectPlayer
 from api.serializers import (GameSerializer, MatchSerializer, OutcomeSerializer,
                              PlayerSerializer, ScoreSerializer)
 
