@@ -53,7 +53,7 @@ class Score(MatchPlayer):
 
     def __str__(self):
         date_started_str = self.match.datetime_started.strftime('%D')
-        return f'{self.player.username} {date_started_str} ({self.pk})'
+        return f'{self.player.username} {date_started_str} - {self.player_score} ({self.pk})'
     
     def get_absolute_url(self):
         return reverse('api:score-detail', kwargs=self.get_url_kwargs())
