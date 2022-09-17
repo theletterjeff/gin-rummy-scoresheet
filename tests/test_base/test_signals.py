@@ -73,85 +73,19 @@ def test_update_score_on_game_edit(
     score = Score.objects.get(player=player0, match=simple_match)
     assert score.player_score == 50
 
+def test_unfinished_matches_do_not_have_outcome_instances(
+        player0, player1, simple_match):
+    """Unfinished Match instances do not have associated Outcome instances."""
+    with pytest.raises(Outcome.DoesNotExist):
+        Outcome.objects.get(player=player0, match=simple_match)
+        Outcome.objects.get(player=player1, match=simple_match)
+
 class TestSignals(TestCase):
     """
     Test signals for Base models.
     """
     fixtures = ['accounts', 'base']
-
-    def test_update_score(self):
-        """
-        When a Game is entered, the .player_score attribute of Score
-        records are updated.
-        """
-        # Load data from fixtures
-        player1 = Player.objects.get(username='player1')
-        player2 = Player.objects.get(username='player2')
-
-        match = Match.objects.get(pk=2)
-
-        # Create a Game that player1 got 50 points from
-        Game.objects.create(
-            match=match,
-            winner=player1,
-            loser=player2,
-            points=50,
-        )
-
-        # Assert that player1's new Score is 50, player2's score is 0
-        self.assertEqual(
-            Score.objects.get(match=match, player=player1).player_score,
-            50
-        )
-        self.assertEqual(
-            Score.objects.get(match=match, player=player2).player_score,
-            0
-        )
-
-        # Create a Game that player 2 got 25 points from
-        Game.objects.create(
-            match=match,
-            winner=player2,
-            loser=player1,
-            points=25,
-        )
-
-        # Assert that player1's Score is still 50 and player2's score is 25
-        self.assertEqual(
-            Score.objects.get(match=match, player=player1).player_score,
-            50
-        )
-        self.assertEqual(
-            Score.objects.get(match=match, player=player2).player_score,
-            25
-        )
-    
-    def test_unfinished_matches_do_not_have_outcome_instances(self):
-        """
-        Unfinished Match instances do not have associated Outcome instances.
-        """
-        player1 = Player.objects.get(username='player1')
-        player2 = Player.objects.get(username='player2')
-
-        match = Match.objects.get(pk=2)
-
-        self.assertEqual(match.target_score, 500)
-        self.assertFalse(match.complete)
-
-        # Assert that Outome objects for the Match do not yet exist
-        self.assertRaises(
-            Outcome.DoesNotExist,
-            Outcome.objects.get,
-            match=match,
-            player=player1,
-        )
-        self.assertRaises(
-            Outcome.DoesNotExist,
-            Outcome.objects.get,
-            match=match,
-            player=player2,
-        )
-    
+        
     def test_finish_match(self):
         """
         When one player's Score.player_score exceed Match.target_score,
