@@ -102,53 +102,22 @@ def test_delete_game_removes_score_points(
     score = Score.objects.get(player=player0, match=simple_match)
     assert score.player_score == 0
 
-def test_delete_game_deletes_outcomes(
+def test_delete_game_deletes_outcomes_and_sets_completed_to_false(
         player0, player1, simple_match, winning_game):
     """When Game is deleted, if deleted points put the associated Match below
     its target_score, delete the associated Outcome objects.
     """
     assert Outcome.objects.count() == 2
     winning_game.delete()
+    
     assert Outcome.objects.count() == 0
+    assert simple_match.complete == False
 
 class TestSignals(TestCase):
     """
     Test signals for Base models.
     """
     fixtures = ['accounts', 'base']
-    
-    def test_delete_game_deletes_outcomes(self):
-        """
-        When Game is deleted, if deleted points put the associated Match below
-        its target_score, delete the associated Outcome objects.
-        """
-        # Load data from fixtures
-        match = Match.objects.get(pk=4)
-        player1 = Player.objects.get(pk=1)
-        player2 = Player.objects.get(pk=2)
-
-        # Verify that the Outcome instances exist
-        try:
-            Outcome.objects.get(match=match, player=player1, player_outcome=1)
-            Outcome.objects.get(match=match, player=player2, player_outcome=0)
-        except:
-            assert False
-
-        Game.objects.get(pk=2).delete()
-
-        with self.assertRaises(Outcome.DoesNotExist):
-            Outcome.objects.get(
-                match=match, player=player1, player_outcome=1)
-            Outcome.objects.get(
-                match=match, player=player2, player_outcome=0)
-
-    def test_delete_game_sets_completed_to_false(self):
-        """
-        When Game is deleted, if deleted points put the associated Match below
-        its target_score, Match.complete changes to False.
-        """
-        Game.objects.get(pk=2).delete()
-        self.assertFalse(Match.objects.get(pk=4).complete)
     
     def test_finish_match_adds_datetime_ended(self):
         """When a Score object for a Match exceeds the point threshold,
