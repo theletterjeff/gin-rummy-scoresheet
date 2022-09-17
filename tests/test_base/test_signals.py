@@ -64,6 +64,15 @@ def test_update_score_on_game_creation(
     score = Score.objects.get(player=player0, match=simple_match)
     assert score.player_score == 25
 
+def test_update_score_on_game_edit(
+        player0, player1, simple_match, simple_game):
+    """Editing a Game's `.points` value updates the Match's Score."""
+    simple_game.points = 50
+    simple_game.save()
+
+    score = Score.objects.get(player=player0, match=simple_match)
+    assert score.player_score == 50
+
 class TestSignals(TestCase):
     """
     Test signals for Base models.
