@@ -6,7 +6,8 @@ import pytest
 from frontend import views
 from tests.fixtures import (make_player, authenticate_api_request,
                             logged_out_driver, player0, player1, auth_client,
-                            simple_match, make_match)
+                            simple_match, make_match, make_game,
+                            incomplete_match_with_one_game)
 
 def test_home_view(authenticate_api_request, make_player):
     """The 'home' view redirects to the 'match-list' page."""
@@ -39,6 +40,20 @@ def test_views_redirect_if_not_logged_in(client, view_name, kwargs):
     assert isinstance(response, HttpResponseRedirect)
     target_path = '/' + response.url
     assert reverse('login')[:-1] in target_path
+
+@pytest.mark.parametrize(
+        'view_name,kwargs',
+        [('player-detail', {'username': 'player0'}),
+         ('player-edit', {'username': 'player0'}),
+         ('match-list', {'username': 'player0'}),
+         ('match-detail', {'match_pk': 1}),
+         ('game-edit', {'match_pk': 1, 'game_pk': 1})])
+def test_views_return_200_response(
+        incomplete_match_with_one_game, auth_client, view_name, kwargs):
+    """Sending a GET request with valid API kwargs returns a 200 response."""
+    url = reverse(f'frontend:{view_name}', kwargs=kwargs)
+    response = auth_client.get(url)
+    assert response.status_code == 200
 
 @pytest.mark.parametrize(
         'view_name,kwargs',
