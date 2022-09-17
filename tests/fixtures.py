@@ -16,7 +16,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from accounts.models import Player
 from base.models import Game, Match
 
-headless = True
+headless = False
 
 ### Fixtures
 

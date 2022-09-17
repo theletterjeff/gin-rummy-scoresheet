@@ -239,3 +239,13 @@ def test_edit_game_correctly_changes_score(
     scoreboard_points = wait.until(EC.presence_of_all_elements_located(
         (By.CLASS_NAME, 'scoreboard-points')))
     assert any([points.text == '120' for points in scoreboard_points])
+
+def test_match_list_page_for_invalid_player_returns_404_page(
+        player0, live_server, driver):
+    """Navigating to the match-list page with the URL kwarg `username` set 
+    to an invalid value returns a 404 error.
+    """
+    url = live_server.url + reverse('frontend:match-list',
+                                    kwargs={'username': 'invalid_player'})
+    driver.get(url)
+    assert driver.title == 'Not Found'
