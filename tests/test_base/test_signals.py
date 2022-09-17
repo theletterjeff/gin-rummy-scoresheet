@@ -89,7 +89,10 @@ def test_finish_match(
     """
     assert player0_outcome.player_outcome == 1
     assert player1_outcome.player_outcome == 0
-    assert Match.objects.get(pk=simple_match.pk).complete == True
+
+    simple_match.refresh_from_db()
+    assert simple_match.complete == True
+    assert simple_match.datetime_ended
 
 def test_delete_game_removes_score_points(
         player0, simple_match, simple_game, simple_score):
@@ -109,26 +112,6 @@ def test_delete_game_deletes_outcomes_and_sets_completed_to_false(
     """
     assert Outcome.objects.count() == 2
     winning_game.delete()
-    
+
     assert Outcome.objects.count() == 0
     assert simple_match.complete == False
-
-class TestSignals(TestCase):
-    """
-    Test signals for Base models.
-    """
-    fixtures = ['accounts', 'base']
-    
-    def test_finish_match_adds_datetime_ended(self):
-        """When a Score object for a Match exceeds the point threshold,
-        the Match's `datetime_ended` attribute gets set to timezone.now().
-        """
-        target_date = datetime(2022, 1, 1, tzinfo=pytz.timezone('utc'))
-
-        with mock.patch('django.utils.timezone.now', return_value=target_date):
-            score = Score.objects.get(pk=1)
-            score.player_score = 501
-            score.save()
-
-            match = Match.objects.get(pk=2)
-            self.assertEqual(match.datetime_ended, target_date)
