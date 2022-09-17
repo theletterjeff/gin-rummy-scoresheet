@@ -80,6 +80,17 @@ def test_unfinished_matches_do_not_have_outcome_instances(
         Outcome.objects.get(player=player0, match=simple_match)
         Outcome.objects.get(player=player1, match=simple_match)
 
+def test_finish_match(
+        player0, player1, simple_match, winning_game,
+        player0_outcome, player1_outcome):
+    """When one player's Score.player_score exceed Match.target_score,
+    the Match is marked as complete, the winner's Outcome.player_outcome
+    is set as 1, and the loser's Outcome.player_outcome is set as 0.
+    """
+    assert player0_outcome.player_outcome == 1
+    assert player1_outcome.player_outcome == 0
+    assert Match.objects.get(pk=simple_match.pk).complete == True
+
 class TestSignals(TestCase):
     """
     Test signals for Base models.
