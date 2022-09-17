@@ -30,7 +30,6 @@ def test_home_view(authenticate_api_request, make_player):
          ('player-edit', {'username': 'player0'}),
          ('match-list', {'username': 'player0'}),
          ('match-detail', {'match_pk': 1}),
-         ('game-detail', {'match_pk': 1, 'game_pk': 1}),
          ('game-edit', {'match_pk': 1, 'game_pk': 1})])
 def test_views_redirect_if_not_logged_in(client, view_name, kwargs):
     """The `home` view redirects to the `login` page if the user is not 
@@ -61,7 +60,6 @@ def test_views_return_200_response(
          ('player-edit', {'username': 'xyz'}),
          ('match-list', {'username': 'xyz'}),
          ('match-detail', {'match_pk': 1000}),
-         ('game-detail', {'match_pk': 1000, 'game_pk': 1000}),
          ('game-edit', {'match_pk': 1000, 'game_pk': 1000})])
 def test_views_return_404_with_invalid_lookup_kwargs(
         player0, simple_match, auth_client, view_name, kwargs):

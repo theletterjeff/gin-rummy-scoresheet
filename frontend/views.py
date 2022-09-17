@@ -46,7 +46,7 @@ def match_edit(request, match_pk: int):
 @login_required
 @check_api_object_exists(Game, 'game_pk', 'pk')
 def game_detail(request, match_pk: int, game_pk: int):
-    return render(request, 'frontend/game-detail.html')
+    raise NotImplementedError()
 
 @login_required
 @check_api_object_exists(Game, 'game_pk', 'pk')
