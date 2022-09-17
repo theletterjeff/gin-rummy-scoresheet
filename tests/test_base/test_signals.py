@@ -91,40 +91,22 @@ def test_finish_match(
     assert player1_outcome.player_outcome == 0
     assert Match.objects.get(pk=simple_match.pk).complete == True
 
+def test_delete_game_removes_score_points(
+        player0, simple_match, simple_game, simple_score):
+    """When Game is deleted, remove its points from the associated
+    Score objects.
+    """
+    assert simple_score.player_score == 25
+    simple_game.delete()
+
+    score = Score.objects.get(player=player0, match=simple_match)
+    assert score.player_score == 0
+
 class TestSignals(TestCase):
     """
     Test signals for Base models.
     """
     fixtures = ['accounts', 'base']
-
-    def test_delete_game_remove_score_points(self):
-        """
-        When Game is deleted, remove its points from the associated
-        Score objects.
-        """
-        player1 = Player.objects.get(username='player1')
-        player2 = Player.objects.get(username='player2')
-
-        match = Match.objects.get(pk=2)
-
-        game = Game.objects.create(
-            match=match,
-            winner=player1,
-            loser=player2,
-            points=50,
-        )
-
-        self.assertEqual(
-            Score.objects.get(player=player1, match=match).player_score,
-            50
-        )
-
-        game.delete()
-
-        self.assertEqual(
-            Score.objects.get(player=player1, match=match).player_score,
-            0
-        )
     
     def test_delete_game_deletes_outcomes(self):
         """
