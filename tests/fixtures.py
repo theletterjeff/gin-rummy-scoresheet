@@ -14,7 +14,7 @@ from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 
 from accounts.models import Player
-from base.models import Game, Match
+from base.models import Game, Match, Score
 
 headless = False
 
@@ -28,7 +28,6 @@ def player0(make_player) -> Player:
 def player1(make_player) -> Player:
     return make_player(username='player1')
 
-"""Matches"""
 @pytest.fixture
 def simple_match(make_match, player0, player1):
     """A single Match object. Attributes:
@@ -67,6 +66,11 @@ def incomplete_match_with_ten_games(make_match, make_games, player0, player1):
     make_games(game_num, match, winners, losers, points)
 
     return Match.objects.get(pk=match.pk)
+
+@pytest.fixture
+def simple_score(simple_match, player0):
+    """A Score object for player0 with `player_score` set to 0."""
+    return Score.objects.get(match=simple_match, player=player0)
 
 @pytest.fixture
 def driver(player0, log_in_driver, log_in_client, live_server, csrftoken):
