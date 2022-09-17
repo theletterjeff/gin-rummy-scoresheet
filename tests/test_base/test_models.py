@@ -10,6 +10,8 @@ from accounts.models import Player
 from base.models import Match, Score
 from tests.fixtures import *
 
+### Match
+
 def test_default_match_has_target_score_500_and_outcome_false(simple_match):
     """Match instances that are created without any additional parameters
     have .target_score=500 and .complete=False..
@@ -29,22 +31,11 @@ def test_match_str(mock_now, simple_match):
     target_str = '01/01/22 (1)'
     assert simple_match.__str__() == target_str
 
+### Score
 
-class TestScoreModel(TestCase):
+def test_score_str(mock_now, simple_match, simple_score):
+    """String representation of Score object returns as 
+    f'{self.player.username} {date_started_str} - {self.player_score} ({self.pk})'
     """
-    Tests for the Score model.
-    """
-    fixtures = ['accounts', 'base']
-    
-    def test_str(self):
-        """
-        String representation of a Match is 
-        '<username> <date started string (<pk>) ({self.pk})',
-        e.g., 'player1 04/02/22 (1)'
-        """
-        # Load score from fixture
-        score = Score.objects.get(pk=1)
-
-        target_str = 'player1 04/02/22 (1)'
-
-        self.assertEqual(score.__str__(), target_str)
+    target_str = 'player0 01/01/22 - 0 (1)'
+    assert simple_score.__str__() == target_str
