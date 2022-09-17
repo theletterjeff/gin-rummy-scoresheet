@@ -96,31 +96,6 @@ class TestSignals(TestCase):
     Test signals for Base models.
     """
     fixtures = ['accounts', 'base']
-        
-    def test_finish_match(self):
-        """
-        When one player's Score.player_score exceed Match.target_score,
-        the Match is marked as complete, the winner's Outcome.player_outcome
-        is set as 1, and the loser's Outcome.player_outcome is set as 0.
-        """
-        player1 = Player.objects.get(username='player1')
-        player2 = Player.objects.get(username='player2')
-
-        match = Match.objects.get(pk=2)
-
-        # Add a Game whose .points are equal to Match.target_score
-        Game.objects.create(
-            match=match,
-            winner=player1,
-            loser=player2,
-            points=500,
-        )
-
-        winner_outcome = Outcome.objects.get(player=player1, match=match)
-        loser_outcome = Outcome.objects.get(player=player2, match=match)
-
-        self.assertEqual(winner_outcome.player_outcome, 1)
-        self.assertEqual(loser_outcome.player_outcome, 0)
 
     def test_delete_game_remove_score_points(self):
         """
