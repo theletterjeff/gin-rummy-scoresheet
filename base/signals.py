@@ -98,13 +98,20 @@ def delete_game(sender, instance, **kwargs):
     change Match.complete to False and delete the associated Outcome objects.
     """
     # Remove points from Score
-    winner_score = Score.objects.get(
-        match=instance.match, player=instance.winner)
+    match_scores = Score.objects.filter(match=instance.match)
+    winner_score = match_scores.get(player=instance.winner)
     
     winner_score.player_score -= instance.points
     winner_score.save()
+
+    # Make sure instance.match.complete is synced to database
+    instance.match.refresh_from_db()
+
+    all_scores_below_target = all([score.player_score < instance.match.target_score
+                                  for score in match_scores])
     
-    if instance.match.complete:
+    # Undo complete and datetime_ended on Match
+    if instance.match.complete and all_scores_below_target:
         instance.match.complete = False
         instance.match.datetime_ended = None
         instance.match.save()

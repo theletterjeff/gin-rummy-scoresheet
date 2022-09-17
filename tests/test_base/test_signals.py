@@ -102,6 +102,15 @@ def test_delete_game_removes_score_points(
     score = Score.objects.get(player=player0, match=simple_match)
     assert score.player_score == 0
 
+def test_delete_game_deletes_outcomes(
+        player0, player1, simple_match, winning_game):
+    """When Game is deleted, if deleted points put the associated Match below
+    its target_score, delete the associated Outcome objects.
+    """
+    assert Outcome.objects.count() == 2
+    winning_game.delete()
+    assert Outcome.objects.count() == 0
+
 class TestSignals(TestCase):
     """
     Test signals for Base models.
