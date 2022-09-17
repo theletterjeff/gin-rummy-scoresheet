@@ -68,6 +68,12 @@ def incomplete_match_with_ten_games(make_match, make_games, player0, player1):
     return Match.objects.get(pk=match.pk)
 
 @pytest.fixture
+def simple_game(simple_match, player0, player1):
+    """A Game within `simple_match`."""
+    return Game.objects.create(
+        match=simple_match, winner=player0, loser=player1, points=25)
+
+@pytest.fixture
 def simple_score(simple_match, player0):
     """A Score object for player0 with `player_score` set to 0."""
     return Score.objects.get(match=simple_match, player=player0)
