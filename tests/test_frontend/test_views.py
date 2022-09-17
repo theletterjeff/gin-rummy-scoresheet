@@ -69,3 +69,4 @@ def test_views_return_404_with_invalid_lookup_kwargs(
     url = reverse(f'frontend:{view_name}', kwargs=kwargs)
     response = auth_client.get(url)
     assert isinstance(response, HttpResponseNotFound)
+    assert response.status_code == 404
