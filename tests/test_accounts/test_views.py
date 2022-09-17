@@ -33,5 +33,5 @@ def test_signup_view_post(client, transactional_db):
     response = client.post(url, data, content_type=content_type)
 
     assert response.status_code == 302
-    assert response.url == '/accounts//login/'
+    assert response.url == '/accounts/login/'
     assert Player.objects.get(username='player0')
