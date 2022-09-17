@@ -14,7 +14,7 @@ from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 
 from accounts.models import Player
-from base.models import Game, Match, Score
+from base.models import Game, Match, Score, Outcome
 
 headless = False
 
@@ -74,9 +74,25 @@ def simple_game(simple_match, player0, player1):
         match=simple_match, winner=player0, loser=player1, points=25)
 
 @pytest.fixture
+def winning_game(simple_match, player0, player1):
+    """A Game within `simple_match` whose `player_score` exceeds 
+    `simple_match.target_score`.
+    """
+    return Game.objects.create(
+        match=simple_match, winner=player0, loser=player1, points=501)
+
+@pytest.fixture
 def simple_score(simple_match, player0):
     """A Score object for player0 with `player_score` set to 0."""
     return Score.objects.get(match=simple_match, player=player0)
+
+@pytest.fixture
+def simple_outcome(simple_match, player0):
+    """An Outcome object for player0."""
+    try:
+        return Outcome.objects.get(match=simple_match, player=player0)
+    except Outcome.DoesNotExist:
+        return None
 
 @pytest.fixture
 def driver(player0, log_in_driver, log_in_client, live_server, csrftoken):
