@@ -8,7 +8,7 @@ from django.urls import reverse
 
 from accounts.models import Player
 from base.models import Game, Match, Outcome, Score
-from tests.fixtures import make_player, player0, player1, auth_client
+from tests.fixtures import *
 
 def test_create_score_with_client(player0, player1, auth_client, transactional_db):
     """When a Match is created through a POST request, an associated Score is 
@@ -53,9 +53,16 @@ def test_create_score_with_obj_manager(player0, player1, db):
 
     assert Score.objects.get(player=player0).player_score == 0
     assert Score.objects.get(player=player1).player_score == 0
-    
+
     assert len(Score.objects.filter(match=match)) == 2
 
+def test_update_score_on_game_creation(
+        player0, player1, simple_match, simple_game):
+    """Creating a Game (`simple_game`) updates the Score object for the winner 
+    by the amount of points in the `points` attribute.
+    """
+    score = Score.objects.get(player=player0, match=simple_match)
+    assert score.player_score == 25
 
 class TestSignals(TestCase):
     """
