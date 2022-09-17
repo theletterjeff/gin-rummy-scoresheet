@@ -34,6 +34,10 @@ def test_create_score_with_client(player0, player1, auth_client, transactional_d
 
     assert Score.objects.get(player=player0)
     assert Score.objects.get(player=player1)
+
+    assert Score.objects.get(player=player0).player_score == 0
+    assert Score.objects.get(player=player1).player_score == 0
+
     assert len(Score.objects.filter(match=match)) == 2
 
 def test_create_score_with_obj_manager(player0, player1, db):
@@ -46,6 +50,10 @@ def test_create_score_with_obj_manager(player0, player1, db):
 
     assert Score.objects.get(player=player0)
     assert Score.objects.get(player=player1)
+
+    assert Score.objects.get(player=player0).player_score == 0
+    assert Score.objects.get(player=player1).player_score == 0
+    
     assert len(Score.objects.filter(match=match)) == 2
 
 
