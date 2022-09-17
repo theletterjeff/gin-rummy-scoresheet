@@ -28,7 +28,7 @@ def test_match_str(mock_now, simple_match):
     """String representation of a Match is '<date started string> (<pk>)',
     e.g., '01/01/22 (3)'.
     """
-    target_str = '01/01/22 (1)'
+    target_str = f'01/01/22 ({simple_match.pk})'
     assert simple_match.__str__() == target_str
 
 ### Score
@@ -37,5 +37,5 @@ def test_score_str(mock_now, simple_match, simple_score):
     """String representation of Score object returns as 
     f'{self.player.username} {date_started_str} - {self.player_score} ({self.pk})'
     """
-    target_str = 'player0 01/01/22 - 0 (1)'
+    target_str = f'player0 01/01/22 - 0 ({simple_score.pk})'
     assert simple_score.__str__() == target_str
