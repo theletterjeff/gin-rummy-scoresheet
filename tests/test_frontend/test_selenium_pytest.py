@@ -76,8 +76,10 @@ def test_add_game_multiple_times_correctly_calculates_score(
     scoreboard_points = driver.find_elements(By.CLASS_NAME, 'scoreboard-points')
     scoreboard_wins_losses = driver.find_elements(By.CLASS_NAME, 'scoreboard-wins-losses')
     
-    assert any([points.text == '55' for points in scoreboard_points])
-    assert any([points.text == '0' for points in scoreboard_points])
+    assert any([points.text == f'55/{simple_match.target_score}'
+                for points in scoreboard_points])
+    assert any([points.text == f'0/{simple_match.target_score}'
+                for points in scoreboard_points])
 
     assert any([wins_losses.text == '(10 Wins, 0 Losses)' for wins_losses in scoreboard_wins_losses])
     assert any([wins_losses.text == '(0 Wins, 10 Losses)' for wins_losses in scoreboard_wins_losses])
@@ -114,8 +116,10 @@ def test_game_creation_with_gin_and_undercut(
     assert len(game_rows) == 2
     assert len(Game.objects.all()) == 2
 
-    assert any([points.text == '12' for points in scoreboard_points])
-    assert any([points.text == '0' for points in scoreboard_points])
+    assert any([points.text == f'12/{simple_match.target_score}'
+                for points in scoreboard_points])
+    assert any([points.text == f'0/{simple_match.target_score}'
+                for points in scoreboard_points])
 
     assert any([wins_losses.text == '(2 Wins, 0 Losses)' for wins_losses in scoreboard_wins_losses])
     assert any([wins_losses.text == '(0 Wins, 2 Losses)' for wins_losses in scoreboard_wins_losses])
@@ -136,8 +140,10 @@ def test_delete_games_returns_score_to_zero(
     scoreboard_points = driver.find_elements(By.CLASS_NAME, 'scoreboard-points')
     scoreboard_wins_losses = driver.find_elements(By.CLASS_NAME, 'scoreboard-wins-losses')
     
-    assert all([points.text == '0' for points in scoreboard_points])
-    assert all([wins_losses.text == '(0 Wins, 0 Losses)' for wins_losses in scoreboard_wins_losses])
+    assert all([points.text == f'0/{incomplete_match_with_ten_games.target_score}'
+                for points in scoreboard_points])
+    assert all([wins_losses.text == '(0 Wins, 0 Losses)'
+                for wins_losses in scoreboard_wins_losses])
 
 def test_add_then_delete_then_add_match_creates_one_match(
         player0, player1, driver, wait, live_server, transactional_db):
@@ -238,7 +244,9 @@ def test_edit_game_correctly_changes_score(
 
     scoreboard_points = wait.until(EC.presence_of_all_elements_located(
         (By.CLASS_NAME, 'scoreboard-points')))
-    assert any([points.text == '120' for points in scoreboard_points])
+    target_score = incomplete_match_with_ten_games.target_score
+    assert any([points.text == f'120/{target_score}'
+                for points in scoreboard_points])
 
 def test_match_list_page_for_invalid_player_returns_404_page(
         player0, live_server, driver):
