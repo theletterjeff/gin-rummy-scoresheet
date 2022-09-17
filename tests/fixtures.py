@@ -87,10 +87,18 @@ def simple_score(simple_match, player0):
     return Score.objects.get(match=simple_match, player=player0)
 
 @pytest.fixture
-def simple_outcome(simple_match, player0):
+def player0_outcome(simple_match, player0):
     """An Outcome object for player0."""
     try:
         return Outcome.objects.get(match=simple_match, player=player0)
+    except Outcome.DoesNotExist:
+        return None
+
+@pytest.fixture
+def player1_outcome(simple_match, player1):
+    """An Outcome object for player0."""
+    try:
+        return Outcome.objects.get(match=simple_match, player=player1)
     except Outcome.DoesNotExist:
         return None
 
