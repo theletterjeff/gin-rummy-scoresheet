@@ -10,6 +10,8 @@ from django.middleware.csrf import get_token
 from django.test import RequestFactory
 from django.urls import reverse
 
+import pytest
+
 import selenium
 from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.options import Options
@@ -74,7 +76,8 @@ class TestSetUpTearDown(StaticLiveServerTestCase):
     def tearDown(self):
         self.driver.quit()
         super().tearDown()
-    
+
+@pytest.mark.skip(reason='Need to refactor')
 class BaseTests(TestSetUpTearDown):
 
     def test_authenticated_user_navbar_links(self):
@@ -98,6 +101,7 @@ class BaseTests(TestSetUpTearDown):
         self.assertEqual(matches_link.get_attribute('href'),
             self.live_server_url + '/match/')
 
+@pytest.mark.skip(reason='Need to refactor')
 class CurrentMatchesTests(TestSetUpTearDown):
 
     fixtures = ['accounts', 'base']
@@ -184,6 +188,7 @@ class CurrentMatchesTests(TestSetUpTearDown):
                 (By.ID, f'delete-match-{match.pk}')
             ))
 
+@pytest.mark.skip(reason='Need to refactor')
 class PastMatchesTests(TestSetUpTearDown):
 
     fixtures = ['accounts']
@@ -267,6 +272,7 @@ class PastMatchesTests(TestSetUpTearDown):
         self.assertEqual(date_range.text, '1/1/2022-3/31/2022')
 
 
+@pytest.mark.skip(reason='Need to refactor')
 class LoginTests(StaticLiveServerTestCase):
 
     @classmethod
