@@ -11,6 +11,7 @@ function fillNavbarLinks() {
   } else {
     getRequestPlayerUsername().then(function(username) {
       fillNavbarLink('matches-nav-link', `/players/${username}/matches/`);
+      fillNavbarLink('players-nav-link', `/players/`);
       fillNavbarLink('account-nav-link', `/players/${username}/`);
       fillNavbarLink('logout-nav-link', '/accounts/logout/');
     });

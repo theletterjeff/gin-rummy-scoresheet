@@ -15,8 +15,8 @@ def home(request):
     return HttpResponseRedirect(redirect_url)
 
 @login_required
-def player_list(request):
-    raise NotImplementedError
+def player_list_all(request):
+    return render(request, 'frontend/player-list-all.html')
 
 @login_required
 @check_api_object_exists(Player, 'username')
