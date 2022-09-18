@@ -5,6 +5,7 @@ import {
   getCookie,
   getRequestPlayerUsername,
   getValFromUrl,
+  setElemAsHidden,
   setFormElemsAsDisabled,
   waitForElem,
 } from "./utils.js";
@@ -41,6 +42,7 @@ async function fillPlayerMatchesPage() {
   
   if (requestPlayer.username != username) {
     disableNewMatchFormFields();
+    setElemAsHidden('new-match-card');
   } else {
     fillNewMatchForm();
   };

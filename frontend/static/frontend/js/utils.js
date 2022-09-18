@@ -50,6 +50,12 @@ export function setFormElemsAsEnabled(elemNames) {
     document.getElementById(elemName).removeAttribute('disabled');
   }
 }
+/**
+ * Set an element as hidden.
+ */
+export function setElemAsHidden(elemName) {
+  document.getElementById(elemName).setAttribute('hidden', '');
+}
 
 export function formatDate(dateObj) {
   if ((dateObj instanceof Date) == false) {
