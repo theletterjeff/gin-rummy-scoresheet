@@ -47,6 +47,7 @@ def test_views_redirect_if_not_logged_in(client, view_name, kwargs):
          ('match-list', {'username': 'player0'}),
          ('match-detail', {'match_pk': 1}),
          ('game-edit', {'match_pk': 1, 'game_pk': 1})])
+@pytest.mark.django_db(transaction=True, reset_sequences=True)
 def test_views_return_200_response(
         incomplete_match_with_one_game, auth_client, view_name, kwargs):
     """Sending a GET request with valid API kwargs returns a 200 response."""
