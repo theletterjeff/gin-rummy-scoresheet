@@ -13,6 +13,7 @@ coreschema==0.0.4
 cryptography==37.0.2
 defusedxml==0.7.1
 dill==0.3.4
+dj-database-url==1.0.0
 Django==4.0.7
 django-crispy-forms==1.14.0
 djangorestframework==3.13.1
