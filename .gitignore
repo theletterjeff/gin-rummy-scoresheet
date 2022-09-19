@@ -6,3 +6,4 @@ geckodriver.log
 .vscode/launch.json
 .DS_Store
 .env
+config/staticfiles
