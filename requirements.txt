@@ -60,5 +60,6 @@ typing_extensions==4.1.1
 tzdata==2022.1
 uritemplate==4.1.1
 urllib3==1.26.9
+whitenoise==6.2.0
 wrapt==1.14.0
 wsproto==1.1.0
