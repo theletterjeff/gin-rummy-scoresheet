@@ -257,3 +257,19 @@ def test_match_list_page_for_invalid_player_returns_404_page(
                                     kwargs={'username': 'invalid_player'})
     driver.get(url)
     assert driver.title == 'Not Found'
+
+def test_player_usernames_on_player_list_page_and_link_correctly(
+        player0, player1, live_server, driver):
+    """Players' usernames in the player-list-all page are the correct usernames 
+    and link to each player's detail page.
+    """
+    url = live_server.url + reverse('frontend:player-list-all')
+    driver.get(url)
+
+    for player in [player0, player1]:
+        xpath = f'//td[@id="player-username-{player.username}"]/a'
+        assert player.username == driver.find_element(
+            By.XPATH, xpath).get_attribute('text')
+        target_url = player.get_absolute_url().replace('api/', '')
+        assert target_url in driver.find_element(
+            By.XPATH, xpath).get_attribute('href')
