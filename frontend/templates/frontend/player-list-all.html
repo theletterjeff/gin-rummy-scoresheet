@@ -2,5 +2,24 @@
 {% load static %}
 
 {% block content %}
-  <h5>Coming soon</h5>
+  <div class="card mt-3">
+    <div class="card-body">
+      <h5 class="card-title mb-3">Players</h5>
+      <div class="table-responsive">
+        <table class="table" id="players-table">
+          <thead>
+            <tr>
+              <th scope="col">Player</th>
+              <th scope="col">Match Win %</th>
+              <th scope="col">Game Win %</th>
+            </tr>
+          </thead>
+          <tbody id="players-table-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script src="{% static './frontend/js/player/player-list-all.js' %}" type="module"></script>
+
 {% endblock %}

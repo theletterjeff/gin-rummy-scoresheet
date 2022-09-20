@@ -113,3 +113,10 @@ export async function getRequestPlayerUsername() {
   const requestPlayerObj = await getJsonResponse(requestPlayerEndpoint);
   return requestPlayerObj.username;
 }
+/**
+ * Format a float value as a percentage.
+ */
+export function formatAsPct(float) {
+  const value = Math.round(float * 100)
+  return `${value}%`
+}
