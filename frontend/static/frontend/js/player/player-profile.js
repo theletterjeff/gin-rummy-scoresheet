@@ -32,14 +32,12 @@ async function fillPlayerPage() {
   fillTitle(`Gin Rummy Scoresheet - ${username}`);
 }
 /**
- * Fills data within the player profile card--full name, email, date joined,
+ * Fills data within the player profile card--full name, date joined,
  * last login.
  */
 function fillProfileCard(playerJson) {
   fillProfileElem('player-username', playerJson.username);
   fillProfileElem('player-name', getPlayerFullName(playerJson));
-  fillProfileElem('player-email', playerJson.email);
-  linkPlayerEmail('player-email', playerJson.email);
   fillProfileElem('player-date-joined', makeDateString(playerJson.date_joined));
   fillProfileElem('player-last-login', makeDateString(playerJson.last_login));
   addEditButtonRedirect();
@@ -56,11 +54,6 @@ function fillProfileElem(elemName, value) {
 
 function makeDateString(date) {
   return new Date(date).toDateString();
-}
-
-function linkPlayerEmail(emailElemName, emailValue) {
-  let emailElem = document.getElementById(emailElemName);
-  emailElem.href = "mailto:" + emailValue;
 }
 /**
  * Add link to the "Edit" button that redirects to the player-edit page.
