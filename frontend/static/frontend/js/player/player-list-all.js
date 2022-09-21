@@ -38,10 +38,14 @@ async function fillPlayerListTable(playerListAllData) {
     let username = playerData.username;
 
     let matchWinPct = await getMatchWinPct(username);
-    matchWinPct = formatAsPct(matchWinPct);
+    if (matchWinPct != '--') {
+      matchWinPct = formatAsPct(matchWinPct);
+    };
 
     let gameWinPct = await getGameWinPct(username);
-    gameWinPct = formatAsPct(gameWinPct);
+    if (gameWinPct != '--') {
+      gameWinPct = formatAsPct(gameWinPct);
+    };
 
     let playersBody = document.getElementById('players-table-body');
 
