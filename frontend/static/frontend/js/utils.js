@@ -80,6 +80,13 @@ export function formatDateRange(dateObjStart, dateObjEnd) {
  */
 export function getValFromUrl(urlStr, key) {
   let urlArray = urlStr.split('/');
+  const keyIdx = urlArray.indexOf(key);
+
+  // Missing key
+  if (keyIdx == -1) {
+    return;
+  };
+
   let val_idx = urlArray.indexOf(key) + 1;
   return urlArray[val_idx];
 }
