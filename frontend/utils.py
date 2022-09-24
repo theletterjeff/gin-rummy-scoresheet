@@ -1,7 +1,8 @@
 import functools
 from typing import Callable
 
-from django.http import Http404
+import django
+from django.http import Http404, HttpResponseForbidden
 
 def check_api_object_exists(model: type, lookup_url_field: str,
                             lookup_model_field: str = None) -> Callable:
@@ -26,3 +27,26 @@ def check_api_object_exists(model: type, lookup_url_field: str,
             return view_func(*args, **kwargs)
         return wrapper
     return decorate
+
+def fallback_403(request):
+  """
+  Fallback 403 handler which prints out a hard-coded string patterned
+  after the Apache default 403 page.
+  Templates: None
+  Context: None
+
+  From [https://github.com/wtanaka/django403](https://github.com/wtanaka/django403)
+  """
+  return HttpResponseForbidden(
+      django.utils.translation.gettext(
+        """<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+             <html>
+               <head>
+                 <title>403 Forbidden</title>
+               </head>
+               <body>
+                 <h1>Forbidden</h1>
+                 <p>You don't have permission to access %(path)s on this server.</p>
+                 <hr>
+               </body>
+             </html>""") % {'path': request.path})

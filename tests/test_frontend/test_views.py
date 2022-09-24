@@ -69,3 +69,19 @@ def test_views_return_404_with_invalid_lookup_kwargs(
     response = auth_client.get(url)
     assert isinstance(response, HttpResponseNotFound)
     assert response.status_code == 404
+
+def test_player_edit_page_inaccessible_to_diff_user(
+        player0, player1, auth_client):
+    """Attempting to navigate to the player-edit page of a player other than 
+    yourself will raise a 403 error respnose page.
+    """
+    url = reverse('frontend:player-edit', kwargs={'username': player1.username})
+    response = auth_client.get(url)
+    assert response.status_code == 403
+
+def test_player_edit_page_accessible_to_logged_in_user(
+        player0, auth_client):
+    """Attempting to navigate to your own player-edit page will succeed."""
+    url = reverse('frontend:player-edit', kwargs={'username': player0.username})
+    response = auth_client.get(url)
+    assert response.status_code == 200

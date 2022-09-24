@@ -1,11 +1,11 @@
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.shortcuts import render
 from django.urls import reverse
 
 from accounts.models import Player
 from base.models import Match, Game, Score, Outcome
-from frontend.utils import check_api_object_exists
+from frontend.utils import check_api_object_exists, fallback_403
 
 @login_required
 def home(request):
@@ -26,6 +26,8 @@ def player_detail(request, username: str):
 @login_required
 @check_api_object_exists(Player, 'username')
 def player_edit(request, username: str):
+    if request.user.username != username:
+        return fallback_403(request)
     return render(request, 'frontend/player-edit.html')
 
 @login_required
