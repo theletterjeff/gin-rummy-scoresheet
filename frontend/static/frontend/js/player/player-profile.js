@@ -1,6 +1,6 @@
 import { fillTitle, getJsonResponse } from '../utils.js';
 import { getPlayerFullName } from './utils.js';
-import { getPlayerDetailEndpoint } from '../endpoints.js';
+import { getPlayerDetailEndpoint, getRequestPlayerEndpoint } from '../endpoints.js';
 
 fillPlayerPage();
 
@@ -11,9 +11,12 @@ async function fillPlayerPage() {
   const username = getUsername();
   const playerDetailEndpoint = getPlayerDetailEndpoint(username);
   let playerJson = await getJsonResponse(playerDetailEndpoint);
+  
+  const requestPlayerEndpoint = getRequestPlayerEndpoint();
+  const requestPlayerJson = await getJsonResponse(requestPlayerEndpoint);
 
   fillPlayerDetailTitle(username);
-  fillProfileCard(playerJson);
+  fillProfileCard(playerJson, requestPlayerJson);
 }
 /**
  * Get the username from the player detail URL.
@@ -35,12 +38,12 @@ async function fillPlayerPage() {
  * Fills data within the player profile card--full name, date joined,
  * last login.
  */
-function fillProfileCard(playerJson) {
+function fillProfileCard(playerJson, requestPlayerJson) {
   fillProfileElem('player-username', playerJson.username);
   fillProfileElem('player-name', getPlayerFullName(playerJson));
   fillProfileElem('player-date-joined', makeDateString(playerJson.date_joined));
   fillProfileElem('player-last-login', makeDateString(playerJson.last_login));
-  addEditButtonRedirect();
+  addEditButton(playerJson, requestPlayerJson);
 }
 
 function fillProfileElem(elemName, value) {
@@ -58,10 +61,14 @@ function makeDateString(date) {
 /**
  * Add link to the "Edit" button that redirects to the player-edit page.
  */
-function addEditButtonRedirect() {
-  const editPlayerEndpoint = window.location.href + 'edit-profile/'
-  const editBtn = document.getElementById('edit-button');
-  editBtn.addEventListener('click', function() {
-    window.location = editPlayerEndpoint;
-  })
+function addEditButton(playerJson, requestPlayerJson) {
+  if (playerJson.url == requestPlayerJson.url) {
+    const editPlayerUrl = window.location.href + 'edit-profile/';
+    let playerCardDiv = document.getElementById('player-card-body');
+    playerCardDiv.innerHTML += `
+      <div class="d-grid col-4 col-md-3 col-lg-2 mx-auto mt-4">
+        <a href="${editPlayerUrl}" class="btn btn-outline-success"">Edit</a>
+      </div>
+    `;
+  };
 }
