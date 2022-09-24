@@ -1,4 +1,4 @@
-import { fillTitle, getJsonResponse } from '../utils.js';
+import { getJsonResponse } from '../utils.js';
 import { getPlayerFullName } from './utils.js';
 import { getPlayerDetailEndpoint, getRequestPlayerEndpoint } from '../endpoints.js';
 
@@ -27,12 +27,6 @@ async function fillPlayerPage() {
  function getUsername() {
   let urlPath = window.location.pathname;
   return urlPath.split('/')[2];
-}
-/**
- * Fill the page title for the player detail page.
- */
- function fillPlayerDetailTitle(username) {
-  fillTitle(`Gin Rummy Scoresheet - ${username}`);
 }
 /**
  * Fills data within the player profile card--full name, date joined,

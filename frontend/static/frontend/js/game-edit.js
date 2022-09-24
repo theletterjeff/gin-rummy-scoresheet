@@ -1,4 +1,4 @@
-import { fillTitle, getJsonResponse, getValFromUrl } from './utils.js';
+import { getJsonResponse, getValFromUrl } from './utils.js';
 import { getDetailEndpointFromEditURL, getFrontendURL } from './endpoints.js';
 import { fillPoints, fillCheckbox, 
          fillWinnerDropdown, submitGameForm } from './game-form.js';
@@ -10,7 +10,6 @@ fillGameEditPage();
  * Main function for filling the Game Edit page.
  */
 async function fillGameEditPage() {
-  fillTitle('Edit Game');
   fillGameEditForm();
 }
 

@@ -1,6 +1,5 @@
 import {
   getJsonResponse,
-  fillTitle,
   formatDate,
   getCookie,
   setFormElemsAsDisabled,
@@ -116,16 +115,6 @@ async function getDataObj(endpoints) {
     dataObj[dataKeys[i]] = dataVals[i];
   };
   return dataObj;
-}
-/**
- * Fill the match-detail page title.
- */
-function fillMatchDetailPageTitle(playerListData) {
-  let usernames = [];
-  for (let data of playerListData.results) {
-    usernames.push(data.username);
-  }
-  fillTitle(`Match - ${usernames[0]} v. ${usernames[1]}`);
 }
 /** Fill the `game-wrapper` element with a list of game details */
 async function listGames(gamesJson) {
