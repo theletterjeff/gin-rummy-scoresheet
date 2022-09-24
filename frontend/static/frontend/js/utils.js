@@ -63,7 +63,7 @@ export function formatDate(dateObj) {
   };
   let monthNum = dateObj.getMonth() + 1;
   let dateNum = dateObj.getDate();
-  let yearNum = dateObj.getUTCFullYear();
+  let yearNum = dateObj.getUTCFullYear() % 100;
   return `${monthNum}/${dateNum}/${yearNum}`;
 }
 

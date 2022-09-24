@@ -1,6 +1,7 @@
 import {
   getJsonResponse,
   fillTitle,
+  formatDate,
   getCookie,
   setFormElemsAsDisabled,
   setFormElemsAsEnabled,
@@ -153,7 +154,8 @@ function makeGameTableRow(gameJson) {
   const gamePk = getValFromUrl(gameJson.url, 'games');
   const winnerUrl = getFrontendURL(gameJson.winner);
 
-  let datePlayed = new Date(gameJson.datetime_played).toDateString()
+  let datePlayed = new Date(gameJson.datetime_played)
+  datePlayed = formatDate(datePlayed);
   let points = gameJson.points
 
   const check_circle_html = '<span class="material-symbols-outlined pt-1">check_circle</span>'
