@@ -99,7 +99,6 @@ async function fillMatchesTables(matchesData, csrfToken) {
   const matchesPromise = matchesData.map(async function(matchData) {
     const requestPlayerUsername = await getRequestPlayerUsername();
     if (matchData.viewPlayer.username == requestPlayerUsername) {
-      await addEditMatchButton(matchData.pk);
       await addDeleteMatchButton(matchData.pk, csrfToken);
     };
   });
@@ -210,10 +209,12 @@ async function addFormattedOutcomeToMatch(match) {
 }
 
 function addHTMLRowToCurrentMatchesTable(matchData, currentMatchesTable) {
+  const matchDetailUrl = getFrontendURL(matchData.url);
+  const opponentDetailUrl = getFrontendURL(matchData.opponent.url);
   let matchHTML = `
       <tr id="row-match-${matchData.pk}" class="row-current-match">
-        <td>${matchData.datetime_started_formatted}</td>
-        <td>${matchData.opponent.username}</td>
+        <td><a href="${matchDetailUrl}">${matchData.datetime_started_formatted}</a></td>
+        <td><a href="${opponentDetailUrl}">${matchData.opponent.username}</a></td>
         <td>${matchData.formattedScores}</td>
         <td>${matchData.target_score}</td>
       </tr>
@@ -222,25 +223,17 @@ function addHTMLRowToCurrentMatchesTable(matchData, currentMatchesTable) {
 }
 
 function addHTMLRowToPastMatchesTable(matchData, pastMatchesTable) {
+  const matchDetailUrl = getFrontendURL(matchData.url);
+  const opponentDetailUrl = getFrontendURL(matchData.opponent.url);
   let matchHTML = `
       <tr id="row-match-${matchData.pk}" class="row-past-match">
-        <td id="past-match-datetime-${matchData.pk}">${matchData.datetime_range_formatted}</td>
-        <td id="past-match-opponent-username-${matchData.pk}">${matchData.opponent.username}</td>
+        <td id="past-match-datetime-${matchData.pk}"><a href="${matchDetailUrl}">${matchData.datetime_range_formatted}</a></td>
+        <td id="past-match-opponent-username"><a href="${opponentDetailUrl}">${matchData.opponent.username}</a></td>
         <td id="past-match-outcome-${matchData.pk}">${matchData.formattedOutcome}</td>
         <td id="past-match-scores-${matchData.pk}">${matchData.formattedScores}</td>
     `
     pastMatchesTable.innerHTML += matchHTML;
 }
-/**
- * Add an 'Edit' button to a match row.
- */
-async function addEditMatchButton(matchPk) {
-  // Add HTML
-  let matchRow = document.getElementById(`row-match-${matchPk}`)
-  const matchDetailUrl = getFrontendURL(getMatchDetailEndpoint(matchPk));
-  const editButtonHTML = `<td class="button-cell"><a href="${matchDetailUrl}" class="btn btn-small btn-outline-success edit-match" id="edit-match-${matchPk}">Edit</a></td>`
-  matchRow.innerHTML += editButtonHTML;
-} 
 /**
  * Add a 'Delete' button to a match row.
  */
