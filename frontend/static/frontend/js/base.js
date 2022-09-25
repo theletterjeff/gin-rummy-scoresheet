@@ -69,7 +69,7 @@ async function fillTitles() {
     case matchDetailRegex.test(path):
       matchData = await getJsonResponse(matchDetailEndpoint);
       for (let playerUrl of matchData.players) {
-        playerData = await getJsonResponse(playerUrl);
+        let playerData = await getJsonResponse(playerUrl);
         usernames.push(playerData.username);
       };
       fillTitle(`Match - ${usernames[0]} v. ${usernames[1]}`);
