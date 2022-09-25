@@ -245,7 +245,6 @@ async function addDeleteMatchButton(matchPk, csrfToken) {
 
   // Add click event
   let deleteBtn = await waitForElem(`delete-match-${matchPk}`)
-  console.log(deleteBtn);
   deleteBtn.addEventListener('click', function(e) {
     e.preventDefault();
     let deleteMatchEndpoint = window.location.origin + `/api/matches/${matchPk}/`;
