@@ -27,7 +27,6 @@ async function fillMatchDetailPage() {
   const endpoints = getEndpoints(matchPk);
   let data = await getDataObj(endpoints);
   
-  fillMatchDetailPageTitle(data.playerList);
   fillWinnerDropdown(
     data.playerList.results[0].username,
     data.playerList.results[1].username,
