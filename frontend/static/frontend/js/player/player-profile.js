@@ -15,7 +15,6 @@ async function fillPlayerPage() {
   const requestPlayerEndpoint = getRequestPlayerEndpoint();
   const requestPlayerJson = await getJsonResponse(requestPlayerEndpoint);
 
-  fillPlayerDetailTitle(username);
   fillProfileCard(playerJson, requestPlayerJson);
 }
 /**
