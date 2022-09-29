@@ -139,10 +139,8 @@ def test_add_then_delete_then_add_match_creates_one_match(
     url = live_server.url + reverse('frontend:match-list',
                                     kwargs={'username': 'player0'})
     driver.get(url)
-    wait.until(EC.presence_of_all_elements_located(
-        (By.CLASS_NAME, 'opponent-option')))
-    submit_btn = driver.find_element(By.ID, 'new-match-submit')
-    submit_btn.click()
+    driver.find_elements(By.CLASS_NAME, 'opponent-option')[0].click()
+    driver.find_element(By.ID, 'new-match-submit').click()
 
     # Reload match-list page after match-detail page loads
     wait.until(EC.presence_of_element_located(
@@ -153,14 +151,10 @@ def test_add_then_delete_then_add_match_creates_one_match(
     delete_btn.click()
     wait.until(EC.staleness_of(delete_btn))
 
-    wait.until(EC.presence_of_all_elements_located(
-        (By.CLASS_NAME, 'opponent-option')))
-    submit_btn = driver.find_element(By.ID, 'new-match-submit')
-    submit_btn.click()
+    driver.find_elements(By.CLASS_NAME, 'opponent-option')[0].click()
+    driver.find_element(By.ID, 'new-match-submit').click()
 
     # Reload match-list page
-    wait.until(EC.presence_of_element_located(
-        (By.ID, 'player0-username-option')))
     driver.get(url)
 
     match_rows = driver.find_elements(By.CLASS_NAME, 'row-current-match')
