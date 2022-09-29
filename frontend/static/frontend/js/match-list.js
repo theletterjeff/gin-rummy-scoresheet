@@ -33,7 +33,7 @@ async function fillPlayerMatchesPage() {
 
   // JSON data
   let matchesData = await getJsonResponse(matchListEndpoint);
-  matchesData = matchesData.results;
+  matchesData = matchesData;
   
   addDataToMatches(matchesData)
   .then(function(matchesData) {
@@ -282,7 +282,7 @@ async function fillOpponentDropdown(requestPlayer) {
   const playersData = await getJsonResponse(playersEndpoint);
 
   let playersDropdown = document.getElementById('opponent-dropdown');
-  for (let player of playersData.results) {
+  for (let player of playersData) {
     if (player.username != requestPlayer.username) {
       let dropdownOption = `<option class="opponent-option" value=${player.url}>${player.username}</option>`;
       playersDropdown.innerHTML += dropdownOption;

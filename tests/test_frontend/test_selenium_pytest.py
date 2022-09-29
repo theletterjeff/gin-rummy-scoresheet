@@ -253,3 +253,5 @@ def test_player_usernames_on_player_list_page_and_link_correctly(
         target_url = player.get_absolute_url().replace('api/', '')
         assert target_url in driver.find_element(
             By.XPATH, xpath).get_attribute('href')
+
+def test_player_match_win_pct(player0, player1, )

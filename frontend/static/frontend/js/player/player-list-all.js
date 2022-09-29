@@ -32,7 +32,7 @@ async function fillPlayerListPage() {
  * Fill the player list table.
  */
 async function fillPlayerListTable(playerListAllData) {
-  for (let playerData of playerListAllData.results) {
+  for (let playerData of playerListAllData) {
     let playerUrl = getFrontendURL(playerData.url);
     let playerPk = getPlayerPk(playerData);
     let username = playerData.username;
@@ -79,17 +79,17 @@ async function getMatchWinPct(username) {
   const outcomeData = await getJsonResponse(outcomeListPlayerEndpoint);
   
   // If no completed matches
-  if (outcomeData.count == 0) {
+  if (outcomeData.length == 0) {
     return '--';
   };
   // Add up wins, divide by number of completed matches
   let playerWins = null;
-  for (let outcome of outcomeData.results) {
+  for (let outcome of outcomeData) {
     if (outcome.player_outcome == 1) {
       playerWins += 1;
     };
   };
-  return playerWins / outcomeData.count;
+  return playerWins / outcomeData.length;
 }
 /**
  * Calculate the percentage of games the player has won.
@@ -99,16 +99,16 @@ async function getMatchWinPct(username) {
   const gameData = await getJsonResponse(gameListPlayerEndpoint);
   
   // If no completed matches
-  if (gameData.count == 0) {
+  if (gameData.length == 0) {
     return '--';
   };
   // Add up wins, divide by number of completed games
   let playerWins = null;
-  for (let game of gameData.results) {
+  for (let game of gameData) {
     let winnerUsername = getValFromUrl(game.winner, 'players');
     if (winnerUsername == username) {
       playerWins += 1;
     };
   };
-  return playerWins / gameData.count;
+  return playerWins / gameData.length;
 }

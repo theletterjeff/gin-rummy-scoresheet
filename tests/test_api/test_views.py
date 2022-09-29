@@ -30,7 +30,7 @@ def test_player_list(make_players, authenticate_api_request):
     response = view(request)
 
     assert response.status_code == 200
-    assert response.data['count'] == player_num
+    assert len(response.data) == player_num
 
 def test_player_detail(make_player, authenticate_api_request):
     """GET request to the PlayerDetail view returns the Player instance."""
@@ -87,7 +87,7 @@ def test_match_list_view_returns_no_records_when_no_records_present(
     request = authenticate_api_request(view, url, 'get', player)
     response = view(request, **kwargs)
     
-    assert response.data['count'] == 0
+    assert len(response.data) == 0
 
 def test_match_list_view_returns_no_records_when_matches_are_w_other_players(
         make_players, make_match, authenticate_api_request):
@@ -104,7 +104,7 @@ def test_match_list_view_returns_no_records_when_matches_are_w_other_players(
     request = authenticate_api_request(view, url, 'get', players[0])
     response = view(request, **kwargs)
 
-    assert response.data['count'] == 0
+    assert len(response.data) == 0
 
 @pytest.mark.parametrize('match_num', [1, 2, 10])
 def test_match_list_view_returns_records_when_matches_are_with_player(
@@ -122,7 +122,7 @@ def test_match_list_view_returns_records_when_matches_are_with_player(
     request = authenticate_api_request(view, url, 'get', players[0])
     response = view(request, **kwargs)
 
-    assert response.data['count'] == match_num
+    assert len(response.data) == match_num
 
 def test_match_create(make_players, authenticate_api_request):
     """Sending a POST request to the MatchCreate view creates a new Match."""
@@ -252,28 +252,25 @@ def test_match_detail_delete(make_players, make_match, authenticate_api_request)
     assert not response.data
 
 @pytest.mark.parametrize('game_count', [2, 4, 6])
-def test_game_list(game_count, make_players, make_match, make_games, 
+def test_game_list(game_count, player0, player1, simple_match, make_games, 
                    authenticate_api_request):
     """GameList view returns list of Game instances for a Match instance."""
-    players = make_players(2)
-    match = make_match(players)
-    winners = [players[0], players[1]] * int(game_count / 2)
-    losers = [players[1], players[0]] * int(game_count / 2)
+    winners = [player0, player1] * int(game_count / 2)
+    losers = [player1, player0] * int(game_count / 2)
     points = [5, 10] * int(game_count / 2)
 
-    games = make_games(num=game_count, match=match, winners=winners,
+    games = make_games(num=game_count, match=simple_match, winners=winners,
                        losers=losers, points=points)
     
     view = GameListMatch.as_view()
-    kwargs = {'match_pk': match.pk}
+    kwargs = {'match_pk': simple_match.pk}
     url = reverse('api:game-list-match', kwargs=kwargs)
 
-    request = authenticate_api_request(view, url, 'get', players[0], kwargs)
+    request = authenticate_api_request(view, url, 'get', player0, kwargs)
     response = view(request, **kwargs)
 
     assert response.status_code == 200
-    assert response.data['count'] == game_count
-    assert len(response.data['results']) == game_count
+    assert len(response.data) == game_count
 
 def test_game_detail_get(make_players, make_match, make_game,
                          authenticate_api_request, mock_now):
@@ -389,7 +386,7 @@ def test_score_list(make_players, make_matches, authenticate_api_request):
     request = authenticate_api_request(view, url, 'get', players[0], kwargs)
     response = view(request, **kwargs)
 
-    assert response.data['count'] == 3
+    assert len(response.data) == 3
 
 def test_score_detail_get(make_players, make_match, authenticate_api_request):
     """Sending a GET request to the ScoreDetail view returns a response
@@ -432,7 +429,7 @@ def test_outcome_list(make_players, make_matches, authenticate_api_request):
     request = authenticate_api_request(view, url, 'get', players[0], kwargs)
     response = view(request, **kwargs)
 
-    assert response.data['count'] == match_count
+    assert len(response.data) == match_count
 
 def test_outcome_detail(make_players, make_match, authenticate_api_request):
     """Sending a GET request to the OutcomeDetail view returns a response

@@ -28,21 +28,21 @@ async function fillMatchDetailPage() {
   let data = await getDataObj(endpoints);
   
   fillWinnerDropdown(
-    data.playerList.results[0].username,
-    data.playerList.results[1].username,
+    data.playerList[0].username,
+    data.playerList[1].username,
   );
-  listGames(data.gameList.results);
+  listGames(data.gameList);
   fillScoreboard(
-    data.playerList.results,
+    data.playerList,
     data.matchDetail,
-    data.gameList.results,
-    data.scoreList.results,
+    data.gameList,
+    data.scoreList,
   );
 
   // If match is complete, gray out the game submit form
   let matchIsComplete = checkMatchOutcome(data.outcomeList);
   if (matchIsComplete) {
-    setMatchAsComplete(data.outcomeList.results, data.playerList.results);
+    setMatchAsComplete(data.outcomeList, data.playerList);
   } else {
     enableNewGameFormFields();
     setScoreboardCardTitleWithoutWinner();
@@ -278,7 +278,7 @@ function countWinsAndLosses(playersJson, gamesJson) {
 }
 
 function checkMatchOutcome(outcomeList) {
-  return outcomeList.count > 0;
+  return outcomeList.length > 0;
 }
 
 function disableNewGameFormFields() {
