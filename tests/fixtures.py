@@ -82,6 +82,27 @@ def winning_game(simple_match, player0, player1):
         match=simple_match, winner=player0, loser=player1, points=501)
 
 @pytest.fixture
+def matches_and_games_for_win_pct(player0, player1, make_matches, make_games):
+    """Matches and games to test match and game win percentage calculations."""
+    players = [player0, player1]
+    matches = make_matches(num=3, players=players)
+    games = []
+    
+    player_idx = 0      # Alternate match winner
+    for match in matches:
+        i = player_idx % 2
+        j = (player_idx + 1) % 2
+        games.append(make_games(
+            num=5,
+            match=match,
+            winners=(players[i], players[j], players[i], players[j], players[i]),
+            losers=(players[j], players[i], players[j], players[i], players[j]),
+            points=[200]*5,
+        ))
+        player_idx += 1
+    return matches, games
+
+@pytest.fixture
 def simple_score(simple_match, player0):
     """A Score object for player0 with `player_score` set to 0."""
     return Score.objects.get(match=simple_match, player=player0)

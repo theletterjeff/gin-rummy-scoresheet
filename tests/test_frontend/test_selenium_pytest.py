@@ -254,4 +254,25 @@ def test_player_usernames_on_player_list_page_and_link_correctly(
         assert target_url in driver.find_element(
             By.XPATH, xpath).get_attribute('href')
 
-def test_player_match_win_pct(player0, player1, )
+def test_player_win_pcts(player0, player1, matches_and_games_for_win_pct,
+        live_server, driver):
+    """TODO"""
+    url = live_server.url + reverse('frontend:player-list-all')
+    driver.get(url)
+
+    match_win_pct_dict = {
+        player0: '67%',
+        player1: '33%',
+    }
+    game_win_pct_dict = {
+        player0: '53%',
+        player1: '47%',
+    }
+    for player in [player0, player1]:
+        match_win_pct = driver.find_element(
+                By.ID, f'player-match-win-pct-{player.username}')
+        assert match_win_pct.text == match_win_pct_dict[player]
+        
+        game_win_pct = driver.find_element(
+            By.ID, f'player-game-win-pct-{player.username}')
+        assert game_win_pct.text == game_win_pct_dict[player]
