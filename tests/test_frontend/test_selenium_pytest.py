@@ -35,20 +35,6 @@ def test_past_matches_table_contains_finished_complete_matches(
 
     assert match_row
 
-def test_edit_buttons_on_match_list_page_redirect(
-        driver, player0, incomplete_match_with_one_game,
-        complete_match_with_one_game, live_server, wait):
-    """The edit button on match rows on the match list page redirects to 
-    the detail view for their respective matches.
-    """
-    for match in [incomplete_match_with_one_game, complete_match_with_one_game]:
-        url = live_server.url + reverse('frontend:match-list', kwargs={'username': 'player0'})
-        driver.get(url)
-        edit_button = wait.until(EC.presence_of_element_located(
-            (By.ID, f'edit-match-{match.pk}')))
-        edit_button.click()
-        wait.until(EC.url_changes(url))
-
 def test_add_game_multiple_times_creates_one_game_per_submit(
         driver, wait, simple_match, live_server, transactional_db):
     """Adding multiple games through the `new-game-form` element creates one 
