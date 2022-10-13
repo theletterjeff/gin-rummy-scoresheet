@@ -7,12 +7,8 @@ from accounts.models import Player
 from base.models import Match, Game, Score, Outcome
 from frontend.utils import check_api_object_exists, fallback_403
 
-@login_required
 def home(request):
-    player = request.user
-    username = player.username
-    redirect_url = reverse('frontend:match-list', kwargs={'username': username})
-    return HttpResponseRedirect(redirect_url)
+    return render(request, 'frontend/home.html')
 
 @login_required
 def player_list_all(request):

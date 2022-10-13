@@ -2,5 +2,41 @@
 {% load static %}
 
 {% block content %}
-  <p>This is your home page.</p>
+  <h5>Welcome to Gin Rummy Scoresheet!</h5>
+  <p class='pt-3'>This app is meant to be used as a handy score tracker for offline Gin Rummy games.</p>
+  <p class='mb-4'>Create matches against your friends, log games, and see your win rates all in one convenient place.</p>
+  </p>
+  <div class="card mt-3">
+    <div class="card-body">
+      <h5 class="card-title mb-3">Matches</h5>
+      <p class="mt-4">Browse current and past matches, and see scores and outcomes.</p>
+      <img src={% static "./frontend/gifs/test_gif.gif" %} class="img-fluid">
+      <p class="mt-4">Delete matches you're no longer interested in playing.</p>
+      <img src={% static "./frontend/gifs/test_gif.gif" %} class="img-fluid">
+      <p class="mt-4">Add new matches against any player in the system.</p>
+      <img src={% static "./frontend/gifs/test_gif.gif" %} class="img-fluid">
+      <p class="mt-4">Access existing matches to update wins, losses, and points.</p>
+      <img src={% static "./frontend/gifs/test_gif.gif" %} class="img-fluid">
+    </div>
+  </div>
+  <div class="card mt-3">
+    <div class="card-body">
+      <h5 class="card-title mb-3">Games</h5>
+      <p class="mt-4">Add completed games to matches and watch your score increase.</p>
+      <img src={% static "./frontend/gifs/test_gif.gif" %} class="img-fluid">
+      <p class="mt-4">Edit or delete past games that were mistakenly entered.</p>
+      <img src={% static "./frontend/gifs/test_gif.gif" %} class="img-fluid">
+    </div>
+  </div>
+  <div class="card mt-3">
+    <div class="card-body">
+      <h5 class="card-title mb-3">Players</h5>
+      <p class="mt-4">View all players, along with the share of matches and games they've won.</p>
+      <img src={% static "./frontend/gifs/test_gif.gif" %} class="img-fluid">
+      <p class="mt-4">Access basic profile details for any player.</p>
+      <img src={% static "./frontend/gifs/test_gif.gif" %} class="img-fluid">
+      <p class="mt-4">Edit your own profile details, including your username and contact information.</p>
+      <img src={% static "./frontend/gifs/test_gif.gif" %} class="img-fluid">
+    </div>
+  </div>
 {% endblock%}
